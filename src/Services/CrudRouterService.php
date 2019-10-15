@@ -1,12 +1,12 @@
 <?php
 
-namespace Softworx\RocXolid;
+namespace Softworx\RocXolid\Services;
 
 use Route;
 
 class CrudRouterService
 {
-    protected $extraRoutes = [];
+    protected $extra_routes = [];
 
     protected $name = null;
     protected $options = null;
@@ -115,64 +115,28 @@ class CrudRouterService
         ]);
     }
 
-    /**
-     * The CRUD resource needs to be registered after all the other routes.
-     */
-    public function __destruct()
-    {
-        $options_with_default_route_names = array_merge([
-            'names' => [
-                'index'     => 'crud.'.$this->name.'.index',
-                'create'    => 'crud.'.$this->name.'.create',
-                'store'     => 'crud.'.$this->name.'.store',
-                'edit'      => 'crud.'.$this->name.'.edit',
-                'update'    => 'crud.'.$this->name.'.update',
-                'show'      => 'crud.'.$this->name.'.show',
-                'clone'     => 'crud.'.$this->name.'.clone',
-                'destroy'   => 'crud.'.$this->name.'.destroy',
-            ],
-        ], $this->options);
-
-        Route::resource($this->name, $this->controller, $options_with_default_route_names);
-    }
-
-    /**
-     * Call other methods in this class, that register extra routes.
-     *
-     * @param  [type] $injectables [description]
-     * @return [type]              [description]
-     */
     public function with($injectables)
     {
         if (is_string($injectables)) {
-            $this->extraRoutes[] = 'with'.ucwords($injectables);
+            $this->extra_routes[] = 'with'.ucwords($injectables);
         } elseif (is_array($injectables)) {
             foreach ($injectables as $injectable) {
-                $this->extraRoutes[] = 'with'.ucwords($injectable);
+                $this->extra_routes[] = 'with'.ucwords($injectable);
             }
         } else {
             $reflection = new \ReflectionFunction($injectables);
 
             if ($reflection->isClosure()) {
-                $this->extraRoutes[] = $injectables;
+                $this->extra_routes[] = $injectables;
             }
         }
 
         return $this->registerExtraRoutes();
     }
 
-    /**
-     * TODO
-     * Give developers the ability to unregister a route.
-     */
-    // public function without($injectables) {}
-
-    /**
-     * Register the routes that were passed using the "with" syntax.
-     */
     private function registerExtraRoutes()
     {
-        foreach ($this->extraRoutes as $route) {
+        foreach ($this->extra_routes as $route) {
             if (is_string($route)) {
                 $this->{$route}();
             } else {
