@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Http\Controllers;
 
 use Illuminate\Routing\Controller as IlluminateController;
+// rocXolid traits
 use Softworx\RocXolid\Http\Controllers\Traits\Routable as RoutableTrait;
 
 abstract class AbstractController extends IlluminateController

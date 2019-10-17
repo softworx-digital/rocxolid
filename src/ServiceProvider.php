@@ -57,7 +57,7 @@ class ServiceProvider extends IlluminateServiceProvider
     }
 
     /**
-     * Load routes, migrations and translations.
+     * Load routes, migrations, views and translations.
      *
      * @return \Illuminate\Support\ServiceProvider
      */

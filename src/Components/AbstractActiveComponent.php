@@ -14,17 +14,4 @@ abstract class AbstractActiveComponent extends AbstractComponent implements Cont
     use ControllableTrait;
     use ModellableTrait;
     use RoutableTrait;
-
-    protected function getTranslationKey($key, $use_repository_param = true)
-    {
-        if (!$use_repository_param) {
-            return sprintf('general.%s', $key);
-        } elseif ($this->hasController() && $this->getController()->getRepository()) {
-            return sprintf('%s.%s', $this->getController()->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---component--- (' . $key . ' -- ' . __METHOD__ . ')';
-        }
-
-        return $key;
-    }
 }

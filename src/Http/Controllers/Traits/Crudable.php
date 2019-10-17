@@ -31,11 +31,7 @@ use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
  */
 trait Crudable
 {
-    //protected static $model_class; // should be defined in specific class
-
-    //protected static $dashboard_class; // should be defined in specific class
-
-    protected $dashboard;
+    // protected static $model_class; // should be defined in specific class
 
     protected $response;
 
@@ -47,11 +43,6 @@ trait Crudable
     public function getModelClass(): string
     {
         return static::$model_class;
-    }
-
-    public function getDashboardClass(): string
-    {
-        return static::$dashboard_class;
     }
 
     public function isModelActionAvailable(CrudableModel $model, $action)
@@ -365,17 +356,6 @@ trait Crudable
     protected function getIndexViewAssignments(Request $request)//: array
     {
         return [];
-    }
-
-    protected function getDashboard(): AbstractActiveComponent
-    {
-        if (is_null($this->dashboard)) {
-            $class = $this->getDashboardClass();
-
-            $this->dashboard = new $class($this);
-        }
-
-        return $this->dashboard;
     }
 
     protected function success(CrudRequest $request, Repository $repository, AbstractCrudForm $form, $action)

@@ -48,7 +48,7 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function setRouteName(stirng $name): RoutableContract
+    public function setRouteName(string $name): RoutableContract
     {
         $this->route_name = $name;
         $this->route = route($name);
@@ -59,7 +59,7 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function setRouteMethod(stirng $method): RoutableContract
+    public function setRouteMethod(string $method): RoutableContract
     {
         $this->route_method = $method;
         $this->route = action(sprintf('\%s@%s', get_class($this->getController()), $method));

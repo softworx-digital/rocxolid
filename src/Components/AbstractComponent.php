@@ -3,7 +3,10 @@
 namespace Softworx\RocXolid\Components;
 
 use Softworx\RocXolid\Helpers\View as ViewHelper;
-use Softworx\RocXolid\Components\Contracts\Renderable;
+use Softworx\RocXolid\Contracts\Translatable;
+use Softworx\RocXolid\Contracts\Renderable;
+use Softworx\RocXolid\Traits\Renderable as RenderableTrait;
+use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
 
 /**
  * Base abstract class for components.
@@ -13,13 +16,20 @@ use Softworx\RocXolid\Components\Contracts\Renderable;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractComponent extends AbstractRenderableComponent implements Renderable
+abstract class AbstractComponent implements Renderable, Translatable
 {
+    use RenderableTrait;
+    use TranslatableTrait;
+
+    const DEFAULT_TEMPLATE_NAME = 'default';
+
     protected $dom_id;
 
     protected $view_package = 'rocXolid';
 
     protected $view_directory = '';
+
+    protected $translation_package = 'rocXolid';
 
     public function setDomId($id)
     {
@@ -42,11 +52,6 @@ abstract class AbstractComponent extends AbstractRenderableComponent implements 
         return ViewHelper::domIdHash($this, $params);
     }
 
-    public function translate($key, $use_repository_param = true)
-    {
-        return __(sprintf('rocXolid::%s', $this->getTranslationKey($key, $use_repository_param)));
-    }
-
     protected function makeDomId(...$params)
     {
         return ViewHelper::domId($this, $params);
@@ -55,18 +60,5 @@ abstract class AbstractComponent extends AbstractRenderableComponent implements 
     protected function makeDomIdHash(...$params)
     {
         return ViewHelper::domIdHash($this, $params);
-    }
-
-    protected function getTranslationKey($key, $use_repository_param)
-    {
-        if (!$use_repository_param) {
-            return sprintf('general.%s', $key);
-        } elseif (method_exists($this, 'getRepository') && $this->getRepository()) {
-            return sprintf('%s.%s', $this->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---component--- (' . __METHOD__ . ')';
-        }
-
-        return $key;
     }
 }

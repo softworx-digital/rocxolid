@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Components\Contracts;
+namespace Softworx\RocXolid\Contracts;
 
 use Illuminate\View\View;
 
@@ -13,6 +13,14 @@ use Illuminate\View\View;
  */
 interface Renderable
 {
+    /**
+     * Possibility to dynamically set properties before rendering. 
+     * Can be overriden in specific Renderable class.
+     * 
+     * @return \Softworx\RocXolid\Components\Contracts\Renderable
+     */
+    public function setPreRenderProperties(...$elements): Renderable;
+
     /**
      * Composes the blade template and returns it.
      *

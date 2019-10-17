@@ -6,6 +6,7 @@ use Auth;
 // contracts
 use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
+use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Repositories\Contracts\Repositoryable;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
@@ -14,6 +15,7 @@ use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableCompo
 use Softworx\RocXolid\Components\Contracts\Modellable as ModellableComponent;
 // traits
 use Softworx\RocXolid\Http\Controllers\Traits\Crudable as CrudableTrait;
+use Softworx\RocXolid\Http\Controllers\Traits\Dashboardable as DashboardableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryOrderableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryFilterable as RepositoryFilterableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryAutocompleteable as RepositoryAutocompleteableTrait;
@@ -27,9 +29,10 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
 /**
  * @todo - toto asi skor na styl ako je Softworx\RocXolid\DevKit\Console\Commands\Generate\Traits\Formable, pripadne to nejako vyuzit / upratat do traitu(ov)
  */
-abstract class AbstractCrudController extends AbstractController implements Crudable, Repositoryable, Modellable // doplnit repository features traity / contracty
+abstract class AbstractCrudController extends AbstractController implements Crudable, Dashboardable, Repositoryable, Modellable // doplnit repository features traity / contracty
 {
     use CrudableTrait;
+    use DashboardableTrait;
     use ModellableTrait;
     use RepositoryableTrait;
     use RepositoryOrderableTrait;

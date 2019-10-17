@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
- *
+ * @TODO: refactor?
  */
 trait Crudable
 {

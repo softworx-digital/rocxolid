@@ -3,8 +3,15 @@
 namespace Softworx\RocXolid\Services\Contracts;
 
 use Illuminate\View\View;
-use Softworx\RocXolid\Components\Contracts\Renderable;
+use Softworx\RocXolid\Contracts\Renderable;
 
+/**
+ * Retrieves view for given object and view name.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 interface ViewService
 {
     /**

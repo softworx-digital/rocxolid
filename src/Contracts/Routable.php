@@ -35,7 +35,7 @@ interface Routable
      * @param string $method Route method to set.
      * @return \Softworx\RocXolid\Contracts\Routable
      */
-    public function setRouteMethod(stirng $method): Routable;
+    public function setRouteMethod(string $method): Routable;
 
     /**
      * Set the route target (to be used in HTML anchor element).

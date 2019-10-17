@@ -9,7 +9,7 @@ use Blade;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\View\View as IlluminateView;
 use Softworx\RocXolid\Services\Contracts\ViewService as ViewServiceContract;
-use Softworx\RocXolid\Components\Contracts\Renderable;
+use Softworx\RocXolid\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\Controllable;
 use Softworx\RocXolid\Components\Contracts\Modellable;
 use Softworx\RocXolid\Services\Exceptions\ViewNotFoundException;
@@ -19,7 +19,7 @@ class ViewService implements ViewServiceContract
     /**
      * Directory name placeholder for general views.
      */
-    const GENERIC_VIEW_DIRECTORY = '_generic'; // @todo - toto do configu
+    const GENERIC_VIEW_DIRECTORY = '_generic'; // @TODO: put his into config
 
     protected $namespace_depth = [
         'model' => 'Models',

@@ -156,7 +156,7 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
-    public function get(): string
+    public function get(): array
     {
         return $this->message_bag->jsonSerialize();
     }

@@ -5,7 +5,7 @@ namespace Softworx\RocXolid\Traits;
 use App;
 use Illuminate\View\View;
 use Softworx\RocXolid\Services\Contracts\ViewService;
-use Softworx\RocXolid\Components\Contracts\Renderable as RenderableContract;
+use Softworx\RocXolid\Contracts\Renderable as RenderableContract;
 
 /**
  * Enables object to be rendered at the front-end.
@@ -19,15 +19,25 @@ trait Renderable
     /**
      * @var string $view_package Identifier for package containing views for component using this trait.
      */
-    protected $view_package = null;
+    // protected $view_package; // should be defined in package specific (Abstract)Component class
+
     /**
      * @var string $view_directory Enables to define specific directory containing views for component using this trait.
      */
-    protected $view_directory = null;
+    // protected $view_directory; // should be defined in package specific (Abstract)Component class
 
     /**
      * {@inheritdoc}
-     * @todo nejako handlovat exceptiony, lebo ked priebezne renderuje, tak vyhodi content a nejaku exception, ak je, tak neskoro
+     * @todo find some cleaner way
+     */
+    public function setPreRenderProperties(...$elements): RenderableContract
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @todo find some way to handle exceptions not during content rendering, but first try to render and then throw exceptions on error
      */
     public function render(string $view_name = null, array $assignments = []): View
     {
@@ -102,8 +112,9 @@ trait Renderable
 
     /**
      * Retrieves the view service responsible for retrieving and composing the views.
+     * @TODO: pass as dependency via class constructor (however to all classes using this trait - awkward)
      *
-     * @return ViewService
+     * @return \Softworx\RocXolid\Services\Contracts\ViewService
      * @todo Optimize adding view_service property?
      */
     protected function getViewService(): ViewService
