@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Softworx\RocXolid\Forms\Validation\Validator as RocXolidValidator;
 
 /**
- * RocXolid request validation service provider.
+ * rocXolid request validation service provider.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid

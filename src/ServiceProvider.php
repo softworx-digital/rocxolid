@@ -8,7 +8,7 @@ use Illuminate\Foundation\AliasLoader;
 // use Vsch\TranslationManager\Translator; // @TODO: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 
 /**
- * RocXolid package service provider.
+ * rocXolid package service provider.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid

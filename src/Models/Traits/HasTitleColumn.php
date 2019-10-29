@@ -13,6 +13,12 @@ trait HasTitleColumn
 
     public function getTitle()
     {
-        return $this->{static::$title_column};
+        if (is_array($this->getTitleColumn())) {
+            return implode(' ', array_filter(array_map(function($attribute) {
+                return $this->{$attribute};
+            }, static::$title_column)));
+        }
+
+        return  $this->{static::$title_column};
     }
 }

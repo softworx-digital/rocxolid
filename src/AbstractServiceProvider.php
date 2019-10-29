@@ -172,7 +172,7 @@ class AbstractServiceProvider extends IlluminateServiceProvider
      */
     private function bindContracts()
     {
-        // RocXolid
+        // rocXolid
         // $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
         // ...
         // third-party
@@ -188,7 +188,7 @@ class AbstractServiceProvider extends IlluminateServiceProvider
      */
     private function bindAliases(AliasLoader $loader)
     {
-        // RocXolid
+        // rocXolid
         // $loader->alias('<alias>', <Facade/>Contract>::class);
         // ...
         // third-party

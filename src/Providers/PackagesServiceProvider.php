@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 // use Vsch\TranslationManager\Translator; // @TODO: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 
 /**
- * RocXolid third party packages' service provider.
+ * rocXolid third party packages' service provider.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid

@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Illuminate\Console\Command;
 
 /**
- * RocXolid CLI commands service provider.
+ * rocXolid CLI commands service provider.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
