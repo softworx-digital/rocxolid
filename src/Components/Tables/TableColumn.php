@@ -31,7 +31,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
         return $this->table_column;
     }
 
-    public function getDefaultTemplateName()
+    public function getDefaultTemplateName(): string
     {
         return $this->getTableColumn()->isArray()
              ? static::ARRAY_TEMPLATE_NAME
@@ -67,14 +67,14 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
         ]);
     }
 
-    protected function getTranslationKey($key, $use_repository_param)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('column.%s', $key);
         } elseif ($this->getTableColumn() && $this->getTableColumn()->getRepository()) {
             return sprintf('%s.column.%s', $this->getTableColumn()->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---field--- (' . __METHOD__ . ')';
+            return '---table-column--- (' . __METHOD__ . ')';
         }
 
         return $key;

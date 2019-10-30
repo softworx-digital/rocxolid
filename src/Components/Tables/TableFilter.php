@@ -39,7 +39,7 @@ class TableFilter extends AbstractOptionableComponent implements ComponentTableF
         return $this->table_filter;
     }
 
-    public function getDefaultTemplateName()
+    public function getDefaultTemplateName(): string
     {
         return $this->getTableFilter()->isArray()
              ? static::ARRAY_TEMPLATE_NAME
@@ -58,14 +58,14 @@ class TableFilter extends AbstractOptionableComponent implements ComponentTableF
         return $this->getOption('model')->$attribute;
     }
 
-    protected function getTranslationKey($key, $use_repository_param)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('filter.%s', $key);
         } elseif ($this->getTableFilter() && $this->getTableFilter()->getRepository()) {
             return sprintf('%s.filter.%s', $this->getTableFilter()->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---filter--- (' . __METHOD__ . ')';
+            return '---table-filter--- (' . __METHOD__ . ')';
         }
 
         return $key;

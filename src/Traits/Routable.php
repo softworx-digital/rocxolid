@@ -16,7 +16,7 @@ use Softworx\RocXolid\Contracts\Routable as RoutableContract;
 trait Routable
 {
     /**
-     * @var \Illuminate\Routing\Route Assigned route object.
+     * @var string Assigned route.
      */
     protected $route;
 
@@ -38,7 +38,7 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function setRoute(Route $route): RoutableContract
+    public function setRoute(string $route): RoutableContract
     {
         $this->route = $route;
 
@@ -80,7 +80,7 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function getRoute(): Route
+    public function getRoute(): string
     {
         if (!$this->hasRoute()) {
             throw new \UnderflowException(sprintf('No route set in [%s]', get_class($this)));

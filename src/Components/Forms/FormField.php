@@ -40,14 +40,14 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
         return $this->form_field;
     }
 
-    public function getDefaultTemplateName()
+    public function getDefaultTemplateName(): string
     {
         return $this->getFormField()->isArray()
              ? static::ARRAY_TEMPLATE_NAME
              : parent::getDefaultTemplateName();
     }
 
-    protected function getTranslationKey($key, $use_repository_param = true)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('field.%s', $key);
@@ -58,7 +58,7 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
                 return sprintf('general.field.%s', $key);
             }
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---field--- (' . __METHOD__ . ')';
+            return '---form-field--- (' . __METHOD__ . ')';
         }
 
         return $key;

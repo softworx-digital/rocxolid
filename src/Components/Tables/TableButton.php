@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Components\Tables;
 
+use Softworx\RocXolid\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
 use Softworx\RocXolid\Repositories\Contracts\Column as TableButtonContract;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
@@ -30,7 +31,7 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this->button;
     }
 
-    public function setPreRenderProperties(...$elements)
+    public function setPreRenderProperties(...$elements): Renderable
     {
         $table = $elements[0];
         $model = $elements[1];
@@ -63,14 +64,14 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this;
     }
 
-    protected function getTranslationKey($key, $use_repository_param)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('table-button.%s', $key);
         } elseif ($this->getButton() && $this->getButton()->getRepository()) {
             return sprintf('%s.table-button.%s', $this->getButton()->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---field--- (' . __METHOD__ . ')';
+            return '---table-button--- (' . __METHOD__ . ')';
         }
 
         return $key;

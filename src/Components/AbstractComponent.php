@@ -23,42 +23,54 @@ abstract class AbstractComponent implements Renderable, Translatable
 
     const DEFAULT_TEMPLATE_NAME = 'default';
 
+    /**
+     * @var string
+     */
     protected $dom_id;
 
+    /**
+     * @var string
+     */
     protected $view_package = 'rocXolid';
 
+    /**
+     * @var string
+     */
     protected $view_directory = '';
 
+    /**
+     * @var string
+     */
     protected $translation_package = 'rocXolid';
 
-    public function setDomId($id)
+    public function setDomId(string $id): AbstractComponent
     {
         $this->dom_id = $id;
 
         return $this;
     }
 
-    public function getDomId(...$params)
+    public function getDomId(...$params): string
     {
         if (!isset($this->dom_id)) {
-            $this->setDomId($this->makeDomId($params));
+            $this->setDomId($this->makeDomId(...$params));
         }
 
-        return $id;
+        return $this->dom_id;
     }
 
-    protected function getDomIdHash(...$params)
+    protected function getDomIdHash(...$params): string
     {
-        return ViewHelper::domIdHash($this, $params);
+        return ViewHelper::domIdHash($this, ...$params);
     }
 
-    protected function makeDomId(...$params)
+    protected function makeDomId(...$params): string
     {
-        return ViewHelper::domId($this, $params);
+        return ViewHelper::domId($this, ...$params);
     }
 
-    protected function makeDomIdHash(...$params)
+    protected function makeDomIdHash(...$params): string
     {
-        return ViewHelper::domIdHash($this, $params);
+        return ViewHelper::domIdHash($this, ...$params);
     }
 }

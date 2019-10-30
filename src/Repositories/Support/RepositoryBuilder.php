@@ -64,7 +64,7 @@ class RepositoryBuilder implements RepositoryBuilderContract
             ->buildColumns()
             ->init();
 
-        $this->event_dispatcher->fire(new AfterRepositoryCreation($repository));
+        $this->event_dispatcher->dispatch(new AfterRepositoryCreation($repository));
 
         return $repository;
     }

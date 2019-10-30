@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Traits;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
@@ -12,7 +13,7 @@ trait MethodOptionable
 
     public function setOption($option, $value): OptionableContract
     {
-        $method = camel_case(sprintf('set_%s', str_replace('-', '_', $option)));
+        $method = Str::camel(sprintf('set_%s', str_replace('-', '_', $option)));
 
         if (!method_exists($this, $method)) {
             throw new \InvalidArgumentException(sprintf('Required method [%s] does not exist in [%s] field [%s]', $method, get_class($this), $this->name));

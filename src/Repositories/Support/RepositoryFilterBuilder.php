@@ -33,7 +33,7 @@ class RepositoryFilterBuilder implements RepositoryFilterBuilderContract
         $field = new $type($name, $type, $repository, $options);
 
         if ($repository instanceof EventDispatchable) {
-            $repository->getEventDispatcher()->fire(new AfterFilterCreation($repository, $field));
+            $repository->getEventDispatcher()->dispatch(new AfterFilterCreation($repository, $field));
         }
 
         return $field;

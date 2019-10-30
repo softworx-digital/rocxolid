@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Models\Traits;
 use App;
 use DB;
 use Auth;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 // relations
@@ -52,7 +53,7 @@ trait Crudable
         if (property_exists($this, 'model_name')) {
             $name = static::$model_name;
         } else {
-            $name = kebab_case((new \ReflectionClass($this))->getShortName());
+            $name = Str::kebab((new \ReflectionClass($this))->getShortName());
         }
 
         return $singular ? $name : str_plural($name);

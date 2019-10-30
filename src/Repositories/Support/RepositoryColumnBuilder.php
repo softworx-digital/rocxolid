@@ -46,7 +46,7 @@ class RepositoryColumnBuilder implements RepositoryColumnBuilderContract
         $field = new $type($name, $type, $repository, $options);
 
         if ($repository instanceof EventDispatchable) {
-            $repository->getEventDispatcher()->fire(new AfterColumnCreation($repository, $field));
+            $repository->getEventDispatcher()->dispatch(new AfterColumnCreation($repository, $field));
         }
 
         return $field;

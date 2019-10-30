@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Support;
 
+use Illuminate\Support\Str;
 // doctrine
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\Type;
@@ -259,7 +260,7 @@ class FormFieldFactory implements FormFieldFactoryContract
     public function getRelationshipFieldName($method, $relation): string
     {
         if ($relation instanceof BelongsTo) {
-            return sprintf('%s_id', snake_case($method));
+            return sprintf('%s_id', Str::snake($method));
         }
 
         return $method;

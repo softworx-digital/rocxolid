@@ -80,14 +80,14 @@ class Item extends AbstractComponent implements NavbarAccessible
         return $this->icon;
     }
 
-    public function getTranslationKey($key, $use_repository_param)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('navbar.%s', $key);
         } elseif (method_exists($this, 'getRepository') && $this->getRepository()) {
             return sprintf('navbar.%s', $this->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---component--- (' . __METHOD__ . ')';
+            return '---item--- (' . __METHOD__ . ')';
         }
 
         return $key;

@@ -28,14 +28,14 @@ class FormButton extends Button implements ComponentFormButtonable
         return $this->form_field;
     }
 
-    protected function getTranslationKey($key, $use_repository_param = true)
+    protected function getTranslationKey(string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('general.button.%s', $key);
         } elseif ($this->getButton() && $this->getButton()->getForm() && $this->getButton()->getForm()->getRepository()) {
             return sprintf('%s.button.%s', $this->getButton()->getForm()->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---button--- (' . __METHOD__ . ')';
+            return '---form-button--- (' . __METHOD__ . ')';
         }
 
         return $key;

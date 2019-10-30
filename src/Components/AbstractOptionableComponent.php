@@ -9,7 +9,7 @@ abstract class AbstractOptionableComponent extends AbstractComponent implements 
 {
     use OptionableTrait;
 
-    public function getHtmlAttributes($param = null, $merge = [])
+    public function getHtmlAttributes($param = null, $merge = []): string
     {
         $html = '';
         $option = is_null($param) ? 'attributes' : sprintf('%s.attributes', $param);
@@ -22,7 +22,7 @@ abstract class AbstractOptionableComponent extends AbstractComponent implements 
         return $html;
     }
 
-    public function getDomId($prefix = '', $suffix = '')
+    public function getDomId(...$params): string
     {
         if (!isset($this->dom_id)) {
             $this->setDomId($this->getOption('id', $this->makeDomId()));
@@ -31,12 +31,12 @@ abstract class AbstractOptionableComponent extends AbstractComponent implements 
 
         $id = $this->dom_id;
 
-        if (!empty($prefix)) {
-            $id = sprintf('%s-%s', $prefix, $id);
-        }
+        if (!empty($params)) {
+            $id = sprintf('%s-%s', array_shift($params), $id);
 
-        if (!empty($suffix)) {
-            $id = sprintf('%s-%s', $id, $suffix);
+            foreach ($params as $param) {
+                $id = sprintf('%s-%s', $id, $param);
+            }
         }
 
         return $id;

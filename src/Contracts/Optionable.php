@@ -20,7 +20,7 @@ interface Optionable
      * @param mixed $value Option value. Can be anything.
      * @return \Softworx\RocXolid\Contracts\Optionable;
      */
-    public function setOption(string $option, mixed $value): Optionable;
+    public function setOption(string $option, $value): Optionable;
 
     /**
      * Set/replace multiple options at once.
@@ -58,10 +58,11 @@ interface Optionable
      * Remove option.
      *
      * @param string $option Option name - key to remove.
-     * @return
+     * @param bool $report Whether to throw an exception if option not previously set.
+     * @return \Softworx\RocXolid\Contracts\Optionable
      * @throws \UnderflowException If the given option is not set.
      */
-    public function removeOption(string $option): Optionable;
+    public function removeOption(string $option, bool $report = false): Optionable;
 
     /**
      * Get all the option keys.

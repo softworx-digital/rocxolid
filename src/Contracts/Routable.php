@@ -14,12 +14,12 @@ use Illuminate\Routing\Route;
 interface Routable
 {
     /**
-     * Set the route object.
+     * Set the route.
      *
-     * @param \Illuminate\Routing\Route $route Route object to set.
+     * @param string $route Route to set.
      * @return `\Softworx\RocXolid\Contracts\Routable
     */
-    public function setRoute(Route $route): Routable;
+    public function setRoute(string $route): Routable;
 
     /**
      * Set the route by its name.
@@ -48,10 +48,10 @@ interface Routable
     /**
      * Get the route object.
      *
-     * @return \Illuminate\Routing\Route
+     * @return string
      * @throws \UnderflowException If no route is set.
      */
-    public function getRoute(): Route;
+    public function getRoute(): string;
 
     /**
      * Get the route path.

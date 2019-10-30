@@ -18,7 +18,7 @@ class View
      * @param array $additional Additional params to add to the DOM ID. They will be separated by dash (-) sign.
      * @return string
      */
-    public static function domId($param, array $additional = []): string
+    public static function domId($param, ...$additional): string
     {
         $id = md5(is_object($param) ? get_class($param) : $param);
 
@@ -38,9 +38,9 @@ class View
      * @param array $additional Additional params to add to the DOM ID. They will be separated by dash.
      * @return string
      */
-    public static function domIdHash($param, array $additional = []): string
+    public static function domIdHash($param, ...$additional): string
     {
-        return sprintf('#%s', static::domId($param, $additional));
+        return sprintf('#%s', static::domId($param, ...$additional));
     }
 
     /**

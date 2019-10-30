@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 // relations
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -104,7 +105,7 @@ trait CanClone
 
         foreach ($this->getAttributes() as $attribute => $value) {
             if (substr($attribute, -3) == '_id') {
-                $method = camel_case(substr($attribute, 0, -3));
+                $method = Str::camel(substr($attribute, 0, -3));
 
                 if (method_exists($this, $method) && ($this->$method() instanceof Relation)) {
                     $related = $this->$method()->getRelated();

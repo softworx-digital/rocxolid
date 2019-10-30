@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
@@ -22,7 +23,7 @@ trait Optionable
     /**
      * {@inheritdoc}
      */
-    public function setOption(string $option, mixed $value): OptionableContract
+    public function setOption(string $option, $value): OptionableContract
     {
         $this->getOptions()->put($option, $value);
 
@@ -75,10 +76,10 @@ trait Optionable
     /**
      * {@inheritdoc}
      */
-    public function mergeOptions($options): OptionableContract
+    public function mergeOptions(array $options): OptionableContract
     {
         //$this->options = $this->getOptions()->merge($new_options); // doesn't deep merge
-        $this->options = new Collection(array_replace_recursive($this->getOptions()->toArray(), $options)); // @tu bude problem, ak na konci bude objekt
+        $this->options = new Collection(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo: problem possible if object at the end
 
         return $this;
     }
@@ -86,13 +87,13 @@ trait Optionable
     /**
      * {@inheritdoc}
      */
-    public function removeOption($option): OptionableContract
+    public function removeOption(string $option, bool $report = false): OptionableContract
     {
         $options = $this->getOptions()->toArray();
 
-        if (array_has($options, $option)) {
+        if (Arr::has($options, $option)) {
             array_forget($options, $option);
-        } else {
+        } elseif ($report) {
             throw new \UnderflowException(sprintf('Option [%s] is not set', $option));
         }
 
@@ -112,7 +113,7 @@ trait Optionable
     /**
      * {@inheritdoc}
      */
-    public function hasOption($option): bool
+    public function hasOption(string $option): bool
     {
         return $this->getOptions()->has($option);
     }
