@@ -22,7 +22,7 @@ interface Renderable
     public function setPreRenderProperties(...$elements): Renderable;
 
     /**
-     * Composes the blade template and returns it.
+     * Compose the blade template and returns it.
      *
      * @param string $view_name Name of the view to compose.
      * @param array $assignments Array of key-value params to assign to the view.
@@ -31,7 +31,7 @@ interface Renderable
     public function render(string $view_name, array $assignments = []): View;
 
     /**
-     * Composes the blade template and returns it compiled as a string.
+     * Compose the blade template and returns it compiled as a string.
      *
      * @param string $view_name Name of the view to compose.
      * @param array $assignments Array of key-value params to assign to the view.
@@ -40,14 +40,14 @@ interface Renderable
     public function fetch(string $view_name, array $assignments = []): string;
 
     /**
-     * Checks if the component has a view package defined.
+     * Check if the component has a view package defined.
      *
      * @return bool
      */
     public function hasViewPackage(): bool;
 
     /**
-     * Sets a view package to the component.
+     * Set a view package to the component.
      *
      * @param string $package Package identifier to set.
      * @return \Softworx\RocXolid\Components\Contracts\Renderable
@@ -55,14 +55,14 @@ interface Renderable
     public function setViewPackage(string $package): Renderable;
 
     /**
-     * Returns view packages set to the component.
+     * Return view packages set to the component.
      *
      * @return array
      */
     public function getViewPackages(): array;
 
     /**
-     * Sets a view directory of the view package to the component.
+     * Set a view directory of the view package to the component.
      *
      * @param string $directory Directory path to set.
      * @return \Softworx\RocXolid\Components\Contracts\Renderable
@@ -70,7 +70,7 @@ interface Renderable
     public function setViewDirectory(string $directory): Renderable;
 
     /**
-     * Gets a view directory of the view package of the component.
+     * Get a view directory of the view package of the component.
      *
      * @return string
      */

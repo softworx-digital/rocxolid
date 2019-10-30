@@ -3,10 +3,15 @@
 namespace Softworx\RocXolid\Http\Controllers;
 
 use Illuminate\Routing\Controller as IlluminateController;
+// rocXolid contracts
+use Softworx\RocXolid\Contracts\Routable;
+use Softworx\RocXolid\Contracts\TranslationPackageProvidable;
 // rocXolid traits
-use Softworx\RocXolid\Http\Controllers\Traits\Routable as RoutableTrait;
+use Softworx\RocXolid\Http\Controllers\Traits\Actionable as ActionableTrait;
+use Softworx\RocXolid\Traits\TranslationPackageProvidable as TranslationPackageProvidableTrait;
 
-abstract class AbstractController extends IlluminateController
+abstract class AbstractController extends IlluminateController implements TranslationPackageProvidable
 {
-    use RoutableTrait;
+    use ActionableTrait;
+    use TranslationPackageProvidableTrait;
 }

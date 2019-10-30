@@ -1,20 +1,24 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use App;
+use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable as RepositoryableContract;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Contracts\Repositoryable as RepositoryableContract;
 use Softworx\RocXolid\Repositories\Support\RepositoryBuilder;
+use Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder as RepositoryBuilderContract;
 
-// @todo - asi do RepositoryService pichnut
+// @todo: put this to some kind of (Repository)Service?
 trait Repositoryable
 {
+    /**
+     * @var array
+     */
     protected $repositories;
 
     //protected $repository_bulider;
 
-    public function createRepository($class, $param = RepositoryableContract::REPOSITORY_PARAM): Repository
+    public function createRepository(string $class, string $param = RepositoryableContract::REPOSITORY_PARAM): Repository
     {
         $repository = $this->getRepositoryBuilder()->buildRepository($class, $this);
         $repository->setParam($param);
@@ -22,7 +26,7 @@ trait Repositoryable
         return $repository;
     }
 
-    public function setRepository(Repository $repository, $param = RepositoryableContract::REPOSITORY_PARAM): RepositoryableContract
+    public function setRepository(Repository $repository, string $param = RepositoryableContract::REPOSITORY_PARAM): RepositoryableContract
     {
         if (isset($this->repositories[$param])) {
             throw new \InvalidArgumentException(sprintf('Repository with given parameter [%s] is already set to [%s]', $param, get_class($this)));
@@ -33,12 +37,12 @@ trait Repositoryable
         return $this;
     }
 
-    public function getRepositories()
+    public function getRepositories(): array
     {
         return $this->repositories;
     }
 
-    public function getRepository($param = RepositoryableContract::REPOSITORY_PARAM): Repository
+    public function getRepository(string $param = RepositoryableContract::REPOSITORY_PARAM): Repository
     {
         if (!$this->hasRepositoryAssigned($param)) {
             $class = $this->getRepositoryClass($param);
@@ -53,17 +57,17 @@ trait Repositoryable
         return $this->repositories[$param];
     }
 
-    public function hasRepositoryAssigned($param = RepositoryableContract::REPOSITORY_PARAM)
+    public function hasRepositoryAssigned(string $param = RepositoryableContract::REPOSITORY_PARAM): bool
     {
         return isset($this->repositories[$param]);
     }
 
-    public function hasRepositoryClass($param = RepositoryableContract::REPOSITORY_PARAM)
+    public function hasRepositoryClass(string $param = RepositoryableContract::REPOSITORY_PARAM): bool
     {
         return class_exists($this->getRepositoryClass($param));
     }
 
-    public function getRepositoryClass($param = RepositoryableContract::REPOSITORY_PARAM): string
+    public function getRepositoryClass(string $param = RepositoryableContract::REPOSITORY_PARAM): string
     {
         if (isset(static::$repository_param_class) && isset(static::$repository_param_class[$param])) {
             return static::$repository_param_class[$param];
@@ -79,7 +83,7 @@ trait Repositoryable
         }
     }
 
-    protected function getRepositoryBuilder()
+    protected function getRepositoryBuilder(): RepositoryBuilderContract
     {
         if (!property_exists($this, 'repository_builder') || is_null($this->repository_builder)) {
             $repository_builder = App::make(RepositoryBuilder::class);
@@ -94,7 +98,7 @@ trait Repositoryable
         return $repository_builder;
     }
 
-    protected function getRepositoryElementClass()
+    protected function getRepositoryElementClass(): RepositoryableContract
     {
         return $this;
     }

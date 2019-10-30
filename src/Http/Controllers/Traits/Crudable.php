@@ -68,7 +68,7 @@ trait Crudable
     }
 
     /**
-     * Reloads Create/Update form to dynamically load related field values.
+     * Reload Create/Update form to dynamically load related field values.
      */
     public function formReload(CrudRequest $request, $id = null)//: Response
     {
@@ -286,7 +286,7 @@ trait Crudable
         }
     }
 
-    public function destroy(CrudRequest $request, $id)//: Response - pri ajaxe vracia JSON
+    public function destroy(CrudRequest $request, $id)//: Response - returns JSON for ajax calls
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
 

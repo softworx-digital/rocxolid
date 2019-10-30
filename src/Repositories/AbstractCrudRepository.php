@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Contracts\Repositoryable;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // general traits
 use Softworx\RocXolid\Traits\Controllable;

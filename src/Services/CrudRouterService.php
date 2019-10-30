@@ -70,24 +70,9 @@ class CrudRouterService
             'uses' => $this->controller . '@reorder',
         ]);
 
-        Route::get($this->name . '/{id}/details', [
-            'as' => 'crud.' . $this->name . '.showDetailsRow',
-            'uses' => $this->controller . '@showDetailsRow',
-        ]);
-
         Route::get($this->name . '/{id}/translate/{lang}', [
             'as' => 'crud.' . $this->name . '.translateItem',
             'uses' => $this->controller . '@translateItem',
-        ]);
-
-        Route::get($this->name . '/{id}/revisions', [
-            'as' => 'crud.' . $this->name . '.listRevisions',
-            'uses' => $this->controller . '@listRevisions',
-        ]);
-
-        Route::post($this->name . '/{id}/revisions/{revisionId}/restore', [
-            'as' => 'crud.' . $this->name . '.restoreRevision',
-            'uses' => $this->controller . '@restoreRevision',
         ]);
 
         Route::get($this->name . '/{id}/clone', [

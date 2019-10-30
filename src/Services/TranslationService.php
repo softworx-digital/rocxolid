@@ -22,7 +22,7 @@ class TranslationService implements TranslationServiceContract
      */
     public function getTranslation(Translatable $component, string $key, bool $use_repository_param = true): string
     {
-        return __(sprintf('%s::%s', $component->getTranslationPackage(), $this->getTranslationKey($key, $use_repository_param)));
+        return __(sprintf('%s::%s', $component->getTranslationPackage(), $this->getTranslationKey($component, $key, $use_repository_param)));
     }
 
     /**
@@ -32,12 +32,12 @@ class TranslationService implements TranslationServiceContract
      * @param bool $use_repository_param
      * @return string
      */
-    protected function getTranslationKey(string $key, bool $use_repository_param): string
+    protected function getTranslationKey(Translatable $component, string $key, bool $use_repository_param): string
     {
         if (!$use_repository_param) {
             return sprintf('general.%s', $key);
-        } elseif (method_exists($this, 'getRepository') && $this->getRepository()) {
-            return sprintf('%s.%s', $this->getRepository()->getTranslationParam(), $key);
+        } elseif (method_exists($component, 'getRepository') && $component->getRepository()) {
+            return sprintf('%s.%s', $component->getRepository()->getTranslationParam(), $key);
         } else {//if ($this->getController() && $this->getController()->getRepository())
             return $key . '---component--- (' . __METHOD__ . ')';
         }

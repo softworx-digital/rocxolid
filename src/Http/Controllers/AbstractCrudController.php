@@ -2,36 +2,43 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
-use Auth;
-// contracts
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
+use Softworx\RocXolid\Http\Controllers\Contracts\Permissionable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
+use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Contracts\Repositoryable;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// component contracts
+// rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableComponent;
 use Softworx\RocXolid\Components\Contracts\Modellable as ModellableComponent;
-// traits
+// rocXolid traits
 use Softworx\RocXolid\Http\Controllers\Traits\Crudable as CrudableTrait;
+use Softworx\RocXolid\Http\Controllers\Traits\Permissionable as PermissionableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\Dashboardable as DashboardableTrait;
+use Softworx\RocXolid\Http\Controllers\Traits\Repositoryable as RepositoryableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryOrderableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryFilterable as RepositoryFilterableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryAutocompleteable as RepositoryAutocompleteableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\ItemsReorderderable as ItemsReorderderableTrait;
-use Softworx\RocXolid\Repositories\Traits\Repositoryable as RepositoryableTrait; // @todo - toto by mal byt trait controlleru - refactorovat, podobne ako ostatne analogicke pouzitia traitov
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
-// components
+// rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
 
 /**
- * @todo - toto asi skor na styl ako je Softworx\RocXolid\DevKit\Console\Commands\Generate\Traits\Formable, pripadne to nejako vyuzit / upratat do traitu(ov)
+ * Base rocXolid controller for CRUD (and associated) operations.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo: add contracts to repository features traits
  */
-abstract class AbstractCrudController extends AbstractController implements Crudable, Dashboardable, Repositoryable, Modellable // doplnit repository features traity / contracty
+abstract class AbstractCrudController extends AbstractController implements Permissionable, Crudable, Dashboardable, Repositoryable, Modellable
 {
     use CrudableTrait;
+    use PermissionableTrait;
     use DashboardableTrait;
     use ModellableTrait;
     use RepositoryableTrait;
@@ -39,10 +46,6 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use RepositoryFilterableTrait;
     use RepositoryAutocompleteableTrait;
     use ItemsReorderderableTrait;
-    //use AjaxTable;
-    //use Revisions;
-    //use ShowDetailsRow;
-    //use SaveActions;
 
     /**
      * <repository-param> => <repository-class>
@@ -69,39 +72,6 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         'update' => 'update',
     ];
 
-    public function userCan($method_group): bool
-    {
-        $permission = sprintf('\%s.%s', get_class($this), $method_group);
-
-        if ($user = Auth::guard('rocXolid')->user()) {
-            // @TODO - zmenit - len narychlo pre luminox
-            return true;
-            if ($user->id == 1) {
-                return true;
-            }
-
-            foreach ($user->permissions as $extra_permission) {
-                if (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->controller_method_group == $method_group)) {
-                    return true;
-                } elseif (($method_group == 'read-only') && (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->controller_method_group == 'write'))) {
-                    return true;
-                }
-            }
-
-            foreach ($user->roles as $role) {
-                foreach ($role->permissions as $permission) {
-                    if (($permission->controller_class == sprintf('\%s', static::class)) && ($permission->controller_method_group == $method_group)) {
-                        return true;
-                    } elseif (($method_group == 'read-only') && (($permission->controller_class == sprintf('\%s', static::class)) && ($permission->controller_method_group == 'write'))) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function getRoute($route_action, ...$params)
     {
         $action = sprintf('\%s@%s', get_class($this), $route_action);
@@ -117,13 +87,17 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     public function getRepositoryComponent(Repository $repository): RepositoryableComponent
     {
         return (new CrudTableComponent())
-            ->setRepository($repository);
+            ->setRepository($repository)
+            ->setTranslationPackage($this->provideTranslationPackage())
+            ->setTranslationParam($this->provideTranslationParam());
     }
 
     public function getModelViewerComponent(CrudableModel $model): CrudModelViewerComponent
     {
         return (new CrudModelViewerComponent())
             ->setModel($model)
-            ->setController($this);
+            ->setController($this)
+            ->setTranslationPackage($this->provideTranslationPackage())
+            ->setTranslationParam($this->provideTranslationParam());
     }
 }

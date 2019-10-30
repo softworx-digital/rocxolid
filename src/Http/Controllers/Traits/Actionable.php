@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-trait Routable
+trait Actionable
 {
     public function getRoute($route_action, ...$params)
     {
