@@ -7,7 +7,7 @@ use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Permissionable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
+use Softworx\RocXolid\Repositories\Contracts\Repositoryable;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid component contracts
@@ -17,11 +17,11 @@ use Softworx\RocXolid\Components\Contracts\Modellable as ModellableComponent;
 use Softworx\RocXolid\Http\Controllers\Traits\Crudable as CrudableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\Permissionable as PermissionableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\Dashboardable as DashboardableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\Repositoryable as RepositoryableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryOrderableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryFilterable as RepositoryFilterableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryAutocompleteable as RepositoryAutocompleteableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\ItemsReorderderable as ItemsReorderderableTrait;
+use Softworx\RocXolid\Repositories\Traits\Repositoryable as RepositoryableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 // rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;

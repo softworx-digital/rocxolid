@@ -1,9 +1,9 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Repositories\Traits;
 
 use App;
-use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable as RepositoryableContract;
+use Softworx\RocXolid\Repositories\Contracts\Repositoryable as RepositoryableContract;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Repositories\Support\RepositoryBuilder;
 use Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder as RepositoryBuilderContract;

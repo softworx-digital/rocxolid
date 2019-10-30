@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Contracts;
+namespace Softworx\RocXolid\Repositories\Contracts;
 
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableComponent;
