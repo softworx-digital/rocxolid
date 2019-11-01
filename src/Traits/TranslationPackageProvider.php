@@ -9,12 +9,12 @@ namespace Softworx\RocXolid\Traits;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-trait TranslationPackageProvidable
+trait TranslationPackageProvider
 {
     /**
      * @var string $translation_package Identifier for package containing translations for object using this trait.
      */
-    protected static $translation_package = null; // should be defined in package specific class
+    protected $translation_package = null; // should be defined in package specific class
 
     /**
      * {@inheritdoc}
@@ -25,11 +25,11 @@ trait TranslationPackageProvidable
             throw new \UnderflowException(sprintf('No translation package set in [%s]', get_class($this)));
         }
 
-        return static::$translation_package;
+        return $this->translation_package;
     }
 
     public function issetTranslationPackage(): bool
     {
-        return isset(static::$translation_package) && !empty(static::$translation_package);
+        return isset($this->translation_package) && !empty($this->translation_package);
     }
 }

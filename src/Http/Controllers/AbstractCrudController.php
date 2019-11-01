@@ -86,18 +86,14 @@ abstract class AbstractCrudController extends AbstractController implements Perm
 
     public function getRepositoryComponent(Repository $repository): RepositoryableComponent
     {
-        return (new CrudTableComponent())
-            ->setRepository($repository)
-            ->setTranslationPackage($this->provideTranslationPackage())
-            ->setTranslationParam($this->provideTranslationParam());
+        return CrudTableComponent::build($this, $this)
+            ->setRepository($repository);
     }
 
     public function getModelViewerComponent(CrudableModel $model): CrudModelViewerComponent
     {
-        return (new CrudModelViewerComponent())
+        return CrudModelViewerComponent::build($this, $this)
             ->setModel($model)
-            ->setController($this)
-            ->setTranslationPackage($this->provideTranslationPackage())
-            ->setTranslationParam($this->provideTranslationParam());
+            ->setController($this);
     }
 }

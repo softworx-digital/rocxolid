@@ -9,12 +9,12 @@ namespace Softworx\RocXolid\Traits;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-trait TranslationParamProvidable
+trait TranslationParamProvider
 {
     /**
      * @var string $translation_param Identifier for param containing translations for object using this trait.
      */
-    protected static $translation_param = null; // should be defined in param specific class
+    protected $translation_param = null; // should be defined in param specific class
 
     /**
      * {@inheritdoc}
@@ -25,11 +25,11 @@ trait TranslationParamProvidable
             throw new \UnderflowException(sprintf('No translation param set in [%s]', get_class($this)));
         }
 
-        return static::$translation_param;
+        return $this->translation_param;
     }
 
     public function issetTranslationParam(): bool
     {
-        return isset(static::$translation_param) && !empty(static::$translation_param);
+        return isset($this->translation_param) && !empty($this->translation_param);
     }
 }

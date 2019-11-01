@@ -18,7 +18,12 @@ trait Translatable
     /**
      * @var string $translation_package Identifier for package containing translations for component using this trait.
      */
-    // protected $translation_package; // should be defined in package specific (Abstract)Component class
+    protected $translation_package;
+
+    /**
+     * @var string $translation_param Identifier for package param(file) containing translations for component using this trait.
+     */
+    protected $translation_param;
 
     /**
      * @var string $language_name Language name reference.
@@ -28,9 +33,17 @@ trait Translatable
     /**
      * {@inheritdoc}
      */
-    public function translate(string $key, bool $use_repository_param = true): string
+    public function translate(string $key): string
     {
-        return $this->getTranslationService()->getTranslation($this, $key, $use_repository_param);
+        return $this->getTranslationService()->getTranslation($this, $key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTranslationKey(string $key): string
+    {
+        return $key;
     }
 
     /**
@@ -38,6 +51,10 @@ trait Translatable
      */
     public function setTranslationPackage(string $package): TranslatableContract
     {
+        if (empty($package)) {
+            throw new \InvalidArgumentException(sprintf('Empty translation package [%s]', get_class($this)));
+        }
+
         $this->translation_package = $package;
 
         return $this;
@@ -48,6 +65,10 @@ trait Translatable
      */
     public function getTranslationPackage(): string
     {
+        if (!$this->hasTranslationPackage()) {
+            $this->translation_package = $this->guessTranslationPackage();
+        }
+
         if (!$this->hasTranslationPackage()) {
             throw new \UnderflowException(sprintf('No translation package set in [%s]', get_class($this)));
         }
@@ -60,7 +81,45 @@ trait Translatable
      */
     public function hasTranslationPackage(): bool
     {
-        return !is_null($this->translation_package);
+        return isset($this->translation_package) && !empty($this->translation_package);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTranslationParam(string $param): TranslatableContract
+    {
+        if (empty($param)) {
+            throw new \InvalidArgumentException(sprintf('Empty translation param [%s]', get_class($this)));
+        }
+
+        $this->translation_param = $param;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTranslationParam(): string
+    {
+        if (!$this->hasTranslationParam()) {
+            $this->translation_param = $this->guessTranslationParam();
+        }
+
+        if (!$this->hasTranslationParam()) {
+            throw new \UnderflowException(sprintf('No translation param set in [%s]', get_class($this)));
+        }
+
+        return $this->translation_param;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTranslationParam(): bool
+    {
+        return isset($this->translation_param) && !empty($this->translation_param);
     }
 
     /**
@@ -91,6 +150,22 @@ trait Translatable
     public function hasLanguageName(): bool
     {
         return isset($this->language_name);
+    }
+
+    // TODO
+    protected function guessTranslationPackage()
+    {
+        $reflection = new \ReflectionClass($this);
+
+        return null;
+    }
+
+    // TODO
+    protected function guessTranslationParam()
+    {
+        $reflection = new \ReflectionClass($this);
+
+        return null;
     }
 
     /**

@@ -19,10 +19,18 @@ interface Translatable
     public function translate(string $key): string;
 
     /**
+     * Return the key to be used for translation.
+     *
+     * @return string
+     */
+    public function getTranslationKey(string $key): string;
+
+    /**
      * Set the package responsible for translation.
      *
      * @param string $package Package to set.
      * @return \Softworx\RocXolid\Contracts\Translatable
+     * @throws \InvalidArgumentException On empty package setting attempt.
      */
     public function setTranslationPackage(string $package): Translatable;
 
@@ -40,6 +48,30 @@ interface Translatable
      * @return bool
      */
     public function hasTranslationPackage(): bool;
+
+    /**
+     * Set the param (file) used for translation.
+     *
+     * @param string $param Param to set.
+     * @return \Softworx\RocXolid\Contracts\Translatable
+     * @throws \InvalidArgumentException On empty param setting attempt.
+     */
+    public function setTranslationParam(string $param): Translatable;
+
+    /**
+     * Retrieve the translation param (file).
+     * 
+     * @return string
+     * @throws \UnderflowException If no param is set.
+     */
+    public function getTranslationParam(): string;
+
+    /**
+     * Check for translation param (file) being set.
+     * 
+     * @return bool
+     */
+    public function hasTranslationParam(): bool;
 
     /**
      * Set the language name.

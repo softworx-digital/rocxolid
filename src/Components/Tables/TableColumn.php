@@ -67,16 +67,8 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
         ]);
     }
 
-    protected function getTranslationKey(string $key, bool $use_repository_param): string
+    public function getTranslationKey(string $key): string
     {
-        if (!$use_repository_param) {
-            return sprintf('column.%s', $key);
-        } elseif ($this->getTableColumn() && $this->getTableColumn()->getRepository()) {
-            return sprintf('%s.column.%s', $this->getTableColumn()->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---table-column--- (' . __METHOD__ . ')';
-        }
-
-        return $key;
+        return sprintf('column.%s', $key);
     }
 }

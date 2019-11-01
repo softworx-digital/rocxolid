@@ -64,16 +64,8 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this;
     }
 
-    protected function getTranslationKey(string $key, bool $use_repository_param): string
+    public function getTranslationKey(string $key): string
     {
-        if (!$use_repository_param) {
-            return sprintf('table-button.%s', $key);
-        } elseif ($this->getButton() && $this->getButton()->getRepository()) {
-            return sprintf('%s.table-button.%s', $this->getButton()->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---table-button--- (' . __METHOD__ . ')';
-        }
-
-        return $key;
+        return sprintf('table-button.%s', $key);
     }
 }

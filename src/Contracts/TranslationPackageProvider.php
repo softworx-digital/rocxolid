@@ -9,7 +9,7 @@ namespace Softworx\RocXolid\Contracts;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface TranslationPackageProvidable
+interface TranslationPackageProvider
 {
     /**
      * Provide the translation package.

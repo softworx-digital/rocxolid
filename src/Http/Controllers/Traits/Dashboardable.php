@@ -35,7 +35,7 @@ trait Dashboardable
         if (is_null($this->dashboard)) {
             $class = $this->getDashboardClass();
 
-            $this->dashboard = new $class($this);
+            $this->dashboard = $class::build();
         }
 
         return $this->dashboard;

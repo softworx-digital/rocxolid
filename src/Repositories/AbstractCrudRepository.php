@@ -5,9 +5,6 @@ namespace Softworx\RocXolid\Repositories;
 use App;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-// rocXolid fundamentals
-use Softworx\RocXolid\Helpers\View as ViewHelper;
-use Softworx\RocXolid\Http\Requests\CrudRequest;
 // relations
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,16 +17,19 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-// contracts
+// rocXolid fundamentals
+use Softworx\RocXolid\Helpers\View as ViewHelper;
+use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// general traits
+// rocXolid general traits
 use Softworx\RocXolid\Traits\Controllable;
 use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\EventDispatchable;
 use Softworx\RocXolid\Traits\Requestable;
-// repository traits
+// rocXolid repository traits
 use Softworx\RocXolid\Repositories\Traits\Buildable;
 use Softworx\RocXolid\Repositories\Traits\Orderable;
 use Softworx\RocXolid\Repositories\Traits\Filterable;
@@ -37,7 +37,7 @@ use Softworx\RocXolid\Repositories\Traits\Paginationable;
 use Softworx\RocXolid\Repositories\Traits\Columnable;
 use Softworx\RocXolid\Repositories\Traits\Buttonable;
 use Softworx\RocXolid\Forms\Traits\Formable;
-// column types
+// rocXolid column types
 use Softworx\RocXolid\Repositories\Columns\Type\ButtonAnchor;
 
 /**
@@ -164,11 +164,6 @@ abstract class AbstractCrudRepository implements Repository
     public function init(): Repository
     {
         return $this;
-    }
-
-    public function getTranslationParam()
-    {
-        return static::$translation_param;
     }
 
     public function getModel(): CrudableModel

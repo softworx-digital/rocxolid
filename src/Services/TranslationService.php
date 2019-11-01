@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Services;
 
+use Lang;
 use Illuminate\Translation\Translator;
 use Softworx\RocXolid\Services\Contracts\TranslationService as TranslationServiceContract;
 use Softworx\RocXolid\Contracts\Translatable;
@@ -20,28 +21,37 @@ class TranslationService implements TranslationServiceContract
     /**
      * {@inheritdoc}
      */
-    public function getTranslation(Translatable $component, string $key, bool $use_repository_param = true): string
+    public function getTranslation(Translatable $translatable, string $key): string
     {
-        return __(sprintf('%s::%s', $component->getTranslationPackage(), $this->getTranslationKey($component, $key, $use_repository_param)));
+        $language_key = $this->getTranslationKey(
+            $translatable->getTranslationPackage(),
+            $translatable->getTranslationParam(),
+            $translatable->getTranslationKey($key)
+        );
+
+        $general_language_key = $this->getTranslationKey(
+            $translatable->getTranslationPackage(),
+            'general',
+            $translatable->getTranslationKey($key)
+        );
+
+        if (Lang::has($language_key)) {
+            return Lang::get($language_key);
+        }
+
+        return Lang::get($general_language_key);
     }
 
     /**
-     * Return the translation key based on component.
+     * Create final translation key based on package, param and translation key.
      * 
+     * @param string $package
+     * @param string $param
      * @param string $key
-     * @param bool $use_repository_param
      * @return string
      */
-    protected function getTranslationKey(Translatable $component, string $key, bool $use_repository_param): string
+    protected function getTranslationKey(string $package, string $param, string $key): string
     {
-        if (!$use_repository_param) {
-            return sprintf('general.%s', $key);
-        } elseif (method_exists($component, 'getRepository') && $component->getRepository()) {
-            return sprintf('%s.%s', $component->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return $key . '---component--- (' . __METHOD__ . ')';
-        }
-
-        return $key;
+        return sprintf('%s::%s.%s', $package, $param, $key);
     }
 }
