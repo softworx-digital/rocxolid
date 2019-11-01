@@ -115,11 +115,21 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         $this->field_components = new Collection();
 
         foreach ($this->getForm()->getFormFieldGroups() as $form_field_group) {
-            $this->field_group_components[$form_field_group->getName()] = App::make(static::$field_group_component_class)->setFormFieldGroup($form_field_group);
+            $class = static::$field_group_component_class;
+
+            $this->field_group_components[$form_field_group->getName()] = $class::build()
+                ->setTranslationPackage($this->getTranslationPackage())
+                ->setTranslationParam($this->getTranslationParam())
+                ->setFormFieldGroup($form_field_group);
         }
 
         foreach ($this->getForm()->getFormFields() as $form_field) {
-            $this->field_components[$form_field->getName()] = App::make(static::$field_component_class)->setFormField($form_field);
+            $class = static::$field_component_class;
+
+            $this->field_components[$form_field->getName()] = $class::build()
+                ->setTranslationPackage($this->getTranslationPackage())
+                ->setTranslationParam($this->getTranslationParam())
+                ->setFormField($form_field);
         }
 
         return $this;

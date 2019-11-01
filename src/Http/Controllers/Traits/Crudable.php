@@ -93,7 +93,7 @@ trait Crudable
                     ->adjustCreateBeforeSubmit($request);
         }
 
-        $form_component = (new CrudFormComponent())
+        $form_component = CrudFormComponent::build($this, $this)
                 ->setForm($form)
                 ->setRepository($repository);
 
@@ -112,7 +112,7 @@ trait Crudable
         $form
             ->adjustCreate($request);
 
-        $form_component = (new CrudFormComponent())
+        $form_component = CrudFormComponent::build($this, $this)
             ->setForm($form)
             ->setRepository($repository);
 
@@ -164,7 +164,7 @@ trait Crudable
         $form
             ->adjustUpdate($request);
 
-        $form_component = (new CrudFormComponent())
+        $form_component = CrudFormComponent::build($this, $this)
             ->setForm($form)
             ->setRepository($repository);
 
@@ -368,7 +368,7 @@ trait Crudable
     // @TODO: refactor to ease overrideability
     protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, CrudableModel $model, $action)
     {
-        $form_component = (new CrudFormComponent())
+        $form_component = CrudFormComponent::build($this, $this)
             ->setForm($form)
             ->setRepository($repository);
 
@@ -429,7 +429,7 @@ trait Crudable
 
     protected function errorResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, $action)
     {
-        $form_component = (new CrudFormComponent())
+        $form_component = CrudFormComponent::build($this, $this)
             ->setForm($form)
             ->setRepository($repository);
 
