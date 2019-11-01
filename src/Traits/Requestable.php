@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Traits;
 
 use Illuminate\Http\Request;
+use Softworx\RocXolid\Contracts\Requestable as RequestableContract;
 
 /**
  * Enables object to have a request assigned.
@@ -21,7 +22,7 @@ trait Requestable
     /**
      * {@inheritdoc}
      */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): RequestableContract
     {
         $this->request = $request;
 
@@ -31,7 +32,7 @@ trait Requestable
     /**
      * {@inheritdoc}
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         if (!$this->hasRequest()) {
             throw new \UnderflowException(sprintf('No request set in [%s]', get_class($this)));
@@ -43,7 +44,7 @@ trait Requestable
     /**
      * {@inheritdoc}
      */
-    public function hasRequest()
+    public function hasRequest(): bool
     {
         return isset($this->request);
     }

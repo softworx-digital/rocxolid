@@ -2,16 +2,16 @@
 
 namespace Softworx\RocXolid\Traits;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Routing\Controller;
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
 trait MethodOptionable
 {
     use Optionable;
 
-    public function setOption($option, $value): OptionableContract
+    public function setOption(string $option, $value): OptionableContract
     {
         $method = Str::camel(sprintf('set_%s', str_replace('-', '_', $option)));
 
@@ -24,7 +24,7 @@ trait MethodOptionable
         return $this;
     }
 
-    public function setOptions($options): OptionableContract
+    public function setOptions(array $options): OptionableContract
     {
         foreach ($options as $option => $value) {
             $this->setOption($option, $value);

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Softworx\RocXolid\Helpers\View as ViewHelper;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid contracts
+use Softworx\RocXolid\Contracts\Requestable;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid general traits
@@ -28,7 +29,7 @@ use Softworx\RocXolid\Traits\Controllable;
 use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\EventDispatchable;
-use Softworx\RocXolid\Traits\Requestable;
+use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
 // rocXolid repository traits
 use Softworx\RocXolid\Repositories\Traits\Buildable;
 use Softworx\RocXolid\Repositories\Traits\Orderable;
@@ -43,9 +44,9 @@ use Softworx\RocXolid\Repositories\Columns\Type\ButtonAnchor;
 /**
  *
  */
-abstract class AbstractCrudRepository implements Repository
+abstract class AbstractCrudRepository implements Repository, Requestable
 {
-    use Requestable;
+    use RequestableTrait;
     use Buildable;
     use Orderable;
     use Filterable;

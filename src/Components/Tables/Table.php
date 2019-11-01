@@ -78,10 +78,7 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->filter_components = new Collection();
 
         foreach ($this->getRepository()->getFilters() as $filter) {
-            $this->filter_components[$filter->getName()] = (new TableFilter())
-                ->setTranslationPackage($this->getTranslationPackage())
-                ->setTranslationParam($this->getTranslationParam())
-                ->setTableFilter($filter);
+            $this->filter_components[$filter->getName()] = TableFilter::build($this, $this)->setTableFilter($filter);
         }
 
         return $this;
@@ -97,10 +94,7 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->column_components = new Collection();
 
         foreach ($this->getRepository()->getColumns() as $column) {
-            $this->column_components[$column->getName()] = (new TableColumn())
-                ->setTranslationPackage($this->getTranslationPackage())
-                ->setTranslationParam($this->getTranslationParam())
-                ->setTableColumn($column);
+            $this->column_components[$column->getName()] = TableColumn::build($this, $this)->setTableColumn($column);
         }
 
         return $this;
@@ -116,10 +110,7 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->button_components = new Collection();
 
         foreach ($this->getRepository()->getButtons() as $button) {
-            $this->button_components[$button->getName()] = (new TableButton())
-                ->setTranslationPackage($this->getTranslationPackage())
-                ->setTranslationParam($this->getTranslationParam())
-                ->setButton($button);
+            $this->button_components[$button->getName()] = TableButton::build($this, $this)->setButton($button);
         }
 
         return $this;

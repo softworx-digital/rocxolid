@@ -2,10 +2,10 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
+use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
-use Softworx\RocXolid\Components\Contracts\ButtonGroupable as ComponentButtonGroupable;
 use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;
-use Softworx\RocXolid\Forms\Contracts\FormButtonGroup as FormButtonGroupContract;
+use Softworx\RocXolid\Components\Contracts\ButtonGroupable as ComponentButtonGroupable;
 
 /**
  * Enables object to be grouped into button group and to get buttons assigned.
@@ -17,7 +17,7 @@ use Softworx\RocXolid\Forms\Contracts\FormButtonGroup as FormButtonGroupContract
 class FormButtonGroup extends AbstractOptionableComponent implements ComponentButtonGroupable
 {
     /**
-     * @var FormButtonGroupContract $form_button_group Assigned button group reference.
+     * @var \Softworx\RocXolid\Forms\Fields\Type\ButtonGroup $form_button_group Assigned button group reference.
      */
     protected $form_button_group;
 
@@ -29,7 +29,7 @@ class FormButtonGroup extends AbstractOptionableComponent implements ComponentBu
     /**
      * {@inheritdoc}
      */
-    public function setButtonGroup(FormButtonGroupContract $form_button_group): ComponentButtonGroupable
+    public function setButtonGroup(ButtonGroup $form_button_group): ComponentButtonGroupable
     {
         $this->form_button_group = $form_button_group;
 
@@ -41,7 +41,7 @@ class FormButtonGroup extends AbstractOptionableComponent implements ComponentBu
     /**
      * {@inheritdoc}
      */
-    public function getButtonGroup(): FormFieldContract
+    public function getButtonGroup(): ButtonGroup
     {
         if (is_null($this->form_button_group)) {
             throw new \RuntimeException(sprintf('Form field is not set yet to [%s] component', get_class($this)));

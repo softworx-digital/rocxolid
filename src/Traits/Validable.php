@@ -42,7 +42,7 @@ trait Validable
         return $this;
     }
 
-    public function setValidationData(arrary $validation_data): ValidableContract
+    public function setValidationData(array $validation_data): ValidableContract
     {
         $this->validation_data = $validation_data;
 
@@ -169,7 +169,7 @@ trait Validable
         return $errors;
     }
 
-    public function hasValidatorFactory()
+    public function hasValidatorFactory(): bool
     {
         return isset($this->validator_factory);
     }

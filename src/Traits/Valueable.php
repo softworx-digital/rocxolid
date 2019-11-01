@@ -67,7 +67,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function getValue($default = null)
+    public function getValue(string $default = null): string
     {
         return $this->getIndexValue(0, $default);
     }

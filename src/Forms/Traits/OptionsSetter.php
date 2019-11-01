@@ -24,7 +24,10 @@ trait OptionsSetter
 
     public function processFormOptions(): Form
     {
-        $this->setOptions($this->options);
+        if (!empty($this->options)) {
+            $this->setOptions($this->options);
+        }
+
         $this->mergeOptions([
             'component' => [
                 'id' => ViewHelper::domId($this, 'form')

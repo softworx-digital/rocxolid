@@ -47,23 +47,8 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
              : parent::getDefaultTemplateName();
     }
 
-    protected function getTranslationKey(string $key): string
+    public function getTranslationKey(string $key): string
     {
-        /*
-        if (!$use_repository_param) {
-            return sprintf('field.%s', $key);
-        } elseif ($this->getFormField() && $this->getFormField()->getForm()) {
-            if (method_exists($this->getFormField()->getForm(), 'getRepository')) {
-                return sprintf('%s.field.%s', $this->getFormField()->getForm()->getRepository()->getTranslationParam(), $key);
-            } else {
-                return sprintf('general.field.%s', $key);
-            }
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---form-field--- (' . __METHOD__ . ')';
-        }
-        */
-        return '---form-field--- (' . __METHOD__ . ')';
-
-        return $key;
+        return sprintf('field.%s', $key);
     }
 }
