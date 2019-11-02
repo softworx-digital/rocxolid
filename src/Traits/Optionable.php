@@ -17,8 +17,10 @@ trait Optionable
 {
     /**
      * @var \Illuminate\Support\Collection Options container.
+     * 
+     * Has to be protected to enable direct override in specific class.
      */
-    private $options;
+    protected $options;
 
     /**
      * {@inheritdoc}
@@ -70,6 +72,10 @@ trait Optionable
             $this->options = new Collection();
         }
 
+        if (is_array($this->options)) {
+            $this->options = collect($this->options);
+        }
+
         return $this->options;
     }
 
@@ -92,7 +98,7 @@ trait Optionable
         $options = $this->getOptions()->toArray();
 
         if (Arr::has($options, $option)) {
-            array_forget($options, $option);
+            Arr::forget($options, $option);
         } elseif ($report) {
             throw new \UnderflowException(sprintf('Option [%s] is not set', $option));
         }
@@ -107,7 +113,7 @@ trait Optionable
      */
     public function getOptionsKeys(): array
     {
-        return array_keys(array_dot($this->getOptions()->all()));
+        return array_keys(Arr::dot($this->getOptions()->all()));
     }
 
     /**

@@ -15,7 +15,7 @@ use Softworx\RocXolid\Contracts\Valueable as ValueableContract;
 trait Valueable
 {
     /**
-     * @var string $default_value Default value.
+     * @var mixed $default_value Default value.
      */
     private $default_value;
 
@@ -27,7 +27,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function setDefaultValue(string $value): ValueableContract
+    public function setDefaultValue($value): ValueableContract
     {
         $this->default_value = $value;
 
@@ -37,7 +37,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function getDefaultValue(): string
+    public function getDefaultValue()
     {
         if (!$this->hasDefaultValue()) {
             throw new \UnderflowException(sprintf('No default value set in [%s]', get_class($this)));
@@ -67,7 +67,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function getValue(string $default = null)
+    public function getValue($default = null)
     {
         return $this->getIndexValue(0, $default);
     }
@@ -115,7 +115,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function isValidValue(string $value): bool
+    public function isValidValue($value): bool
     {
         return !is_null($value);
     }
@@ -123,10 +123,10 @@ trait Valueable
     /**
      * Adjust value before setting.
      *
-     * @param string $value Value to adjust.
-     * @return string
+     * @param mixed $value Value to adjust.
+     * @return mixed
      */
-    protected function adjustValueBeforeSet(string $value): string
+    protected function adjustValueBeforeSet($value)
     {
         return $value;
     }
@@ -134,10 +134,10 @@ trait Valueable
     /**
      * Adjust value before getting.
      *
-     * @param string $value Value to adjust.
-     * @return string
+     * @param mixed $value Value to adjust.
+     * @return mixed
      */
-    protected function adjustValueBeforeGet(string $value): string
+    protected function adjustValueBeforeGet($value)
     {
         return $value;
     }

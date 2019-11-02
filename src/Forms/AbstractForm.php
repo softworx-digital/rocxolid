@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 // general contracts
 use Softworx\RocXolid\Contracts\Paramable;
@@ -436,7 +437,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         $errors = [];
 
         foreach ($this->getErrors()->getMessages() as $key => $message) {
-            array_set($errors, $key, $message);
+            Arr::set($errors, $key, $message);
         }
 
         $errors = new Collection($errors);

@@ -102,6 +102,11 @@ trait Crudable
                 ->get();
     }
 
+    /**
+     * Show model create screen.
+     * 
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest
+     */
     public function create(CrudRequest $request)
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
@@ -135,6 +140,11 @@ trait Crudable
         }
     }
 
+    /**
+     * Store the created model.
+     * 
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest
+     */
     public function store(CrudRequest $request)//: Response
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
@@ -154,6 +164,11 @@ trait Crudable
         }
     }
 
+    /**
+     * Show model edit screen.
+     * 
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest
+     */
     public function edit(CrudRequest $request, $id)
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
@@ -187,6 +202,11 @@ trait Crudable
         }
     }
 
+    /**
+     * Update the edited model.
+     * 
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest
+     */
     public function update(CrudRequest $request, $id)//: Response
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));

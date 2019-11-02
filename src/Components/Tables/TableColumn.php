@@ -2,8 +2,6 @@
 
 namespace Softworx\RocXolid\Components\Tables;
 
-use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Repositories\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
@@ -13,14 +11,6 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
     const ARRAY_TEMPLATE_NAME = 'array';
 
     protected $table_column;
-
-    public static function buildInTable(Translatable $table, Column $table_column)
-    {
-        return static::build()
-            ->setTranslationPackage($table->getTranslationPackage())
-            ->setTranslationParam($table->getTranslationParam())
-            ->setTableColumn($table_column);
-    }
 
     public function setTableColumn(Column $table_column): ComponentTableColumnable
     {

@@ -26,10 +26,10 @@ interface Valueable
     /**
      * Get the default value.
      *
-     * @return string
+     * @return mixed
      * @throws \UnderflowException If no default value is set.
      */
-    public function getDefaultValue(): string;
+    public function getDefaultValue();
 
     /**
      * Check if default value is set.
@@ -41,30 +41,30 @@ interface Valueable
     /**
      * Set value at given index.
      *
-     * @param string $value Value to set.
+     * @param mixed $value Value to set.
      * @param int $index Collection position to set the value at.
      * @return \Softworx\RocXolid\Contracts\Valueable
      */
-    public function setValue(string $value, int $index = 0): Valueable;
+    public function setValue($value, int $index = 0): Valueable;
 
     /**
      * Get the value at first position.
      *
-     * @param string $default Default value to return if value is not set.
+     * @param mixed $default Default value to return if value is not set.
      * @return mixed
      * @throws \UnderflowException If value not set and no default value is available.
      */
-    public function getValue(string $default = null);
+    public function getValue($default = null);
 
     /**
      * Get the value at given position.
      *
      * @param int $index Collection position to get the value at.
-     * @param string $default Default value to return if value is not set.
+     * @param mixed $default Default value to return if value is not set.
      * @return mixed
      * @throws \UnderflowException If value not set and no default value is available.
      */
-    public function getIndexValue(int $index, string $default = null);
+    public function getIndexValue(int $index, $default = null);
 
     /**
      * Set the values at once.
@@ -84,8 +84,8 @@ interface Valueable
     /**
      * Check if provided value is valid for this type.
      *
-     * @param string $value Value to check.
+     * @param mixed $value Value to check.
      * @return bool
      */
-    public function isValidValue(string $value): bool;
+    public function isValidValue($value): bool;
 }

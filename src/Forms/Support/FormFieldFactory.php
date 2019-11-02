@@ -18,35 +18,29 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-// field types
+// rocXolid field types
 use Softworx\RocXolid\Forms\Fields\Type\BooleanRadio;
 use Softworx\RocXolid\Forms\Fields\Type\Button;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonAnchor;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonToolbar;
-use Softworx\RocXolid\Forms\Fields\Type\Checkable;
 use Softworx\RocXolid\Forms\Fields\Type\Checkbox;
-use Softworx\RocXolid\Forms\Fields\Type\ChildForm;
 use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
 use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
-use Softworx\RocXolid\Forms\Fields\Type\Collection;
 use Softworx\RocXolid\Forms\Fields\Type\Colorpicker;
 use Softworx\RocXolid\Forms\Fields\Type\Datepicker;
 use Softworx\RocXolid\Forms\Fields\Type\Timepicker;
 use Softworx\RocXolid\Forms\Fields\Type\DateTimepicker;
-use Softworx\RocXolid\Forms\Fields\Type\Entity;
 use Softworx\RocXolid\Forms\Fields\Type\FormFieldGroup;
 use Softworx\RocXolid\Forms\Fields\Type\FormFieldGroupAddable;
 use Softworx\RocXolid\Forms\Fields\Type\Input;
 use Softworx\RocXolid\Forms\Fields\Type\Radio;
-use Softworx\RocXolid\Forms\Fields\Type\Repeated;
 use Softworx\RocXolid\Forms\Fields\Type\Select;
-use Softworx\RocXolid\Forms\Fields\Type\StaticField;
 use Softworx\RocXolid\Forms\Fields\Type\Switchery;
 use Softworx\RocXolid\Forms\Fields\Type\Textarea;
 use Softworx\RocXolid\Forms\Fields\Type\WysiwygTextarea;
-// contracts
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\EventDispatchable;
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
