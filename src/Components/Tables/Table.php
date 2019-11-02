@@ -6,9 +6,18 @@ use Illuminate\Support\Collection;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\Repositoryable as ComponentRepositoryable;
+use Softworx\RocXolid\Components\Tables\TableFilter;
+use Softworx\RocXolid\Components\Tables\TableColumn;
+use Softworx\RocXolid\Components\Tables\TableButton;
 
 class Table extends AbstractOptionableComponent implements ComponentRepositoryable
 {
+    protected static $filter_component_class = TableFilter::class;
+
+    protected static $column_component_class = TableColumn::class;
+
+    protected static $button_component_class = TableButton::class;
+
     protected $repository;
 
     protected $filter_components = null;
@@ -78,7 +87,10 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->filter_components = new Collection();
 
         foreach ($this->getRepository()->getFilters() as $filter) {
-            $this->filter_components[$filter->getName()] = TableFilter::build($this, $this)->setTableFilter($filter);
+            $this->filter_components->put(
+                $filter->getName(),
+                $this->buildSubComponent(static::$filter_component_class)->setTableFilter($filter)
+            );
         }
 
         return $this;
@@ -94,7 +106,10 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->column_components = new Collection();
 
         foreach ($this->getRepository()->getColumns() as $column) {
-            $this->column_components[$column->getName()] = TableColumn::build($this, $this)->setTableColumn($column);
+            $this->column_components->put(
+                $column->getName(),
+                $this->buildSubComponent(static::$column_component_class)->setTableColumn($column)
+            );
         }
 
         return $this;
@@ -110,7 +125,10 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         $this->button_components = new Collection();
 
         foreach ($this->getRepository()->getButtons() as $button) {
-            $this->button_components[$button->getName()] = TableButton::build($this, $this)->setButton($button);
+            $this->button_components->put(
+                $button->getName(),
+                $this->buildSubComponent(static::$button_component_class)->setButton($button)
+            );
         }
 
         return $this;

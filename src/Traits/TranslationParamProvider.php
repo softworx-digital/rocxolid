@@ -22,6 +22,10 @@ trait TranslationParamProvider
     public function provideTranslationParam(): string
     {
         if (!$this->issetTranslationParam()) {
+            $this->translation_param = $this->guessTranslationParam();
+        }
+
+        if (!$this->issetTranslationParam()) {
             throw new \UnderflowException(sprintf('No translation param set in [%s]', get_class($this)));
         }
 
@@ -31,5 +35,10 @@ trait TranslationParamProvider
     public function issetTranslationParam(): bool
     {
         return isset($this->translation_param) && !empty($this->translation_param);
+    }
+
+    protected function guessTranslationParam(): ?string
+    {
+        return null;
     }
 }

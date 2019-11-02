@@ -37,9 +37,11 @@ class TranslationService implements TranslationServiceContract
 
         if (Lang::has($language_key)) {
             return Lang::get($language_key);
+        } elseif (Lang::has($general_language_key)) {
+            return Lang::get($general_language_key);
         }
 
-        return Lang::get($general_language_key);
+        return $language_key;
     }
 
     /**

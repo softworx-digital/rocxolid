@@ -58,6 +58,13 @@ abstract class AbstractComponent implements Renderable, Translatable
         return $component;
     }
 
+    public static function buildInside(Translatable $component)
+    {
+        return static::build()
+            ->setTranslationPackage($component->getTranslationPackage())
+            ->setTranslationParam($component->getTranslationParam());
+    }
+
     public function setDomId(string $id): AbstractComponent
     {
         $this->dom_id = $id;
@@ -87,5 +94,10 @@ abstract class AbstractComponent implements Renderable, Translatable
     protected function makeDomIdHash(...$params): string
     {
         return ViewHelper::domIdHash($this, ...$params);
+    }
+
+    protected function buildSubComponent(string $class)
+    {
+        return $class::buildInside($this);
     }
 }

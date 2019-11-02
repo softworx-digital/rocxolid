@@ -4,20 +4,11 @@ namespace Softworx\RocXolid\Components\Forms;
 
 use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\General\Button;
-use Softworx\RocXolid\Components\Contracts\Formable;
 use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;
 
 class FormButton extends Button implements ComponentFormButtonable
 {
     protected $button;
-
-    public static function buildInForm(Formable $form, FormFieldContract $button)
-    {
-        return static::build()
-            ->setTranslationPackage($form->getTranslationPackage())
-            ->setTranslationParam($form->getTranslationParam())
-            ->setButton($button);
-    }
 
     public function setButton(FormFieldContract $button): ComponentFormButtonable
     {

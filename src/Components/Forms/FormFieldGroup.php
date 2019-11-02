@@ -4,23 +4,15 @@ namespace Softworx\RocXolid\Components\Forms;
 
 use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
-use Softworx\RocXolid\Components\Contracts\Formable;
 use Softworx\RocXolid\Components\Contracts\FormFieldGroupable as ComponentFormFieldGroupable;
 use Softworx\RocXolid\Components\Contracts\FormFieldable as ComponentFormFieldable;
 
 class FormFieldGroup extends AbstractOptionableComponent implements ComponentFormFieldGroupable
 {
+    // @todo: reason for this?
     protected $form_field;
 
     protected $form_fields = [];
-
-    public static function buildInForm(Formable $form, FormFieldContract $form_field_group)
-    {
-        return static::build()
-            ->setTranslationPackage($form->getTranslationPackage())
-            ->setTranslationParam($form->getTranslationParam())
-            ->setFormFieldGroup($form_field_group);
-    }
 
     public function setFormFieldGroup(FormFieldContract $form_field): ComponentFormFieldGroupable
     {

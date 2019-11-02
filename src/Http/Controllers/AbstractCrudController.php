@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
+use Illuminate\Support\Str;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
@@ -72,28 +73,60 @@ abstract class AbstractCrudController extends AbstractController implements Perm
         'update' => 'update',
     ];
 
-    public function getRoute($route_action, ...$params)
+    /**
+     * Dynamically create route for given controller action.
+     * Set model as a first parameter to the route if given.
+     * 
+     * @param string $route_action
+     * @return string
+     */
+    public function getRoute(string $route_action, ...$params):string
     {
         $action = sprintf('\%s@%s', get_class($this), $route_action);
         $model = array_shift($params);
 
-        if (is_array(reset($params))) {
+        if (!empty($params)) {
             $params = reset($params);
         }
 
-        return is_null($model) ? action($action, $params) : action($action, ['model' => $model] + $params);
+        return is_null($model) ? action($action, $params) : action($action, $model, $params);
     }
 
+    /**
+     * Retrieve repository component to show.
+     * 
+     * @param \Softworx\RocXolid\Repositories\Contracts\Repository $repository
+     * @return \Softworx\RocXolid\Components\Contracts\Repositoryable
+     */
     public function getRepositoryComponent(Repository $repository): RepositoryableComponent
     {
         return CrudTableComponent::build($this, $this)
             ->setRepository($repository);
     }
 
+    /**
+     * Retrieve model viewer component to show.
+     * 
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
+     */
     public function getModelViewerComponent(CrudableModel $model): CrudModelViewerComponent
     {
         return CrudModelViewerComponent::build($this, $this)
             ->setModel($model)
             ->setController($this);
+    }
+
+    /**
+     * Naively guess the translation param for components based on controllers namespace.
+     * 
+     * @return string
+     */
+    protected function guessTranslationParam(): ?string
+    {
+        $reflection = new \ReflectionClass($this);
+        $param = last(explode('\\', $reflection->getNamespaceName()));
+
+        return Str::kebab($param);
     }
 }

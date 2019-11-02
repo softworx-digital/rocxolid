@@ -4,6 +4,7 @@ namespace Softworx\RocXolid\Components\Tables;
 
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
+use Softworx\RocXolid\Components\Contracts\Repositoryable;
 use Softworx\RocXolid\Components\Contracts\TableFilterable as ComponentTableFilterable;
 use Softworx\RocXolid\Repositories\Contracts\Filter;
 
@@ -12,6 +13,14 @@ class TableFilter extends AbstractOptionableComponent implements ComponentTableF
     const ARRAY_TEMPLATE_NAME = 'array';
 
     protected $table_filter;
+
+    public static function buildInTable(Repositoryable $table, Filter $table_filter)
+    {
+        return static::build()
+            ->setTranslationPackage($table->getTranslationPackage())
+            ->setTranslationParam($table->getTranslationParam())
+            ->setTableFilter($table_filter);
+    }
 
     public function setTableFilter(Filter $table_filter): ComponentTableFilterable
     {

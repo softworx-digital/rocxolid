@@ -51,16 +51,17 @@ interface Valueable
      * Get the value at first position.
      *
      * @param string $default Default value to return if value is not set.
-     * @return string
+     * @return mixed
      * @throws \UnderflowException If value not set and no default value is available.
      */
-    public function getValue(string $default = null): string;
+    public function getValue(string $default = null);
 
     /**
      * Get the value at given position.
      *
      * @param int $index Collection position to get the value at.
      * @param string $default Default value to return if value is not set.
+     * @return mixed
      * @throws \UnderflowException If value not set and no default value is available.
      */
     public function getIndexValue(int $index, string $default = null);

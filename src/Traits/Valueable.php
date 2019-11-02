@@ -67,7 +67,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function getValue(string $default = null): string
+    public function getValue(string $default = null)
     {
         return $this->getIndexValue(0, $default);
     }
@@ -83,9 +83,11 @@ trait Valueable
             return $default;
         } elseif ($this->hasDefaultValue()) {
             return $this->getDefaultValue();
+        } elseif ($this->getValues()->count() && $this->isValueExpected()) {
+            throw new \UnderflowException(sprintf('Invalid value index [%s] requested, available: %s', $index, implode(', ', $this->getValues()->keys()->all())));
         }
-        
-        throw new \UnderflowException(sprintf('Invalid value index [%s] requested, available: %s', $index, implode(', ', $this->getValues()->keys()->all())));
+
+        return null;
     }
 
     /**

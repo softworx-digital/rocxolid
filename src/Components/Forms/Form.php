@@ -112,15 +112,24 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
 
     protected function loadFormFieldsComponents(): ComponentFormableContract
     {
+        // field groups
         $this->field_group_components = new Collection();
-        $this->field_components = new Collection();
 
         foreach ($this->getForm()->getFormFieldGroups() as $form_field_group) {
-            $this->field_group_components[$form_field_group->getName()] = $this->buildSubComponent(static::$field_group_component_class, $form_field_group);
+            $this->field_group_components->put(
+                $form_field_group->getName(),
+                $this->buildSubComponent(static::$field_group_component_class)->setFormFieldGroup($form_field_group)
+            );
         }
 
+        // fields
+        $this->field_components = new Collection();
+
         foreach ($this->getForm()->getFormFields() as $form_field) {
-            $this->field_components[$form_field->getName()] = $this->buildSubComponent(static::$field_component_class, $form_field);
+            $this->field_components->put(
+                $form_field->getName(),
+                $this->buildSubComponent(static::$field_component_class)->setFormField($form_field)
+            );
         }
 
         return $this;
@@ -144,20 +153,34 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
 
     protected function loadFormButtonsComponents(): ComponentFormableContract
     {
+        // button toolbars
         $this->button_toolbar_components = new Collection();
-        $this->button_group_components = new Collection();
-        $this->button_components = new Collection();
 
         foreach ($this->getForm()->getButtonToolbars() as $button_toolbar) {
-            $this->button_toolbar_components[$button_toolbar->getName()] = $this->buildSubComponent(static::$button_toolbar_component_class, $button_toolbar);
+            $this->button_toolbar_components->put(
+                $button_toolbar->getName(),
+                $this->buildSubComponent(static::$button_toolbar_component_class)->setButtonToolbar($button_toolbar)
+            );
         }
+
+        // button groups
+        $this->button_group_components = new Collection();
 
         foreach ($this->getForm()->getButtonGroups() as $button_group) {
-            $this->button_group_components[$button_group->getName()] = $this->buildSubComponent(static::$button_group_component_class, $button_group);
+            $this->button_group_components->put(
+                $button_group->getName(),
+                $this->buildSubComponent(static::$button_group_component_class)->setButtonGroup($button_group)
+            );
         }
 
+        // buttons
+        $this->button_components = new Collection();
+
         foreach ($this->getForm()->getButtons() as $button) {
-            $this->button_components[$button->getName()] = $this->buildSubComponent(static::$button_component_class, $button);
+            $this->button_components->put(
+                $button->getName(),
+                $this->buildSubComponent(static::$button_component_class)->setButton($button)
+            );
         }
 
         return $this;
@@ -188,10 +211,5 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         return $this;
-    }
-
-    protected function buildSubComponent(string $class, FormFieldContract $form_field)
-    {
-        return $class::buildInForm($this, $form_field);
     }
 }
