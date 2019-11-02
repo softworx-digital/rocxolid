@@ -2,8 +2,10 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
+use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
+use Softworx\RocXolid\Components\Contracts\Formable;
 use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;
 use Softworx\RocXolid\Components\Contracts\ButtonGroupable as ComponentButtonGroupable;
 
@@ -25,6 +27,14 @@ class FormButtonGroup extends AbstractOptionableComponent implements ComponentBu
      * @var array $buttons Assigned buttons container.
      */
     protected $buttons = [];
+
+    public static function buildInForm(Formable $form, FormFieldContract $form_button_group)
+    {
+        return static::build()
+            ->setTranslationPackage($form->getTranslationPackage())
+            ->setTranslationParam($form->getTranslationParam())
+            ->setButtonGroup($form_button_group);
+    }
 
     /**
      * {@inheritdoc}

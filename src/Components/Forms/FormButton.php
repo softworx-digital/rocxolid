@@ -2,30 +2,39 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
-use Softworx\RocXolid\Components\General\Button;
-use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;
 use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
+use Softworx\RocXolid\Components\General\Button;
+use Softworx\RocXolid\Components\Contracts\Formable;
+use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;
 
 class FormButton extends Button implements ComponentFormButtonable
 {
-    protected $form_field;
+    protected $button;
 
-    public function setButton(FormFieldContract $form_field): ComponentFormButtonable
+    public static function buildInForm(Formable $form, FormFieldContract $button)
     {
-        $this->form_field = $form_field;
+        return static::build()
+            ->setTranslationPackage($form->getTranslationPackage())
+            ->setTranslationParam($form->getTranslationParam())
+            ->setButton($button);
+    }
 
-        $this->setOptions($this->form_field->getOption('component'));
+    public function setButton(FormFieldContract $button): ComponentFormButtonable
+    {
+        $this->button = $button;
+
+        $this->setOptions($this->button->getOption('component'));
 
         return $this;
     }
 
     public function getButton(): FormFieldContract
     {
-        if (is_null($this->form_field)) {
+        if (is_null($this->button)) {
             throw new \RuntimeException(sprintf('Form button is not set yet to [%s] component', get_class($this)));
         }
 
-        return $this->form_field;
+        return $this->button;
     }
 
     public function getTranslationKey(string $key): string

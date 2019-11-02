@@ -6,6 +6,7 @@ use App;
 use Illuminate\Support\Collection;
 // rocXolid contracts
 use Softworx\RocXolid\Forms\Contracts\Form as FormContract;
+use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\Contracts\Formable as ComponentFormableContract;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
@@ -115,21 +116,11 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         $this->field_components = new Collection();
 
         foreach ($this->getForm()->getFormFieldGroups() as $form_field_group) {
-            $class = static::$field_group_component_class;
-
-            $this->field_group_components[$form_field_group->getName()] = $class::build()
-                ->setTranslationPackage($this->getTranslationPackage())
-                ->setTranslationParam($this->getTranslationParam())
-                ->setFormFieldGroup($form_field_group);
+            $this->field_group_components[$form_field_group->getName()] = $this->buildSubComponent(static::$field_group_component_class, $form_field_group);
         }
 
         foreach ($this->getForm()->getFormFields() as $form_field) {
-            $class = static::$field_component_class;
-
-            $this->field_components[$form_field->getName()] = $class::build()
-                ->setTranslationPackage($this->getTranslationPackage())
-                ->setTranslationParam($this->getTranslationParam())
-                ->setFormField($form_field);
+            $this->field_components[$form_field->getName()] = $this->buildSubComponent(static::$field_component_class, $form_field);
         }
 
         return $this;
@@ -158,15 +149,15 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         $this->button_components = new Collection();
 
         foreach ($this->getForm()->getButtonToolbars() as $button_toolbar) {
-            $this->button_toolbar_components[$button_toolbar->getName()] = App::make(static::$button_toolbar_component_class)->setButtonToolbar($button_toolbar);
+            $this->button_toolbar_components[$button_toolbar->getName()] = $this->buildSubComponent(static::$button_toolbar_component_class, $button_toolbar);
         }
 
         foreach ($this->getForm()->getButtonGroups() as $button_group) {
-            $this->button_group_components[$button_group->getName()] = App::make(static::$button_group_component_class)->setButtonGroup($button_group);
+            $this->button_group_components[$button_group->getName()] = $this->buildSubComponent(static::$button_group_component_class, $button_group);
         }
 
         foreach ($this->getForm()->getButtons() as $button) {
-            $this->button_components[$button->getName()] = App::make(static::$button_component_class)->setButton($button);
+            $this->button_components[$button->getName()] = $this->buildSubComponent(static::$button_component_class, $button);
         }
 
         return $this;
@@ -197,5 +188,10 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         return $this;
+    }
+
+    protected function buildSubComponent(string $class, FormFieldContract $form_field)
+    {
+        return $class::buildInForm($this, $form_field);
     }
 }

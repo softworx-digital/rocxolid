@@ -2,15 +2,24 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
-use Softworx\RocXolid\Components\AbstractOptionableComponent;
-use Softworx\RocXolid\Components\Contracts\FormFieldable as ComponentFormFieldable;
 use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
+use Softworx\RocXolid\Components\AbstractOptionableComponent;
+use Softworx\RocXolid\Components\Contracts\Formable;
+use Softworx\RocXolid\Components\Contracts\FormFieldable as ComponentFormFieldable;
 
 class FormField extends AbstractOptionableComponent implements ComponentFormFieldable
 {
     const ARRAY_TEMPLATE_NAME = 'array';
 
     protected $form_field;
+
+    public static function buildInForm(Formable $form, FormFieldContract $form_field)
+    {
+        return static::build()
+            ->setTranslationPackage($form->getTranslationPackage())
+            ->setTranslationParam($form->getTranslationParam())
+            ->setFormField($form_field);
+    }
 
     public function setFormField(FormFieldContract $form_field): ComponentFormFieldable
     {

@@ -2,16 +2,25 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
+use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
+use Softworx\RocXolid\Components\Contracts\Formable;
 use Softworx\RocXolid\Components\Contracts\ButtonToolbarable as ComponentButtonToolbarable;
 use Softworx\RocXolid\Components\Contracts\ButtonGroupable as ComponentButtonGroupable;
-use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 
 class FormButtonToolbar extends AbstractOptionableComponent implements ComponentButtonToolbarable
 {
     protected $form_field;
 
     protected $buttongroups = [];
+
+    public static function buildInForm(Formable $form, FormFieldContract $button_toolbar)
+    {
+        return static::build()
+            ->setTranslationPackage($form->getTranslationPackage())
+            ->setTranslationParam($form->getTranslationParam())
+            ->setButtonToolbar($button_toolbar);
+    }
 
     public function setButtonToolbar(FormFieldContract $form_field): ComponentButtonToolbarable
     {
