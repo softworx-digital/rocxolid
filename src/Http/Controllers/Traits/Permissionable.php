@@ -10,20 +10,19 @@ use Auth;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: put this to middleware?
  */
 trait Permissionable
 {
     public function userCan(string $action): bool
     {
+        if (!config('rocXolid.admin.auth.check_permissions', false)) {
+            return true;
+        }
+
         $permission = sprintf('\%s.%s', get_class($this), $action);
 
         if ($user = Auth::guard('rocXolid')->user()) {
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // @TODO: !! CHANGE THIS TO SOMETHING REASONABLE !!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            return true;
-            if ($user->id == 1) {
+            if (!config('rocXolid.admin.auth.check_permissions_root', false) && $user->isRoot()) {
                 return true;
             }
 

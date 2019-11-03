@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Components\Navbar;
 
+use Softworx\RocXolid\Contracts\Routable;
 use Softworx\RocXolid\Components\Contracts\NavbarAccessible;
 use Softworx\RocXolid\Components\AbstractComponent;
 
@@ -78,5 +79,16 @@ class Item extends AbstractComponent implements NavbarAccessible
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    public function isRouteActive()
+    {
+        foreach ($this->getItems() as $item) {
+            if (($item instanceof Routable) && $item->isRouteActive()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

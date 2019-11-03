@@ -156,14 +156,14 @@ trait Crudable
     {
         $action = sprintf('%s@%s', $this->getControllerClass(), $method);
 
-        return action($action, ['model' => $this] + $params);
+        return action($action, $this, $params);
     }
 
     public function getAppControllerRoute($method = 'show', $params = []): string
     {
         $action = sprintf('%s@%s', $this->getAppControllerClass(), $method);
 
-        return action($action, ['model' => $this] + $params);
+        return action($action, $this, $params);
     }
 
     public function getShowAttributes($except = [], $with = [])
@@ -197,30 +197,31 @@ trait Crudable
 
     public function userCan($method_group)
     {
-        // @TODO: hotfixed, you can do better
-        return true;
+        if (!config('rocXolid.admin.auth.check_permissions', false)) {
+            return true;
+        }
 
         $controller_class = sprintf('\%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
         $permission = sprintf('\%s.%s', $controller_class, $method_group);
 
         if ($user = Auth::guard('rocXolid')->user()) {
-            if ($user->id == 1) {
+            if (!config('rocXolid.admin.auth.check_permissions_root', false) && $user->isRoot()) {
                 return true;
             }
 
             foreach ($user->permissions as $extra_permission) {
-                if (($extra_permission->controller_class == $controller_class) && ($extra_permission->controller_method_group == $method_group)) {
+                if (($extra_permission->controller_class === $controller_class) && ($extra_permission->controller_method_group === $method_group)) {
                     return true;
-                } elseif (($method_group == 'read-only') && (($extra_permission->controller_class == $controller_class) && ($extra_permission->controller_method_group == 'write'))) {
+                } elseif (($method_group === 'read-only') && (($extra_permission->controller_class === $controller_class) && ($extra_permission->controller_method_group === 'write'))) {
                     return true;
                 }
             }
 
             foreach ($user->roles as $role) {
                 foreach ($role->permissions as $permission) {
-                    if (($permission->controller_class == $controller_class) && ($permission->controller_method_group == $method_group)) {
+                    if (($permission->controller_class === $controller_class) && ($permission->controller_method_group === $method_group)) {
                         return true;
-                    } elseif (($method_group == 'read-only') && (($permission->controller_class == $controller_class) && ($permission->controller_method_group == 'write'))) {
+                    } elseif (($method_group === 'read-only') && (($permission->controller_class === $controller_class) && ($permission->controller_method_group === 'write'))) {
                         return true;
                     }
                 }
