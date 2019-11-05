@@ -30,7 +30,7 @@ trait Crudable
 {
     public function getModelViewerComponent()
     {
-        return (new CrudModelViewer())->setModel($this)->setController(App::make($this->getControllerClass()));
+        return App::make($this->getControllerClass())->getModelViewerComponent($this);
     }
 
     public function getExtraAttributes()
@@ -156,20 +156,21 @@ trait Crudable
     {
         $action = sprintf('%s@%s', $this->getControllerClass(), $method);
 
-        return action($action, $this, $params);
+        return action($action, [$this] + $params);
     }
 
     public function getAppControllerRoute($method = 'show', $params = []): string
     {
         $action = sprintf('%s@%s', $this->getAppControllerClass(), $method);
 
-        return action($action, $this, $params);
+        return action($action, [$this] + $params);
     }
 
     public function getShowAttributes($except = [], $with = [])
     {
         $attributes = $this->getAttributes();
         $attributes = array_diff_key($attributes, array_flip($this->getSystemAttributes()), array_flip($except)) + $with;
+        // @todo: you can do better than checking substring
         $attributes = array_filter($attributes, function ($attribute) {
             return (substr($attribute, -3) != '_id');
         }, ARRAY_FILTER_USE_KEY);

@@ -21,24 +21,4 @@ abstract class AbstractOptionableComponent extends AbstractComponent implements 
 
         return $html;
     }
-
-    public function getDomId(...$params): string
-    {
-        if (!isset($this->dom_id)) {
-            $this->setDomId($this->getOption('id', $this->makeDomId()));
-            //$this->setDomId($this->getOption('id', ViewHelper::domId($this, $prefix, $suffix)));
-        }
-
-        $id = $this->dom_id;
-
-        if (!empty($params)) {
-            $id = sprintf('%s-%s', array_shift($params), $id);
-
-            foreach ($params as $param) {
-                $id = sprintf('%s-%s', $id, $param);
-            }
-        }
-
-        return $id;
-    }
 }

@@ -64,8 +64,7 @@ class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchabl
      * @var array
      */
     protected $system = [
-        'gtc',
-        'privacy',
+        'id',
         'created_at',
         'updated_at',
         'deleted_at',

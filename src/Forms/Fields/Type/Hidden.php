@@ -6,6 +6,8 @@ use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
 class Hidden extends AbstractFormField
 {
+    protected $is_hidden = true;
+
     protected $default_options = [
         'type-template' => 'hidden',
         // field wrapper

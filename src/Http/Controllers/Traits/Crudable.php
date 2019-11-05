@@ -386,7 +386,7 @@ trait Crudable
     }
 
     // @TODO: refactor to ease overrideability
-    protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, CrudableModel $model, $action)
+    protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, CrudableModel $model, string $action)
     {
         $form_component = CrudFormComponent::build($this, $this)
             ->setForm($form)
@@ -419,7 +419,7 @@ trait Crudable
             }
 
             return $this->response
-                ->append($form_component->getDomId('output'), (new Message())->fetch('crud.success', $assignments))
+                ->append($form_component->getDomId('output'), Message::build($this, $this)->fetch('crud.success', $assignments))
                 ->get();
         } else {
             /*

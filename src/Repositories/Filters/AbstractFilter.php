@@ -168,7 +168,7 @@ abstract class AbstractFilter implements Filter, Optionable, Translatable
         return $this->repository;
     }
 
-    public function translate($key)
+    public function translate(string $key): string
     {
         $component_class = static::$component_class;
 

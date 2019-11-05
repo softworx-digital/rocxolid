@@ -45,6 +45,10 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
      */
     protected $parent;
     /**
+     * @var bool
+     */
+    protected $is_hidden = false;
+    /**
      * 'template' => 'rocXolid::form.field.text',
      * 'type-template' => 'text',
      * 'attributes' => [
@@ -155,6 +159,16 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Check if the field component is hidden.
+     * 
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->is_hidden;
     }
 
     /**

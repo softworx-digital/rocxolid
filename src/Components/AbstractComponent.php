@@ -65,6 +65,11 @@ abstract class AbstractComponent implements Renderable, Translatable
             ->setTranslationParam($component->getTranslationParam());
     }
 
+    protected function buildSubComponent(string $class)
+    {
+        return $class::buildInside($this);
+    }
+
     public function setDomId(string $id): AbstractComponent
     {
         $this->dom_id = $id;
@@ -74,16 +79,12 @@ abstract class AbstractComponent implements Renderable, Translatable
 
     public function getDomId(...$params): string
     {
-        if (!isset($this->dom_id)) {
-            $this->setDomId($this->makeDomId(...$params));
-        }
-
-        return $this->dom_id;
+        return $this->makeDomId(...$params);
     }
 
-    protected function getDomIdHash(...$params): string
+    public function getDomIdHash(...$params): string
     {
-        return ViewHelper::domIdHash($this, ...$params);
+        return sprintf('#%s', $this->getDomId(...$params));
     }
 
     protected function makeDomId(...$params): string
@@ -94,10 +95,5 @@ abstract class AbstractComponent implements Renderable, Translatable
     protected function makeDomIdHash(...$params): string
     {
         return ViewHelper::domIdHash($this, ...$params);
-    }
-
-    protected function buildSubComponent(string $class)
-    {
-        return $class::buildInside($this);
     }
 }

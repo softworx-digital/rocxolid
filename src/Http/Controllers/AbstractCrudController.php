@@ -89,7 +89,7 @@ abstract class AbstractCrudController extends AbstractController implements Perm
             $params = reset($params);
         }
 
-        return is_null($model) ? action($action, $params) : action($action, $model, $params);
+        return is_null($model) ? action($action, $params) : action($action, [$model] + $params);
     }
 
     /**
