@@ -22,10 +22,9 @@ class CollectionTags extends AbstractFormField
         ],
         // field label
         'label' => false,
-        // null option
-        'show-null-option' => false,
         // field HTML attributes
         'attributes' => [
+            'placeholder' => null,
             'class' => 'form-control',
             'data-role' => 'tagsinput',
         ],
@@ -52,13 +51,7 @@ class CollectionTags extends AbstractFormField
 
     public function getCollection()
     {
-        $collection = $this->collection;
-
-        if ($this->show_null_option) {
-            $collection->prepend($this->translate($this->getOption('component.label.title')), '');
-        }
-
-        return $collection;
+        return $this->collection;
     }
 
     public function getFieldName($index = 0)
@@ -73,11 +66,6 @@ class CollectionTags extends AbstractFormField
     public function setTypeaheadUrl($options)
     {
         return $this->setComponentOptions('typeahead-url', $options);
-    }
-
-    public function setShowNullOption($option)
-    {
-        return $this->show_null_option = $option;
     }
 
     /*

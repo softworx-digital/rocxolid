@@ -96,6 +96,47 @@ interface AjaxResponse
     public function modalClose(string $selector, bool $selector_is_id = true): AjaxResponse;
 
     /**
+     * Instruct the response receiver to show notice notification.
+     *
+     * @param string $text Text to show.
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function notifyNotice(string $text): AjaxResponse;
+
+    /**
+     * Instruct the response receiver to show info notification.
+     *
+     * @param string $text Text to show.
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function notifyInfo(string $text): AjaxResponse;
+
+    /**
+     * Instruct the response receiver to show success notification.
+     *
+     * @param string $text Text to show.
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function notifySuccess(string $text): AjaxResponse;
+
+    /**
+     * Instruct the response receiver to show error notification.
+     *
+     * @param string $text Text to show.
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function notifyError(string $text): AjaxResponse;
+
+    /**
+     * Instruct the response receiver to show general notification (with  given type).
+     *
+     * @param string $text Text to show.
+     * @param string $text Notification type to show.
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function notify(string $text, string $type = null): AjaxResponse;
+
+    /**
      * Instruct the response receiver to redirect to given URL.
      *
      * @param string $url Target URL to redirect to.

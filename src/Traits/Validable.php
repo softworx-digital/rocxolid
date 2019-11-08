@@ -30,7 +30,7 @@ trait Validable
 
     public function validate(array $validation_rules = [], array $messages = []): ValidableContract
     {
-        // @todo get the validation rules and messages from outside, do not extract it from the form fields
+        // @todo: get the validation rules and messages from outside, do not extract it from the form fields
         $validation = $this->getRequest()->getFieldsValidation($this->getFormFields());
 
         $rules = array_merge($validation['rules'], $validation_rules);

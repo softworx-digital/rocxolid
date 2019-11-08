@@ -3,11 +3,11 @@
 namespace Softworx\RocXolid\Forms\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection; // @TODO: needed?
+use Illuminate\Database\Eloquent\Collection; // @todo: needed?
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\FormHelper;
 
-// @TODO: define properly
+// @todo: define properly
 interface FormField
 {
     const SINGLE_DATA_PARAM = '_data';

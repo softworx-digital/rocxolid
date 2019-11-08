@@ -17,7 +17,8 @@ class ConfigurationServiceProvider extends IlluminateServiceProvider
      * @var array $config_files Configuration files to be published and loaded.
      */
     private $config_files = [
-        'rocXolid.main' => '/../../config/main.php'
+        'rocXolid.main' => '/../../config/main.php',
+        'rocXolid.main' => '/../../config/validation.php',
     ];
 
     /**

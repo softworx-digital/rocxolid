@@ -112,7 +112,7 @@ trait Renderable
 
     /**
      * Retrieves the view service responsible for retrieving and composing the views.
-     * @TODO: pass as dependency via class constructor (however to all classes using this trait - awkward)
+     * @todo: pass as dependency via class constructor (however to all classes using this trait - awkward)
      *
      * @return \Softworx\RocXolid\Services\Contracts\ViewService
      * @todo Optimize adding view_service property?

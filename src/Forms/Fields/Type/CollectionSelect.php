@@ -23,10 +23,9 @@ class CollectionSelect extends AbstractFormField
         ],
         // field label
         'label' => false,
-        // null option
-        'show-null-option' => false,
         // field HTML attributes
         'attributes' => [
+            'placeholder' => null,
             'class' => 'form-control',
             'data-live-search' => true,
         ],
@@ -54,13 +53,7 @@ class CollectionSelect extends AbstractFormField
 
     public function getCollection()
     {
-        $collection = $this->collection;
-
-        if ($this->show_null_option) {
-            $collection->prepend(__('rocXolid::general.text.select-no-option'), '');
-        }
-
-        return $collection;
+        return $this->collection;
     }
 
     public function getFieldName($index = 0)
@@ -70,11 +63,6 @@ class CollectionSelect extends AbstractFormField
         } else {
             return sprintf('%s[%s]', self::SINGLE_DATA_PARAM, $this->name);
         }
-    }
-
-    public function setShowNullOption($option)
-    {
-        return $this->show_null_option = $option;
     }
 
     /*

@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Contracts;
 
-// @todo define
+// @todo: define
 interface Crudable
 {
 }

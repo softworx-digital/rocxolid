@@ -6,7 +6,7 @@ use Softworx\RocXolid\Repositories\Columns\AbstractColumn;
 use Softworx\RocXolid\Repositories\Contracts\Column;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
-// @TODO - zatial extenduje AbstractColumn - nejako rozdelit zrejme na buttony a columny (fieldy)
+// @todo - zatial extenduje AbstractColumn - nejako rozdelit zrejme na buttony a columny (fieldy)
 class ButtonAnchor extends AbstractColumn
 {
     protected $default_options = [

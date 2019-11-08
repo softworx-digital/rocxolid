@@ -8,7 +8,7 @@ use Softworx\RocXolid\Repositories\Contracts\Column as TableButtonContract;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Components\General\Button;
 
-// @TODO - zatial sa dava buttonanchor implementujuci Column (tuto aliasnuty ako TableButtonContract) - toto doladit / rozdelit
+// @todo - zatial sa dava buttonanchor implementujuci Column (tuto aliasnuty ako TableButtonContract) - toto doladit / rozdelit
 class TableButton extends Button implements ComponentTableButtonable
 {
     protected $button;

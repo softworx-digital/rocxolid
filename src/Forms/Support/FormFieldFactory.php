@@ -213,7 +213,6 @@ class FormFieldFactory implements FormFieldFactoryContract
             return [
                 'type' => CollectionSelect::class,
                 'options' => [
-                    'show-null-option' => !$column->getNotNull(),
                     'label' => [
                         'title' => $attribute,
                     ],
@@ -223,6 +222,9 @@ class FormFieldFactory implements FormFieldFactoryContract
                     ],
                     'validation' => [
                         'rules' => $rules,
+                    ],
+                    'attributes' => [
+                        'placeholder' => !$column->getNotNull() ? 'select' : false,
                     ],
                 ],
             ];

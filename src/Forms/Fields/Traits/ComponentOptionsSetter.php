@@ -46,6 +46,11 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('label', $label);
     }
 
+    protected function setSelectValueChallange($select_value_challange): FormField
+    {
+        return $this->setComponentOptions('select-value-challange', $select_value_challange);
+    }
+
     protected function setDisabled(): FormField
     {
         return $this->setComponentOptions('attributes', [ 'disabled' => 'disabled' ]);

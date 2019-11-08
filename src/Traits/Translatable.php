@@ -33,9 +33,9 @@ trait Translatable
     /**
      * {@inheritdoc}
      */
-    public function translate(string $key): string
+    public function translate(string $key, bool $use_raw_key = false): string
     {
-        return $this->getTranslationService()->getTranslation($this, $key);
+        return $this->getTranslationService()->getTranslation($this, $key, $use_raw_key);
     }
 
     /**
@@ -152,7 +152,7 @@ trait Translatable
         return isset($this->language_name);
     }
 
-    // TODO
+    // todo
     protected function guessTranslationPackage()
     {
         $reflection = new \ReflectionClass($this);
@@ -160,7 +160,7 @@ trait Translatable
         return null;
     }
 
-    // TODO
+    // todo
     protected function guessTranslationParam()
     {
         $reflection = new \ReflectionClass($this);
@@ -170,7 +170,7 @@ trait Translatable
 
     /**
      * Retrieves the view service responsible for retrieving and composing the views.
-     * @TODO: pass as dependency via class constructor (however to all classes using this trait - awkward)
+     * @todo: pass as dependency via class constructor (however to all classes using this trait - awkward)
      *
      * @return \Softworx\RocXolid\Services\Contracts\TranslationService
      */

@@ -263,7 +263,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
             ->first($columns);
     }
 
-    protected function applyIntenalFilters() // @TODO: missing return type
+    protected function applyIntenalFilters() // @todo: missing return type
     {
         $query = $this->getQuery();
 
@@ -290,6 +290,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         $model
             ->fill($data, $action)
             ->fillCustom($data, $action)
+            ->resolvePolymorphism($data, $action)
             ->beforeSave($data, $action)
             ->save();
 
@@ -300,7 +301,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $model;
     }
 
-    public function delete(array $id) // @TODO: missing return type
+    public function delete(array $id) // @todo: missing return type
     {
         return $this->getModel()->canBeDeleted() && $this->getModel()->destroy($id);
     }
@@ -327,7 +328,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     {
         return $this->getController()->getModelClass();
     }
-    // @TODO: better put this in some definition class
+    // @todo: better put this in some definition class
     protected function getFiltersDefinition()
     {
         return $this->filters;
@@ -352,7 +353,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     {
         return $this->buttons;
     }
-    // @TODO: component building options - better put this in a trait
+    // @todo: component building options - better put this in a trait
     protected function setRoute($route_name): Repository
     {
         $this->mergeOptions([

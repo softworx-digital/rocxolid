@@ -11,7 +11,7 @@ use Softworx\RocXolid\Contracts\Translatable;
  * Handles static texts translation.
  *
  * @author softworx <hello@softworx.digital>
- * @package Softworx\RocXolid\Admin
+ * @package Softworx\RocXolid
  * @version 1.0.0
  */
 class TranslationService implements TranslationServiceContract
@@ -21,18 +21,18 @@ class TranslationService implements TranslationServiceContract
     /**
      * {@inheritdoc}
      */
-    public function getTranslation(Translatable $translatable, string $key): string
+    public function getTranslation(Translatable $translatable, string $key, bool $use_raw_key = false): string
     {
         $language_key = $this->getTranslationKey(
             $translatable->getTranslationPackage(),
             $translatable->getTranslationParam(),
-            $translatable->getTranslationKey($key)
+            $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );
 
         $general_language_key = $this->getTranslationKey(
-            $translatable->getTranslationPackage(),
+            'rocXolid:admin',
             'general',
-            $translatable->getTranslationKey($key)
+            $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );
 
         if (Lang::has($language_key)) {

@@ -29,12 +29,11 @@ class CollectionSelectAutocomplete extends CollectionSelect
         ],
         // field label
         'label' => false,
-        // null option
-        'show-null-option' => false,
         // field HTML attributes
         'attributes' => [
+            'placeholder' => null,
             'class' => 'form-control autocomplete',
-            'data-live-search' => true,
+            'data-live-search' => 'true',
         ],
     ];
     /*
@@ -87,13 +86,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
             });
         }
 
-        $collection = $this->collection;
-
-        if ($this->show_null_option) {
-            $collection->prepend($this->translate($this->getOption('component.label.title')), '');
-        }
-
-        return $collection;
+        return $this->collection;
     }
 
     public function shouldLoad()

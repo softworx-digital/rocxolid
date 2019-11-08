@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Services;
 
 use Route;
 
-// @TODO: refator
+// @todo: refator
 class CrudRouterService
 {
     protected $extra_routes = [];

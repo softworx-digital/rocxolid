@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Contracts;
 
-// @TODO: phpDoc
+// @todo: phpDoc
 interface Form
 {
     public function setHolderProperties(Formable $holder): Form;

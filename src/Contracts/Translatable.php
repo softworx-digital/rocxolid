@@ -14,9 +14,11 @@ interface Translatable
     /**
      * Translate the language key.
      *
+     * @param string $key Translation key to translate.
+     * @param bool $use_raw_key Flag to use raw or transform the key.
      * @return string
      */
-    public function translate(string $key): string;
+    public function translate(string $key, bool $use_raw_key = false): string;
 
     /**
      * Return the key to be used for translation.

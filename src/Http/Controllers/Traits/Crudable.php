@@ -22,7 +22,7 @@ use Softworx\RocXolid\Components\AbstractActiveComponent;
 use Softworx\RocXolid\Components\General\Message;
 use Softworx\RocXolid\Components\Forms\FormField;
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
-// @TODO: try to separate this from general trait
+// @todo: try to separate this from general trait
 use Softworx\RocXolid\Common\Repositories\File\Repository as FileRepository;
 use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
 
@@ -78,7 +78,7 @@ trait Crudable
 
         $this->setModel($model);
 
-        // @TODO: refactor to clearly identify the form we want to get, not artifically like this
+        // @todo: refactor to clearly identify the form we want to get, not artifically like this
         // put form->options['route-action'], or full identification data into the request
         // this can serve as a fallback
         if ($model->exists) {
@@ -385,7 +385,7 @@ trait Crudable
         return $this->successResponse($request, $repository, $form, $model, $action);
     }
 
-    // @TODO: refactor to ease overrideability
+    // @todo: refactor to ease overrideability
     protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, CrudableModel $model, string $action)
     {
         $form_component = CrudFormComponent::build($this, $this)
@@ -394,8 +394,8 @@ trait Crudable
 
         $assignments = [];
 
-        // @TODO: use constants rather than strings
-        // @TODO: divide into <action> => <method> and wrap into property or class
+        // @todo: use constants rather than strings
+        // @todo: divide into <action> => <method> and wrap into property or class
         if ($request->ajax()) {
             switch ($request->input('_submit-action')) {
                 case 'submit-new':
@@ -419,7 +419,8 @@ trait Crudable
             }
 
             return $this->response
-                ->append($form_component->getDomId('output'), Message::build($this, $this)->fetch('crud.success', $assignments))
+                ->notifySuccess($form_component->translate('text.updated'))
+                //->append($form_component->getDomId('output'), Message::build($this, $this)->fetch('crud.success', $assignments))
                 ->get();
         } else {
             /*
@@ -459,10 +460,11 @@ trait Crudable
 
         if ($request->ajax()) {
             return $this->response
+                ->notifyError($form_component->translate('text.form-error'))
                 ->replace($form_component->getDomId('fieldset'), $form_component->fetch('include.fieldset'))
                 ->get();
         } else {
-            // @TODO: hotfixed, you can do better
+            // @todo: hotfixed, you can do better
             if ($action == 'update') {
                 $action = 'edit';
             }

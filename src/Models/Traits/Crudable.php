@@ -59,6 +59,28 @@ trait Crudable
         return $singular ? $name : str_plural($name);
     }
 
+    public function resolvePolymorphism($data, $action = null)
+    {
+        foreach ($data as $attribute => $value) {
+            if (substr($attribute, -5) === '_type') {
+                $id_attribute = sprintf('%s_id', substr($attribute, 0, -5));
+
+                if (array_key_exists($id_attribute, $data)) {
+                    $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
+
+                    if (!method_exists($this, $method)) {
+                        throw new \InvalidArgumentException(sprintf('Model [%s] has no [%s] method', (new \ReflectionClass($this))->getName(), $method));
+                    }
+
+                    $this->$attribute = $this->$method();
+                    $this->$id_attribute = $data[$id_attribute];
+                }
+            }
+        }
+
+        return $this;
+    }
+
     public function fillRelationships($data, $action = null)
     {
         foreach ($this->getRelationshipMethods() as $method) {

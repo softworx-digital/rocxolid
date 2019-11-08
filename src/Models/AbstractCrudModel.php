@@ -22,42 +22,49 @@ class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchabl
     use HasTitleColumn;
     use HasUserAttributes;
     use AutocompleteSearchableTrait;
+
     /**
      * Attribute to use for parent's position.
      *
      * @var string
      */
     const POSITION_COLUMN = 'model_attribute_position';
+
     /**
      * Flag if model instances can be user deleted.
      *
      * @var bool
      */
     protected static $can_be_deleted = true;
+
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    //protected $hidden = [];
+    // protected $hidden = [];
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    //protected $fillable = [];
+    // protected $fillable = [];
+
     /**
      * Model relationship methods.
      *
      * @var array
      */
-    //protected $relationships = [];
+    // protected $relationships = [];
+
     /**
      * Model extra attributes for special forms.
      *
      * @var array
      */
     protected $extra = [];
+
     /**
      * Model system attributes - not to be shown in model viewer.
      *
@@ -72,4 +79,20 @@ class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchabl
         'updated_by',
         'deleted_by',
     ];
+
+    /**
+     * Date attributes.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    public function getAttributeViewValue($attribute)
+    {
+        return $this->$attribute;
+    }
 }

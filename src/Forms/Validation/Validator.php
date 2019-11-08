@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Validation;
 
+use Carbon\Carbon;
 use Illuminate\Validation\Validator as IlluminateValidator;
 
 class Validator extends IlluminateValidator
@@ -35,5 +36,15 @@ class Validator extends IlluminateValidator
     public function validateClassExists(string $attribute, $value, array $parameters): bool
     {
         return class_exists($value);
+    }
+
+    public function validateAge(string $attribute, $value, array $parameters): bool
+    {
+        return Carbon::now()->diff(Carbon::make($value))->y >= ($parameters[0] ?? 0);
+    }
+
+    public function replaceAge(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':age', implode(' / ', $parameters), $message);
     }
 }

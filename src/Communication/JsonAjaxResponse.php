@@ -146,6 +146,51 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
+    public function notifyNotice(string $text): AjaxResponse
+    {
+        return $this->notify($text, 'notice');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notifyInfo(string $text): AjaxResponse
+    {
+        return $this->notify($text, 'info');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notifySuccess(string $text): AjaxResponse
+    {
+        return $this->notify($text, 'success');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notifyError(string $text): AjaxResponse
+    {
+        return $this->notify($text, 'error');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function notify(string $text, string $type = null): AjaxResponse
+    {
+        $this->message_bag->add('notify', [
+            'text' => $text,
+            'type' => $type,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function redirect(string $url): AjaxResponse
     {
         $this->message_bag->add('redirect', $url);

@@ -8,8 +8,8 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Softworx\RocXolid\CrudRouter;
 
-// @TODO: documentation
-// @TODO: use for another rocXolid packages
+// @todo: documentation
+// @todo: use for another rocXolid packages
 class AbstractServiceProvider extends IlluminateServiceProvider
 {
     /**

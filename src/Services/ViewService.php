@@ -19,7 +19,7 @@ class ViewService implements ViewServiceContract
     /**
      * Directory name placeholder for general views.
      */
-    const GENERIC_VIEW_DIRECTORY = '_generic'; // @TODO: put his into config
+    const GENERIC_VIEW_DIRECTORY = '_generic'; // @todo: put his into config
 
     protected $namespace_depth = [
         'model' => 'Models',

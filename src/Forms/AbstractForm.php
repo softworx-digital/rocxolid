@@ -398,6 +398,18 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         return $input;
     }
 
+    public function getInputFieldValue($field, $validate = false)
+    {
+        $param = sprintf('%s.%s', FormField::SINGLE_DATA_PARAM, $field);
+
+        if ($validate && !$this->getRequest()->has($param))
+        {
+            throw new \InvalidArgumentException(sprintf('Undefined [%s] param in request', $param));
+        }
+
+        return $this->getRequest()->input($param, null);
+    }
+
     public function setFieldsRequestInput(array $input = null): Form
     {
         $input = new Collection($input ?: $this->getInput());

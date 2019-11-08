@@ -5,7 +5,7 @@ namespace Softworx\RocXolid;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
-// use Vsch\TranslationManager\Translator; // @TODO: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
+// use Vsch\TranslationManager\Translator; // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 
 /**
  * rocXolid package service provider.
@@ -84,6 +84,7 @@ class ServiceProvider extends IlluminateServiceProvider
         // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="config" (--force to overwrite)
         $this->publishes([
             __DIR__ . '/../config/main.php' => config_path('rocXolid/main.php'),
+            __DIR__ . '/../config/validation.php' => config_path('rocXolid/validation.php'),
         ], 'config');
 
         /*
@@ -127,7 +128,7 @@ class ServiceProvider extends IlluminateServiceProvider
             Services\Contracts\ViewService::class,
             Services\ViewService::class
         );
-        // @TODO: doesn't work
+        // @todo: doesn't work
         $this->app->singleton(
             Illuminate\Contracts\Debug\ExceptionHandler::class,
             Exceptions\Handler::class
@@ -138,7 +139,7 @@ class ServiceProvider extends IlluminateServiceProvider
             Communication\JsonAjaxResponse::class
         );
 
-        // @TODO: use some kind of form service to build and get forms, the same for tables (and columns)
+        // @todo: use some kind of form service to build and get forms, the same for tables (and columns)
         /*
         $this->app->singleton(Services\Contracts\FormService::class, function ($app)
         {

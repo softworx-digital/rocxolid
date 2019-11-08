@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Forms;
 
 use DB;
+use Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 // contracts
@@ -204,7 +205,27 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             }
         }
 
-        return $this->adjustFieldsDefinition($this->fields);
+        // @todo: "hotfixed", you can do better
+        $fields = $this->fields;
+
+        $fields = $this->adjustFieldsDefinition($fields);
+        $fields = $this->adjustFieldsValidationDefinition($fields);
+
+        return $fields;
+    }
+
+    // @todo: "hotfixed", you can do better
+    protected function adjustFieldsValidationDefinition($fields)
+    {
+        foreach ($fields as $field_name => &$field_definition) {
+            $rules_config_key = sprintf('rocXolid.validation.%s.%s.rules', get_class($this->getModel()), $field_name);
+
+            if (Config::has($rules_config_key)) {
+                $field_definition['options']['validation']['rules'] = Config::get($rules_config_key);
+            }
+        }
+
+        return $fields;
     }
 
     protected function getModelAttributes(): Collection

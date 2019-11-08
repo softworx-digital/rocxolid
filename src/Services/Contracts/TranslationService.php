@@ -18,7 +18,8 @@ interface TranslationService
      *
      * @param Translatable $component Component to get translation for.
      * @param string $key Translation key to translate.
+     * @param bool $use_raw_key Flag to use raw or transform the key by the Translatable.
      * @return string
      */
-    public function getTranslation(Translatable $component, string $key): string;
+    public function getTranslation(Translatable $component, string $key, bool $use_raw_key = false): string;
 }
