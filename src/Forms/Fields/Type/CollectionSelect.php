@@ -53,6 +53,10 @@ class CollectionSelect extends AbstractFormField
 
     public function getCollection()
     {
+        if (empty($this->collection)) {
+            return collect([]);
+        }
+
         return $this->collection;
     }
 

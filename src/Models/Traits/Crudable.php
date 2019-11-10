@@ -232,6 +232,10 @@ trait Crudable
                 return true;
             }
 
+            if ($this->allowPermissionException($user, $method_group, $permission)) {
+                return true;
+            }
+
             foreach ($user->permissions as $extra_permission) {
                 if (($extra_permission->controller_class === $controller_class) && ($extra_permission->controller_method_group === $method_group)) {
                     return true;
@@ -251,6 +255,12 @@ trait Crudable
             }
         }
 
+        return false;
+    }
+
+    // @todo: type hints
+    protected function allowPermissionException($user, $method_group, $permission)
+    {
         return false;
     }
 

@@ -113,4 +113,15 @@ trait OptionsSetter
 
         return $this;
     }
+
+    protected function setShowBackButton($param): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'show-back-button' => $param
+            ]
+        ]);
+
+        return $this;
+    }
 }

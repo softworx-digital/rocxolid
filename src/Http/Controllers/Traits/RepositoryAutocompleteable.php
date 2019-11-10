@@ -14,6 +14,8 @@ trait RepositoryAutocompleteable
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
         $model = $id ? $repository->find($id) : $repository->getModel();
+        // @todo: the repository calls the controller to get the model, which can be different from
+        // what is needed (eg. user registration controller vs. city_id)
         $model->setQueryString($request->get('q', null));
 
         $this->setModel($model);

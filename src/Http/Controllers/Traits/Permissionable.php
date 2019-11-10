@@ -3,6 +3,8 @@
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use Auth;
+// rocXolid contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Enables object to restrict user access to certain actions.
@@ -13,16 +15,26 @@ use Auth;
  */
 trait Permissionable
 {
-    public function userCan(string $action): bool
+    public function userCan(string $action, Crudable $model = null): bool
     {
         if (!config('rocXolid.admin.auth.check_permissions', false)) {
             return true;
+        }
+
+         // @todo: hotfixed, you can do better
+        switch ($action) {
+            case 'autocomplete':
+                return true;
         }
 
         $permission = sprintf('\%s.%s', get_class($this), $action);
 
         if ($user = Auth::guard('rocXolid')->user()) {
             if (!config('rocXolid.admin.auth.check_permissions_root', false) && $user->isRoot()) {
+                return true;
+            }
+
+            if ($this->allowPermissionException($user, $action, $permission, $model)) {
                 return true;
             }
 
@@ -45,6 +57,12 @@ trait Permissionable
             }
         }
 
+        return false;
+    }
+
+    // @todo: type hints
+    protected function allowPermissionException($user, $action, $permission, Crudable $model = null)
+    {
         return false;
     }
 }

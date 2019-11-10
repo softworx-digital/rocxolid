@@ -14,6 +14,6 @@ trait Actionable
     {
         $action = sprintf('\%s@%s', get_class($this), $route_action);
 
-        return action($action, $params);
+        return action($action, ...$params);
     }
 }

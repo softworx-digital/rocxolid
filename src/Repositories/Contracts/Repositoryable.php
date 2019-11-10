@@ -20,6 +20,4 @@ interface Repositoryable
     public function hasRepositoryAssigned(string $param = self::REPOSITORY_PARAM): bool;
 
     public function hasRepositoryClass(string $param = self::REPOSITORY_PARAM): bool;
-
-    public function getRepositoryComponent(Repository $repository): RepositoryableComponent;
 }

@@ -43,7 +43,7 @@ trait ComponentOptionsSetter
 
     protected function setLabel($label): Filter
     {
-        return $this->setComponentOptions('label', [ 'title' => $this->translate($label['title']) ]);
+        return $this->setComponentOptions('label', [ 'title' => $label['title'] ]);
     }
 
     protected function setDisabled(): Filter

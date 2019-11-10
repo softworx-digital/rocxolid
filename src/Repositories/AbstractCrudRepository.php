@@ -170,10 +170,15 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function getModel(): CrudableModel
     {
         if (is_null($this->model)) {
-            $this->model = App::make($this->getController()->getModelClass());
+            $this->model = $this->makeModel();
         }
 
         return $this->model;
+    }
+
+    public function makeModel(): CrudableModel
+    {
+        return App::make($this->getController()->getModelClass());
     }
 
     public function getQuery(): EloquentBuilder

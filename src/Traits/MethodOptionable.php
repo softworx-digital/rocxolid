@@ -16,7 +16,7 @@ trait MethodOptionable
         $method = Str::camel(sprintf('set_%s', str_replace('-', '_', $option)));
 
         if (!method_exists($this, $method)) {
-            throw new \InvalidArgumentException(sprintf('Required method [%s] does not exist in [%s] field [%s]', $method, get_class($this), $this->name));
+            throw new \InvalidArgumentException(sprintf('Required method [%s] does not exist in [%s]', $method, get_class($this)));
         }
 
         $this->$method($value);

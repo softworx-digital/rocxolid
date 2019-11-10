@@ -168,10 +168,13 @@ abstract class AbstractFilter implements Filter, Optionable, Translatable
         return $this->repository;
     }
 
-    public function translate(string $key): string
+    public function translate(string $key, bool $use_raw_key = false): string
     {
+        /*
         $component_class = static::$component_class;
 
         return (new $component_class())->setTableFilter($this)->translate($key);
+        */
+        return __METHOD__ . '@todo';
     }
 }
