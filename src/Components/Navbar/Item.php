@@ -36,7 +36,7 @@ class Item extends AbstractComponent implements NavbarAccessible
 
     public function hasItems()
     {
-        return count($this->items);
+        return !empty($this->items);
     }
 
     public function hasSubItems()

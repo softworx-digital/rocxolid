@@ -4,10 +4,10 @@ namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
-class Switchery extends AbstractFormField
+class CheckboxToggle extends AbstractFormField
 {
     protected $default_options = [
-        'type-template' => 'switchery',
+        'type-template' => 'checkbox-toggle',
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -19,12 +19,17 @@ class Switchery extends AbstractFormField
         'label' => [
             'after' => true,
             'attributes' => [
-                'class' => 'label-fit-height margin-left-5 margin-right-5'
+                'class' => 'label-fit-height margin-left-10 margin-right-5'
             ]
         ],
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control js-switch'
+            'data-toggle' => 'toggle',
+            'data-size' => 'small',
+            'data-width' => '60',
+            'data-style' => 'round',
+            'data-on' => '<i class=\'fa fa-check\'></i>',
+            'data-off' => '<i class=\'fa fa-close\'></i>',
         ],
     ];
 }

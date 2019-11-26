@@ -28,6 +28,7 @@ class CollectionSelect extends AbstractFormField
             'placeholder' => null,
             'class' => 'form-control',
             'data-live-search' => true,
+            'title' => 'select',
         ],
     ];
 

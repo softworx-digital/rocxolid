@@ -47,6 +47,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         $this
             ->loadFormFieldsComponents()
             ->organizeFormFieldsComponents();
+
         $this
             ->loadFormButtonsComponents()
             ->organizeFormButtonsComponents();

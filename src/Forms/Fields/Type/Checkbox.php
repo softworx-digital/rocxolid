@@ -6,8 +6,6 @@ use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
 class Checkbox extends AbstractFormField
 {
-    protected $_is_value_expected = false;
-
     protected $default_options = [
         'type-template' => 'checkbox',
         // field wrapper

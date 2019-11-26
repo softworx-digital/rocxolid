@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Contracts;
 
-// @todo - dodefinovat
+// @todo: finish definition
 interface FormFieldBuilder
 {
     public function addDefinitionFields(Form $form, $definition, $form_fields_order_definition): FormFieldBuilder;

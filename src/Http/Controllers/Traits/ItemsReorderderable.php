@@ -34,7 +34,7 @@ trait ItemsReorderderable
         $model_viewer_component = $this->getModelViewerComponent($model);
 
         return $this->response
-            ->append($model_viewer_component->makeDomId('output-icon'), (new Message())->fetch('input-feedback.success'))
+            ->append($model_viewer_component->getDomId('output-icon'), (new Message())->fetch('input-feedback.success'))
             ->get();
     }
 }

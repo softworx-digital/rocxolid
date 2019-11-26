@@ -26,6 +26,7 @@ use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonToolbar;
 use Softworx\RocXolid\Forms\Fields\Type\Checkbox;
+use Softworx\RocXolid\Forms\Fields\Type\CheckboxToggle;
 use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
 use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 use Softworx\RocXolid\Forms\Fields\Type\Colorpicker;
@@ -68,7 +69,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         Type::GUID          => Input::class,
         Type::BINARY        => Input::class,
         Type::BLOB          => Input::class,
-        Type::BOOLEAN       => Switchery::class,
+        Type::BOOLEAN       => CheckboxToggle::class,
         Type::DATE          => Datepicker::class,
         Type::DATETIME      => DateTimepicker::class,
         Type::DATETIMETZ    => DateTimepicker::class,

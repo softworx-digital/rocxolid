@@ -4,7 +4,6 @@ namespace Softworx\RocXolid\Forms;
 
 use DB;
 use Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 // contracts
 use Softworx\RocXolid\Contracts\Controllable;
@@ -17,17 +16,8 @@ use Softworx\RocXolid\Traits\Controllable as ControllableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
 // fields
-use Softworx\RocXolid\Forms\Fields\Type\Input;
-use Softworx\RocXolid\Forms\Fields\Type\Select;
-use Softworx\RocXolid\Forms\Fields\Type\Switchery;
-use Softworx\RocXolid\Forms\Fields\Type\Radio;
-use Softworx\RocXolid\Forms\Fields\Type\Checkbox;
-use Softworx\RocXolid\Forms\Fields\Type\FormFieldGroupAddable;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonAnchor;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonToolbar;
 // utility
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
@@ -137,6 +127,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         return $this;
     }
 
+    // @todo: really FormableContract?
     public function setHolderProperties(FormableContract $repository): Form
     {
         $this->repository = $repository;

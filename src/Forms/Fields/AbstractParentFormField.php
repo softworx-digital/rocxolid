@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields;
 
+use Illuminate\Support\Arr;
 use Softworx\RocXolid\Contracts\Valueable;
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
@@ -106,7 +107,7 @@ abstract class AbstractParentFormField extends AbstractFormField
      */
     public function getChild($key)
     {
-        return array_get($this->children, $key);
+        return Arr::get($this->children, $key);
     }
 
     /**

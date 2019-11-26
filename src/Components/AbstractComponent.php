@@ -91,9 +91,4 @@ abstract class AbstractComponent implements Renderable, Translatable
     {
         return ViewHelper::domId($this, ...$params);
     }
-
-    protected function makeDomIdHash(...$params): string
-    {
-        return ViewHelper::domIdHash($this, ...$params);
-    }
 }

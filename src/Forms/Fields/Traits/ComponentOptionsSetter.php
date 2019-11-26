@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Traits;
 
+use Illuminate\Support\Str;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 
 trait ComponentOptionsSetter
@@ -75,7 +76,7 @@ trait ComponentOptionsSetter
         $dom_data = [];
 
         foreach ($data as $attribute => $value) {
-            $dom_data[sprintf('data-%s', $attribute)] = $this->processDomDataAttributeValuess($attribute, $value);
+            $dom_data[sprintf('data-%s', $attribute)] = $this->processDomDataAttributeValues($attribute, $value);
         }
 
         return $this->setComponentOptions('attributes', $dom_data);
@@ -83,12 +84,28 @@ trait ComponentOptionsSetter
 
     protected function setComponentOptions($what, $value)
     {
+        $method = sprintf('adjust%sComponentOption', Str::studly($what));
+
         $this->mergeOptions([
             'component' => [
-                $what => $value
+                $what => method_exists($this, $method) ? $this->$method($value) : $value,
             ]
         ]);
 
         return $this;
+    }
+
+    protected function adjustAttributesComponentOption($attributes)
+    {
+        foreach ($attributes as $attribute => &$value)
+        {
+            $method = sprintf('adjust%sComponentAttributeOption', Str::studly($attribute));
+
+            if (method_exists($this, $method)) {
+                $value = $this->$method($value);
+            }
+        }
+
+        return $attributes;
     }
 }

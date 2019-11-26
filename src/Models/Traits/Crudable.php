@@ -200,6 +200,18 @@ trait Crudable
         return $attributes;
     }
 
+    public function isBooleanAttribute($attribute)
+    {
+        // @todo: you can do (maybe) better than checking substring
+        return (substr($attribute, 0, 3) === 'is_');
+    }
+
+    public function isColorAttribute($attribute)
+    {
+        // @todo: you can do (maybe) better than checking substring
+        return (substr($attribute, -5) === 'color');
+    }
+
     public function getRelationshipMethods($except = []): array
     {
         if (!property_exists($this, 'relationships')) {

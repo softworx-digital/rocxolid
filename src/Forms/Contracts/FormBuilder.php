@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Contracts;
 
-// @todo - dodefinovat
+// @todo: finish definition
 interface FormBuilder
 {
 }

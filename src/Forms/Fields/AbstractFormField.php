@@ -205,7 +205,7 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
         return $this;
     }
 
-    // @todo - zrejme inak, zatial takto
+    // @todo: "hotfixed", you can do better
     public function updateComponent($index = 0)
     {
         if ($this->hasErrorMessages($index)) {
@@ -297,7 +297,7 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
     // Forms\Fields\Support\... - navrhnut strukturu
     // resp cele nejako inak - domysliet
     /*
-    protected function processDomDataAttributeValuess($attribute, $value)
+    protected function processDomDataAttributeValues($attribute, $value)
     {
         switch ($attribute)
         {

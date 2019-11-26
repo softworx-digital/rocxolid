@@ -338,7 +338,7 @@ trait Crudable
 
                 $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
 
-                $this->response->replace($form_field_component->makeDomId('files', $field_name), $form_field_component->fetch('include.files'));
+                $this->response->replace($form_field_component->getDomId('files', $field_name), $form_field_component->fetch('include.files'));
             }
         }
 
@@ -366,7 +366,7 @@ trait Crudable
 
                 $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
 
-                $this->response->replace($form_field_component->makeDomId('images', $field_name), $form_field_component->fetch('include.images'));
+                $this->response->replace($form_field_component->getDomId('images', $field_name), $form_field_component->fetch('include.images'));
             }
         }
 

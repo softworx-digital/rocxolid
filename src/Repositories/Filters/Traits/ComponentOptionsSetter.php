@@ -70,7 +70,7 @@ trait ComponentOptionsSetter
         $dom_data = [];
 
         foreach ($data as $attribute => $value) {
-            $dom_data[sprintf('data-%s', $attribute)] = $this->processDomDataAttributeValuess($attribute, $value);
+            $dom_data[sprintf('data-%s', $attribute)] = $this->processDomDataAttributeValues($attribute, $value);
         }
 
         return $this->setComponentOptions('attributes', $dom_data);

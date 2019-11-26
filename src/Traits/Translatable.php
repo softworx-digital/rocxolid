@@ -109,6 +109,7 @@ trait Translatable
 
         if (!$this->hasTranslationParam()) {
             throw new \UnderflowException(sprintf('No translation param set in [%s]', get_class($this)));
+
         }
 
         return $this->translation_param;
