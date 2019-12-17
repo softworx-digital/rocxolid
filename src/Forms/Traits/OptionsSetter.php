@@ -114,6 +114,17 @@ trait OptionsSetter
         return $this;
     }
 
+    protected function setScripts($scripts): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'scripts' => $scripts
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setShowBackButton($param): Form
     {
         $this->mergeOptions([

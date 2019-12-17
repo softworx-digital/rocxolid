@@ -75,7 +75,7 @@ class CollectionTags extends AbstractFormField
             {
                 $this->setValue(new Collection($this->getFieldValue($index)));
             }
-    
+
             return  $this->getFieldValue($index)->contains($value);
         }
     */

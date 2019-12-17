@@ -6,14 +6,16 @@ use Illuminate\Support\Collection;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
-class CollectionRadioList extends AbstractFormField
+class CollectionRadioListOtherSelect extends AbstractFormField
 {
     protected $show_null_option = false;
 
     protected $collection = null;
 
+    protected $select_collection = null;
+
     protected $default_options = [
-        'type-template' => 'collection-radio-list',
+        'type-template' => 'collection-radio-list-other-select',
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -55,6 +57,35 @@ class CollectionRadioList extends AbstractFormField
         return $this->collection;
     }
 
+    public function setSelectCollection($option)
+    {
+        if ($option instanceof Collection) {
+            $this->select_collection = $option;
+        } else {
+            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $query = $model::query();
+
+            if (isset($option['filters'])) {
+                foreach ($option['filters'] as $filter) {
+                    $query = (new $filter['class']())->apply($query, $model, $filter['data']);
+                }
+            }
+
+            $this->select_collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
+        }
+
+        return $this;
+    }
+
+    public function getSelectCollection()
+    {
+        if (empty($this->select_collection)) {
+            return collect([]);
+        }
+
+        return $this->select_collection;
+    }
+
     public function setExceptAttributes($attributes)
     {
         $this->setComponentOptions('except-attributes', $attributes);
@@ -69,5 +100,10 @@ class CollectionRadioList extends AbstractFormField
         } else {
             return sprintf('%s[%s]', self::SINGLE_DATA_PARAM, $this->name);
         }
+    }
+
+    public function isSelectFieldValue($value)
+    {
+        return $this->select_collection->has($value);
     }
 }

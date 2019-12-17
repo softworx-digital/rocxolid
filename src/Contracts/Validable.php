@@ -25,6 +25,16 @@ interface Validable
     public function validate(array $validation_rules = [], array $messages = []): Validable;
 
     /**
+     * Validate grouped data.
+     *
+     * @param string $group Group to validate.
+     * @param array $validation_rules Additional rules to be used for validation.
+     * @param array $messages Additional error messages to be used as a result of unsuccessful validation.
+     * @return \Softworx\RocXolid\Contracts\Validable
+     */
+    public function validateGroup(string $group, array $validation_rules = [], array $messages = []): Validable;
+
+    /**
      * Set the data to be validated.
      *
      * @param array $validation_data Data to be validated

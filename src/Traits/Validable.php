@@ -30,13 +30,25 @@ trait Validable
 
     public function validate(array $validation_rules = [], array $messages = []): ValidableContract
     {
-        // @todo: get the validation rules and messages from outside, do not extract it from the form fields
         $validation = $this->getRequest()->getFieldsValidation($this->getFormFields());
 
         $rules = array_merge($validation['rules'], $validation_rules);
         $messages = array_merge($validation['error_messages'], $messages);
 
-        $this->validator = $this->getValidatorFactory()->make($this->getValidationData(), $rules, $messages);
+        $this->validator = $this->getValidatorFactory()->make($this->getValidationData($validation), $rules, $messages);
+        $this->validator->setAttributeNames($validation['attributes']);
+
+        return $this;
+    }
+
+    public function validateGroup(string $group, array $validation_rules = [], array $messages = []): ValidableContract
+    {
+        $validation = $this->getRequest()->getFieldsValidation($this->getFormFields($group));
+
+        $rules = array_merge($validation['rules'], $validation_rules);
+        $messages = array_merge($validation['error_messages'], $messages);
+
+        $this->validator = $this->getValidatorFactory()->make($this->getRequest()->only($validation['attributes']), $rules, $messages);
         $this->validator->setAttributeNames($validation['attributes']);
 
         return $this;
@@ -52,6 +64,7 @@ trait Validable
     public function getValidationData(): array
     {
         if (is_null($this->validation_data)) {
+            // @todo: this could probably be $this->getRequest()->only($validation['attributes'])
             $this->validation_data = $this->getRequest()->all();
         }
 
@@ -139,7 +152,7 @@ trait Validable
      */
     public function isValid(): bool
     {
-        if (!is_null($this->validator)) {
+        if (!$this->wasValidated()) {
             $this->validate();
         }
 

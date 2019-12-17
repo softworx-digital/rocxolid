@@ -65,6 +65,21 @@ class CrudRouterService
             'uses' => $this->controller . '@formReload',
         ]);
 
+        Route::post($this->name . '/form-reload/group/{group}/{id?}', [
+            'as' => 'crud.' . $this->name . '.formReloadGroup',
+            'uses' => $this->controller . '@formReloadGroup',
+        ]);
+
+        Route::post($this->name . '/form-validate/group/{group}/{id?}', [
+            'as' => 'crud.' . $this->name . '.formValidateGroup',
+            'uses' => $this->controller . '@formValidateGroup',
+        ]);
+
+        Route::post($this->name . '/form-validate/field/{field}/{id?}', [
+            'as' => 'crud.' . $this->name . '.formValidateField',
+            'uses' => $this->controller . '@formValidateField',
+        ]);
+
         Route::post($this->name . '/{id}/{relation}/reorder', [
             'as' => 'crud.' . $this->name . '.reorder',
             'uses' => $this->controller . '@reorder',
@@ -103,7 +118,7 @@ class CrudRouterService
 
     /**
      * Register resource CRUD routes after all.
-     * 
+     *
      * @return void
      */
     public function __destruct()

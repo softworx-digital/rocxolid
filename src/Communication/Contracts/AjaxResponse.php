@@ -2,6 +2,8 @@
 
 namespace Softworx\RocXolid\Communication\Contracts;
 
+use Illuminate\Support\Collection;
+
 /**
  * Represents AJAX response to be handled by the front-end.
  *
@@ -11,6 +13,14 @@ namespace Softworx\RocXolid\Communication\Contracts;
  */
 interface AjaxResponse
 {
+    /**
+     * Instruct the response to process an error on consumer side.
+     *
+     * @param \Illuminate\Support\Collection $errors
+     * @return \Softworx\RocXolid\Communication\Contracts\AjaxResponse
+     */
+    public function errors(Collection $errors): AjaxResponse;
+
     /**
      * Instruct the response receiver to replace an HTML element content.
      *

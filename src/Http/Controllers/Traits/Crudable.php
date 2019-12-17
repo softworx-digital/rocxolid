@@ -22,12 +22,13 @@ use Softworx\RocXolid\Components\AbstractActiveComponent;
 use Softworx\RocXolid\Components\General\Message;
 use Softworx\RocXolid\Components\Forms\FormField;
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
+use Softworx\RocXolid\Components\Forms\FormFieldGroup as FormFieldGroupComponent;
 // @todo: try to separate this from general trait
 use Softworx\RocXolid\Common\Repositories\File\Repository as FileRepository;
 use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
 
 /**
- *
+ * @todo: split into separate traits each having (ideally) one method for given action
  */
 trait Crudable
 {
@@ -69,6 +70,10 @@ trait Crudable
 
     /**
      * Reload Create/Update form to dynamically load related field values.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param mixed $id
+     * @todo: verify if $int can be type hinted as int
      */
     public function formReload(CrudRequest $request, $id = null)//: Response
     {
@@ -78,7 +83,7 @@ trait Crudable
 
         $this->setModel($model);
 
-        // @todo: refactor to clearly identify the form we want to get, not artifically like this
+        // @todo: refactor to clearly identify the form we want to get, not artificially like this
         // put form->options['route-action'], or full identification data into the request
         // this can serve as a fallback
         if ($model->exists) {
@@ -103,8 +108,130 @@ trait Crudable
     }
 
     /**
+     * Reload Create/Update form to dynamically load related field values and return given form field group.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param string $group
+     * @param mixed $id
+     * @todo: verify if $int can be type hinted as int
+     */
+    public function formReloadGroup(CrudRequest $request, string $group, $id = null)//: Response
+    {
+        $repository = $this->getRepository($this->getRepositoryParam($request));
+
+        $model = $id ? $repository->findOrFail($id) : $repository->getModel();
+
+        $this->setModel($model);
+
+        // @todo: refactor to clearly identify the form we want to get, not artificially like this
+        // put form->options['route-action'], or full identification data into the request
+        // this can serve as a fallback
+        if ($model->exists) {
+            $form = $repository
+                ->getForm($this->getFormParam($request, 'update'))
+                    ->setFieldsRequestInput($request->input())
+                    ->adjustUpdateBeforeSubmit($request);
+        } else {
+            $form = $repository
+                ->getForm($this->getFormParam($request, 'create'))
+                    ->setFieldsRequestInput($request->input())
+                    ->adjustCreateBeforeSubmit($request);
+        }
+
+        $form_field_group = $form->getFormFieldGroup($group);
+
+        // this is needed for composing the fields
+        $form_component = CrudFormComponent::build($this, $this)
+            ->setForm($form)
+            ->setRepository($repository);
+
+        // this is needed for DOM id
+        $form_field_group_component = FormFieldGroupComponent::build($this, $this)
+            ->setFormFieldGroup($form_field_group);
+
+        $this->response->replace(
+            $form_field_group_component->getDomId($group),
+            $form_component->fetch('include.fieldset-only-group', ['group' => $group])
+        );
+
+        return $this->response->get();
+    }
+
+    /**
+     * Validate group of Create/Update form fields.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param string $group
+     * @param mixed $id
+     * @todo: verify if $int can be type hinted as int
+     * @todo: ugly approach
+     */
+    public function formValidateGroup(CrudRequest $request, string $group, $id = null)//: Response
+    {
+        $repository = $this->getRepository($this->getRepositoryParam($request));
+
+        $model = $id ? $repository->findOrFail($id) : $repository->getModel();
+
+        $this->setModel($model);
+
+        // @todo: refactor to clearly identify the form we want to get, not artificially like this
+        // put form->options['route-action'], or full identification data into the request
+        // this can serve as a fallback
+        if ($model->exists) {
+            $form = $repository
+                ->getForm($this->getFormParam($request, 'update'))
+                    ->setFieldsRequestInput($request->input())
+                    ->adjustUpdateBeforeSubmit($request);
+        } else {
+            $form = $repository
+                ->getForm($this->getFormParam($request, 'create'))
+                    ->setFieldsRequestInput($request->input())
+                    ->adjustCreateBeforeSubmit($request);
+        }
+
+        // @todo: najprv getnutie groupy z formu
+        // @todo: ak sa da, tak nie submit formularu, ale len validaciu groupy
+        $form->submitGroup($group);
+
+        $form_field_group = $form->getFormFieldGroup($group);
+
+        // this is needed for composing the fields
+        $form_component = CrudFormComponent::build($this, $this)
+            ->setForm($form)
+            ->setRepository($repository);
+
+        // this is needed for DOM id
+        $form_field_group_component = FormFieldGroupComponent::build($this, $this)
+            ->setFormFieldGroup($form_field_group);
+
+        $this->response->replace(
+            $form_field_group_component->getDomId($group),
+            $form_component->fetch('include.fieldset-only-group', ['group' => $group])
+        );
+
+        if (!$form->isValid()) {
+            $this->response->errors(collect($form->getErrors()->all()));
+        }
+
+        return $this->response->get();
+    }
+
+    /**
+     * Validate single Create/Update form field.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param string $group
+     * @param mixed $id
+     * @todo: verify if $int can be type hinted as int
+     */
+    public function formValidateField(CrudRequest $request, string $field, $id = null)//: Response
+    {
+        dd(__METHOD__, 'INCOMPLETE');
+    }
+
+    /**
      * Show model create screen.
-     * 
+     *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest
      */
     public function create(CrudRequest $request)
@@ -142,7 +269,7 @@ trait Crudable
 
     /**
      * Store the created model.
-     * 
+     *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest
      */
     public function store(CrudRequest $request)//: Response
@@ -166,7 +293,7 @@ trait Crudable
 
     /**
      * Show model edit screen.
-     * 
+     *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest
      */
     public function edit(CrudRequest $request, $id)
@@ -204,7 +331,7 @@ trait Crudable
 
     /**
      * Update the edited model.
-     * 
+     *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest
      */
     public function update(CrudRequest $request, $id)//: Response
@@ -459,10 +586,23 @@ trait Crudable
         ];
 
         if ($request->ajax()) {
-            return $this->response
-                ->notifyError($form_component->translate('text.form-error'))
-                ->replace($form_component->getDomId('fieldset'), $form_component->fetch('include.fieldset'))
-                ->get();
+            // @todo: refactor - some validation, etc...
+            if ($request->has('_form_field_group')) {
+                $form_field_group_component = $form_component->getFormFieldGroupsComponents()->get($request->input('_form_field_group'));
+
+                return $this->response
+                    ->notifyError($form_component->translate('text.form-error'))
+                    ->replace(
+                        $form_field_group_component->getDomId($form_field_group_component->getFormFieldGroup()->getName()),
+                        $form_field_group_component->fetch($form_field_group_component->getOption('template', $form_field_group_component->getDefaultTemplateName()), ['show' => true])
+                    )
+                    ->get();
+            } else {
+                return $this->response
+                    ->notifyError($form_component->translate('text.form-error'))
+                    ->replace($form_component->getDomId('fieldset'), $form_component->fetch('include.fieldset'))
+                    ->get();
+            }
         } else {
             // @todo: hotfixed, you can do better
             if ($action == 'update') {

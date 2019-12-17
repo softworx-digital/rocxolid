@@ -39,8 +39,13 @@ class FormFieldGroup extends AbstractOptionableComponent implements ComponentFor
         return $this;
     }
 
-    public function getFormFields()
+    public function getFormFields(): array
     {
         return $this->form_fields;
+    }
+
+    public function getTranslationKey(string $key): string
+    {
+        return sprintf('legend.%s', $key);
     }
 }

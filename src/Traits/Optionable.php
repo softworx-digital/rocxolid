@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Traits;
 
+use Log;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
@@ -17,7 +18,7 @@ trait Optionable
 {
     /**
      * @var \Illuminate\Support\Collection Options container.
-     * 
+     *
      * Has to be protected to enable direct override in specific class.
      */
     protected $options;
@@ -97,7 +98,7 @@ trait Optionable
     {
         $options = $this->getOptions()->toArray();
 
-        if (Arr::has($options, $option)) {
+        if ($this->hasOption($option)) {
             Arr::forget($options, $option);
         } elseif ($report) {
             throw new \UnderflowException(sprintf('Option [%s] is not set', $option));
@@ -121,6 +122,8 @@ trait Optionable
      */
     public function hasOption(string $option): bool
     {
-        return $this->getOptions()->has($option);
+        $options = $this->getOptions()->toArray();
+
+        return Arr::has($options, $option);
     }
 }

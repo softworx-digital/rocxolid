@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Modellable;
@@ -76,25 +77,29 @@ abstract class AbstractCrudController extends AbstractController implements Perm
     /**
      * Dynamically create route for given controller action.
      * Set model as a first parameter to the route if given.
-     * 
+     *
      * @param string $route_action
      * @return string
      */
-    public function getRoute(string $route_action, ...$params):string
+    public function getRoute(string $route_action, ...$params): string
     {
         $action = sprintf('\%s@%s', get_class($this), $route_action);
-        $model = array_shift($params);
+        $action_params = [];
 
-        if (!empty($params)) {
-            $params = reset($params);
-        }
+        array_walk($params, function($param) use (&$action_params) {
+            if (is_array($param)) {
+                $action_params += $param;
+            } else {
+                $action_params[] = $param;
+            }
+        });
 
-        return is_null($model) ? action($action, $params) : action($action, [$model] + $params);
+        return action($action, $action_params);
     }
 
     /**
      * Retrieve repository component to show.
-     * 
+     *
      * @param \Softworx\RocXolid\Repositories\Contracts\Repository $repository
      * @return \Softworx\RocXolid\Components\Contracts\Repositoryable
      */
@@ -106,7 +111,7 @@ abstract class AbstractCrudController extends AbstractController implements Perm
 
     /**
      * Retrieve model viewer component to show.
-     * 
+     *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
      */
@@ -119,7 +124,7 @@ abstract class AbstractCrudController extends AbstractController implements Perm
 
     /**
      * Naively guess the translation param for components based on controllers namespace.
-     * 
+     *
      * @return string
      */
     protected function guessTranslationParam(): ?string

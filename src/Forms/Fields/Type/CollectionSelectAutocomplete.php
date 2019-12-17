@@ -2,12 +2,15 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
+use DB;
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 use Softworx\RocXolid\Filters\StartsWith;
 
 class CollectionSelectAutocomplete extends CollectionSelect
 {
+    const LIMIT = 10;
+
     protected $collection_model = null;
 
     protected $collection_model_column = null;
@@ -36,15 +39,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
             'data-live-search' => 'true',
         ],
     ];
-    /*
-        protected function init()
-        {
-    dump($this->getOptions());
-            $this->setOption('attributes.data-abs-ajax-url', $this->getForm()->getController()->getRoute('autocomplete', $this->getForm()->getModel(), ['f' => $this->getName()]));
-    dd($this->getOptions());
-            return $this;
-        }
-    */
+
     public function setCollection($option)
     {
         if ($option instanceof Collection) {
@@ -73,11 +68,20 @@ class CollectionSelectAutocomplete extends CollectionSelect
                 $query = (new $filter['class']())->apply($query, $model, $filter['data']);
             }
 
-            $this->collection = $query->take(10)->pluck(sprintf('%s.%s', $this->collection_model->getTable(), $this->collection_model_column), sprintf('%s.id', $this->collection_model->getTable()));
+            $this->collection = $query->take(static::LIMIT)->pluck(
+                sprintf('%s.%s', $this->collection_model->getTable(),
+                $this->collection_model_column),
+                sprintf('%s.id', $this->collection_model->getTable())
+            );
         } else {
             $value = (($this->getValue() instanceof Collection) && $this->getValue()->isEmpty()) ? null : $this->getValue();
 
-            $this->collection = $this->collection_model->where(sprintf('%s.id', $this->collection_model->getTable()), $value)->take(10)->pluck(sprintf('%s.%s', $this->collection_model->getTable(), $this->collection_model_column), sprintf('%s.id', $this->collection_model->getTable()));
+            $this->collection = $this->collection_model->where(sprintf('%s.id', $this->collection_model->getTable()), $value)->take(static::LIMIT)
+                ->pluck(
+                    sprintf('%s.%s', $this->collection_model->getTable(),
+                    $this->collection_model_column),
+                    sprintf('%s.id', $this->collection_model->getTable())
+                );
         }
 
         if (!is_null($this->collection_model_method) && method_exists($this->collection_model, $this->collection_model_method)) {

@@ -17,6 +17,14 @@ trait IsContained
 
     private $_containee_pivot_data = null;
 
+    /**
+     * @override
+     */
+    public function resolvePolymorphism($data, $action = null)
+    {
+        return $this;
+    }
+
     // @todo - toto hotfix sem, inac spravit zrejme viac tried - lepsiu arch pageelement x container x containee kombinacii
     public function containeePagesWhereVisible(): Collection
     {

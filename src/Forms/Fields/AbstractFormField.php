@@ -98,6 +98,7 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
             ->setType($type)
             ->setForm($form)
             ->setParent($parent)
+            ->setImplicitOptions()
             ->setOptions($options)
             ->init();
     }
@@ -141,6 +142,11 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
         return $this;
     }
 
+    protected function setImplicitOptions(): FormField
+    {
+        return $this;
+    }
+
     /**
      * Get system name of the field.
      *
@@ -163,7 +169,7 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
 
     /**
      * Check if the field component is hidden.
-     * 
+     *
      * @return bool
      */
     public function isHidden(): bool

@@ -64,14 +64,22 @@ trait FormFieldable
 
         return $this;
     }
-
-    public function getFormFields(): Collection
+//////////////////////////// @TODO: subject to change
+    public function getFormFields($group_name = null): Collection
     {
         if (is_null($this->_form_fields)) {
             $this->_form_fields = new Collection();
         }
 
-        return $this->_form_fields;
+        if (!is_null($group_name)) {
+            $form_fields = $this->_form_fields->filter(function ($form_field, $key) use ($group_name) {
+                return $form_field->hasOption('component.group') && ($form_field->getOption('component.group') === $group_name);
+            });
+        } else {
+            $form_fields = $this->_form_fields;
+        }
+
+        return $form_fields;
     }
 
     public function reorderFormFields($order_definition): FormFieldableContract

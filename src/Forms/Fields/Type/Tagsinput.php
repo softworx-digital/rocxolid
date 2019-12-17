@@ -2,13 +2,12 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use Carbon\Carbon;
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
-class Datepicker extends AbstractFormField
+class Tagsinput extends AbstractFormField
 {
     protected $default_options = [
-        'type-template' => 'datepicker',
+        'type-template' => 'text',
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -20,12 +19,8 @@ class Datepicker extends AbstractFormField
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control'
+            'class' => 'form-control',
+            'data-role' => 'tagsinput',
         ],
     ];
-
-    protected function adjustValueBeforeSet($value)
-    {
-        return $value ? Carbon::parse($value)->format('Y-m-d') : null;
-    }
 }

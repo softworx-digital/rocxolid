@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Communication;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Softworx\RocXolid\Communication\Contracts\AjaxResponse;
 
@@ -27,6 +28,16 @@ class JsonAjaxResponse implements AjaxResponse
     public function __construct(MessageBag $message_bag)
     {
         $this->message_bag = $message_bag;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function errors(Collection $errors): AjaxResponse
+    {
+        $this->message_bag->add('errors', $errors);
+
+        return $this;
     }
 
     /**

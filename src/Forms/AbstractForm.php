@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid\Forms;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 // general contracts
 use Softworx\RocXolid\Contracts\Paramable;
 use Softworx\RocXolid\Contracts\Optionable;
@@ -46,78 +45,92 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
     use RequestableTrait;
     use TranslatableTrait;
     use ValidableTrait;
+
     /**
      * @var FormBuilder
      */
     private $form_builder = null;
+
     /**
      * @var FormFieldBuilder
      */
     private $form_field_builder = null;
+
     /**
      * @var FormFieldFactory
      */
     private $form_field_factory = null;
+
     /**
      * Flag to show validation errors.
      *
      * @var bool
      */
     private $show_field_errors = true;
+
     /**
      * Enable html5 validation.
      *
      * @var bool
      */
     private $browser_validation_enabled = true;
+
     /**
      * Form is beign rebuild flag.
      *
      * @var bool
      */
     private $is_rebuilding = false;
+
     /**
      * Flag whether the form has been already composed - form fields turned into form fields components.
      *
      * @var bool
      */
     private $is_composed = false;
+
     /**
      * Flag whether the form has been submitted.
      *
      * @var bool
      */
     private $is_submitted = false;
+
     /**
      * Field groups definition.
      *
      * @var bool|array
      */
     protected $fieldgroups = false;
+
     /**
      * Fields definition.
      *
      * @var bool|array
      */
     protected $fields = false;
+
     /**
      * Button toolbars definition.
      *
      * @var bool|array
      */
     protected $buttontoolbars = false;
+
     /**
      * Button groups definition.
      *
      * @var bool|array
      */
     protected $buttongroups = false;
+
     /**
      * Buttons definition.
      *
      * @var bool|array
      */
     protected $buttons = false;
+
     /**
      * protected $fields_order = [
      *     'field-1',
@@ -125,6 +138,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
      * ];
      */
     protected $fields_order = null;
+
     /**
      * protected $buttons_order = [
      *     'button-1',
@@ -173,6 +187,20 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         $this
             ->setSubmitted()
             ->validate()
+            //->setRequestInput() // treba ??
+            ->clearFormFieldsValues()
+            ->setFieldsRequestInput()
+            ->setFieldsErrorsMessages()
+            ->setFieldsAfterSubmit();
+
+        return $this;
+    }
+
+    public function submitGroup($group): Form
+    {
+        $this
+            ->setSubmitted()
+            ->validateGroup($group)
             //->setRequestInput() // treba ??
             ->clearFormFieldsValues()
             ->setFieldsRequestInput()
@@ -412,32 +440,30 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
 
     public function setFieldsRequestInput(array $input = null): Form
     {
-        $input = new Collection($input ?: $this->getInput());
+        $input = collect($input ?: $this->getInput());
 
         if ($input->has(FormField::SINGLE_DATA_PARAM)) {
-            $_input = new Collection($input->get(FormField::SINGLE_DATA_PARAM));
-            $_input->each(function ($value, $name) {
-                if ($this->hasFormField($name)) {
-                    $this
-                        ->getFormField($name)
+            collect($input->get(FormField::SINGLE_DATA_PARAM))
+                ->each(function ($value, $name) {
+                    if ($this->hasFormField($name)) {
+                        $this->getFormField($name)
                             ->setValue($value)
                             ->updateParent();
-                }
-            });
+                    }
+                });
         }
 
         if ($input->has(FormField::ARRAY_DATA_PARAM)) {
-            $_input = new Collection($input->get(FormField::ARRAY_DATA_PARAM));
-            $_input->each(function ($groupdata, $index) {
-                $groupdata = new Collection($groupdata);
-                $groupdata->each(function ($value, $name) use ($index) {
-                    if ($this->hasFormField($name)) {
-                        $this
-                            ->getFormField($name)
-                                ->setValue($value, $index)
-                                ->updateParent();
-                    }
-                });
+            collect($input->get(FormField::ARRAY_DATA_PARAM))
+                ->each(function ($groupdata, $index) {
+                    collect($groupdata)
+                        ->each(function ($value, $name) use ($index) {
+                            if ($this->hasFormField($name)) {
+                                $this->getFormField($name)
+                                    ->setValue($value, $index)
+                                    ->updateParent();
+                            }
+                        });
             });
         }
 
@@ -452,29 +478,27 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
             Arr::set($errors, $key, $message);
         }
 
-        $errors = new Collection($errors);
+        $errors = collect($errors);
 
         if ($errors->has(FormField::SINGLE_DATA_PARAM)) {
-            $_errors = new Collection($errors->get(FormField::SINGLE_DATA_PARAM));
-            $_errors->each(function ($messages, $name) {
-                $this
-                    ->getFormField($name)
+            collect($errors->get(FormField::SINGLE_DATA_PARAM))
+                ->each(function ($messages, $name) {
+                    $this->getFormField($name)
                         ->setErrorMessages($messages)
                         ->updateComponent();
-            });
+                });
         }
 
         if ($errors->has(FormField::ARRAY_DATA_PARAM)) {
-            $_errors = new Collection($errors->get(FormField::ARRAY_DATA_PARAM));
-            $_errors->each(function ($grouperrors, $index) {
-                $grouperrors = new Collection($grouperrors);
-                $grouperrors->each(function ($messages, $name) use ($index) {
-                    $this
-                        ->getFormField($name)
-                            ->setErrorMessage($messages, $index)
-                            ->updateComponent($index);
-                });
-            });
+            collect($errors->get(FormField::ARRAY_DATA_PARAM))
+                ->each(function ($grouperrors, $index) {
+                    collect($grouperrors)
+                        ->each(function ($messages, $name) use ($index) {
+                            $this->getFormField($name)
+                                ->setErrorMessage($messages, $index)
+                                ->updateComponent($index);
+                        });
+                    });
         }
 
         return $this;

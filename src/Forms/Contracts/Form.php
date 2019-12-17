@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Forms\Contracts;
 
 // @todo: phpDoc
+// @todo: add missing methods
 interface Form
 {
     public function setHolderProperties(Formable $holder): Form;
