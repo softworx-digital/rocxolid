@@ -68,12 +68,19 @@ trait Crudable
                 if (array_key_exists($id_attribute, $data)) {
                     $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
 
-                    if (!method_exists($this, $method)) {
-                        throw new \InvalidArgumentException(sprintf('Model [%s] has no [%s] method', (new \ReflectionClass($this))->getName(), $method));
-                    }
+                    if (method_exists($this, $method)) {
+                        $this->$attribute = $this->$method();
+                        $this->$id_attribute = $data[$id_attribute];
+                    } else {
+                        $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
 
-                    $this->$attribute = $this->$method();
-                    $this->$id_attribute = $data[$id_attribute];
+                        if (!$type) {
+                            throw new \InvalidArgumentException(sprintf('Cannot resolve polymorph param [%s] for [%s], provide either [%s] method or configure in [rocXolid.main.polymorphism.%s]', $attribute, static::class, $method, $value));
+                        }
+
+                        $this->$attribute = $type;
+                        $this->$id_attribute = $data[$id_attribute];
+                    }
                 }
             }
         }
@@ -144,6 +151,11 @@ trait Crudable
     public function canBeDeleted()
     {
         return static::$can_be_deleted;
+    }
+
+    public function getCrudController()
+    {
+        return App::make($this->getControllerClass());
     }
 
     public function getControllerClass()

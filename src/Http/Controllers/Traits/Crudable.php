@@ -19,7 +19,6 @@ use Softworx\RocXolid\Repositories\Contracts\Repositoryable;
 use Softworx\RocXolid\Forms\AbstractCrudForm as AbstractCrudForm;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractActiveComponent;
-use Softworx\RocXolid\Components\General\Message;
 use Softworx\RocXolid\Components\Forms\FormField;
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 use Softworx\RocXolid\Components\Forms\FormFieldGroup as FormFieldGroupComponent;
@@ -129,13 +128,11 @@ trait Crudable
         if ($model->exists) {
             $form = $repository
                 ->getForm($this->getFormParam($request, 'update'))
-                    ->setFieldsRequestInput($request->input())
-                    ->adjustUpdateBeforeSubmit($request);
+                    ->setFieldsRequestInput($request->input());
         } else {
             $form = $repository
                 ->getForm($this->getFormParam($request, 'create'))
-                    ->setFieldsRequestInput($request->input())
-                    ->adjustCreateBeforeSubmit($request);
+                    ->setFieldsRequestInput($request->input());
         }
 
         $form_field_group = $form->getFormFieldGroup($group);
@@ -180,13 +177,11 @@ trait Crudable
         if ($model->exists) {
             $form = $repository
                 ->getForm($this->getFormParam($request, 'update'))
-                    ->setFieldsRequestInput($request->input())
-                    ->adjustUpdateBeforeSubmit($request);
+                    ->setFieldsRequestInput($request->input());
         } else {
             $form = $repository
                 ->getForm($this->getFormParam($request, 'create'))
-                    ->setFieldsRequestInput($request->input())
-                    ->adjustCreateBeforeSubmit($request);
+                    ->setFieldsRequestInput($request->input());
         }
 
         // @todo: najprv getnutie groupy z formu

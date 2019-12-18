@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-use Softworx\RocXolid\Components\General\Message;
 
 /**
  *

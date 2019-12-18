@@ -4,11 +4,15 @@ namespace Softworx\RocXolid\Models\Traits;
 
 trait HasTitleColumn
 {
-    protected static $title_column = 'name';
+    protected static $_title_column = 'name';
 
     public function getTitleColumn()
     {
-        return static::$title_column;
+        if (property_exists($this, 'title_column')) {
+            return static::$title_column;
+        } else {
+            return static::$_title_column;
+        }
     }
 
     public function getTitle()
@@ -16,9 +20,9 @@ trait HasTitleColumn
         if (is_array($this->getTitleColumn())) {
             return implode(' ', array_filter(array_map(function($attribute) {
                 return $this->{$attribute};
-            }, static::$title_column)));
+            }, $this->getTitleColumn())));
         }
 
-        return  $this->{static::$title_column};
+        return  $this->{$this->getTitleColumn()};
     }
 }

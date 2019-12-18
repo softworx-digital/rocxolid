@@ -26,11 +26,22 @@ trait FormFieldable
 
     public function getFormField($field): FormField
     {
-        if ($this->getFormFields()->has($field)) {
+        if ($this->hasFormField($field)) {
             return $this->getFormFields()->get($field);
         } else {
             throw new \InvalidArgumentException(sprintf('Invalid field (name) [%s] requested in [%s]', $field, get_class($this)));
         }
+    }
+
+    public function destoyFormField($field): FormFieldableContract
+    {
+        if ($this->hasFormField($field)) {
+            $this->getFormFields()->forget($field);
+        } else {
+            throw new \InvalidArgumentException(sprintf('Invalid field (name) [%s] requested in [%s]', $field, get_class($this)));
+        }
+
+        return $this;
     }
 
     public function setFormFieldGroups($form_field_groups): FormFieldableContract
@@ -56,6 +67,20 @@ trait FormFieldable
         } else {
             throw new \InvalidArgumentException(sprintf('Invalid field group (name) [%s] requested', $name));
         }
+    }
+
+    public function destoyFormFieldGroup($name): FormFieldableContract
+    {
+        if ($this->getFormFieldGroups()->has($name)) {
+            $this->getFormFields($name)->each(function($field, $key) {
+                $this->destoyFormField($key);
+            });
+            $this->getFormFieldGroups()->forget($name);
+        } else {
+            throw new \InvalidArgumentException(sprintf('Invalid field group (name) [%s] requested', $name));
+        }
+
+        return $this;
     }
 
     public function setFormFields($form_fields): FormFieldableContract
