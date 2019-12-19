@@ -18,7 +18,7 @@ interface Translatable
      * @param bool $use_raw_key Flag to use raw or transform the key.
      * @return string
      */
-    public function translate(string $key, bool $use_raw_key = false): string;
+    public function translate(string $key, array $params = [], bool $use_raw_key = false): string;
 
     /**
      * Return the key to be used for translation.
@@ -38,7 +38,7 @@ interface Translatable
 
     /**
      * Retrieve the translation package.
-     * 
+     *
      * @return string
      * @throws \UnderflowException If no package is set.
      */
@@ -46,7 +46,7 @@ interface Translatable
 
     /**
      * Check for translation package being set.
-     * 
+     *
      * @return bool
      */
     public function hasTranslationPackage(): bool;
@@ -62,7 +62,7 @@ interface Translatable
 
     /**
      * Retrieve the translation param (file).
-     * 
+     *
      * @return string
      * @throws \UnderflowException If no param is set.
      */
@@ -70,7 +70,7 @@ interface Translatable
 
     /**
      * Check for translation param (file) being set.
-     * 
+     *
      * @return bool
      */
     public function hasTranslationParam(): bool;

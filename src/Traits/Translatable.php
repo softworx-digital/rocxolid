@@ -33,9 +33,9 @@ trait Translatable
     /**
      * {@inheritdoc}
      */
-    public function translate(string $key, bool $use_raw_key = false): string
+    public function translate(string $key, array $params = [], bool $use_raw_key = false): string
     {
-        return $this->getTranslationService()->getTranslation($this, $key, $use_raw_key);
+        return $this->getTranslationService()->getTranslation($this, $key, $params, $use_raw_key);
     }
 
     /**

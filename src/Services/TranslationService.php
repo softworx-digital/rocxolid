@@ -21,7 +21,7 @@ class TranslationService implements TranslationServiceContract
     /**
      * {@inheritdoc}
      */
-    public function getTranslation(Translatable $translatable, string $key, bool $use_raw_key = false): string
+    public function getTranslation(Translatable $translatable, string $key, array $params = [], bool $use_raw_key = false): string
     {
         $language_key = $this->getTranslationKey(
             $translatable->getTranslationPackage(),
@@ -36,9 +36,9 @@ class TranslationService implements TranslationServiceContract
         );
 
         if (Lang::has($language_key)) {
-            return Lang::get($language_key);
+            return Lang::get($language_key, $params);
         } elseif (Lang::has($general_language_key)) {
-            return Lang::get($general_language_key);
+            return Lang::get($general_language_key, $params);
         }
 
         return $language_key;
@@ -46,7 +46,7 @@ class TranslationService implements TranslationServiceContract
 
     /**
      * Create final translation key based on package, param and translation key.
-     * 
+     *
      * @param string $package
      * @param string $param
      * @param string $key
