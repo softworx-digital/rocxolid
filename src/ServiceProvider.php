@@ -135,8 +135,8 @@ class ServiceProvider extends IlluminateServiceProvider
         );
 
         $this->app->singleton(
-            Communication\Contracts\AjaxResponse::class,
-            Communication\JsonAjaxResponse::class
+            Http\Responses\Contracts\AjaxResponse::class,
+            Http\Responses\JsonAjaxResponse::class
         );
 
         // @todo: use some kind of form service to build and get forms, the same for tables (and columns)

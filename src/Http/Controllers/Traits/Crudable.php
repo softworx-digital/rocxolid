@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-use Softworx\RocXolid\Communication\Contracts\AjaxResponse;
+use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid repository contracts

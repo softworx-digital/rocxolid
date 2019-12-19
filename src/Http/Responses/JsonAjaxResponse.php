@@ -1,10 +1,10 @@
 <?php
 
-namespace Softworx\RocXolid\Communication;
+namespace Softworx\RocXolid\Http\Responses;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
-use Softworx\RocXolid\Communication\Contracts\AjaxResponse;
+use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 
 /**
  * Populates AJAX response into JSON formatted message.

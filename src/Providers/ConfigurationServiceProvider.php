@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\Rocxolid\Providers;
+namespace Softworx\RocXolid\Providers;
 
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
