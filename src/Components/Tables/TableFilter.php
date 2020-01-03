@@ -69,17 +69,6 @@ class TableFilter extends AbstractOptionableComponent implements ComponentTableF
 
     public function getTranslationKey(string $key): string
     {
-        /*
-        if (!$use_repository_param) {
-            return sprintf('filter.%s', $key);
-        } elseif ($this->getTableFilter() && $this->getTableFilter()->getRepository()) {
-            return sprintf('%s.filter.%s', $this->getTableFilter()->getRepository()->getTranslationParam(), $key);
-        } else {//if ($this->getController() && $this->getController()->getRepository())
-            return '---table-filter--- (' . __METHOD__ . ')';
-        }
-        */
-        return '---table-filter--- (' . __METHOD__ . ')';
-
-        return $key;
+        return sprintf('field.%s', $key);
     }
 }

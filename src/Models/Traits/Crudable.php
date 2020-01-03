@@ -218,6 +218,11 @@ trait Crudable
         return (substr($attribute, 0, 3) === 'is_');
     }
 
+    public function isJsonAttribute($attribute)
+    {
+        return false;
+    }
+
     public function isColorAttribute($attribute)
     {
         // @todo: you can do (maybe) better than checking substring

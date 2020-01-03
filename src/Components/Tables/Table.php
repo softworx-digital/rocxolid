@@ -14,7 +14,8 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
 {
     protected static $filter_component_class = TableFilter::class;
 
-    protected static $column_component_class = TableColumn::class;
+    // @todo: not used - update other component creation to this
+    // protected static $column_component_class = TableColumn::class;
 
     protected static $button_component_class = TableButton::class;
 
@@ -108,7 +109,8 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         foreach ($this->getRepository()->getColumns() as $column) {
             $this->column_components->put(
                 $column->getName(),
-                $this->buildSubComponent(static::$column_component_class)->setTableColumn($column)
+                // $this->buildSubComponent(static::$column_component_class)->setTableColumn($column)
+                $this->buildSubComponent($column->getComponentClass())->setTableColumn($column)
             );
         }
 

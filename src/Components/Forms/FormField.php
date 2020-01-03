@@ -23,7 +23,7 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
             if (!is_numeric($placeholder)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'placeholder' => $this->translate(sprintf('placeholder.%s', $placeholder), true)
+                        'placeholder' => $this->translate(sprintf('placeholder.%s', $placeholder), [], true)
                     ]
                 ]);
             }
@@ -34,7 +34,7 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
             if (!is_numeric($title)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'title' => $this->translate(sprintf('placeholder.%s', $title), true)
+                        'title' => $this->translate(sprintf('placeholder.%s', $title), [], true)
                     ]
                 ]);
             }

@@ -27,7 +27,6 @@ class PackagesServiceProvider extends IlluminateServiceProvider
         //$this->app->register(\Vsch\TranslationManager\TranslationServiceProvider::class);
         $this->app->register(\Spatie\Permission\PermissionServiceProvider::class);
         $this->app->register(\Intervention\Image\ImageServiceProvider::class);
-        $this->app->register(\Intervention\Validation\ValidationServiceProvider::class);
         //$this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
 
         return $this;

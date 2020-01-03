@@ -24,7 +24,6 @@ use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 use Softworx\RocXolid\Components\Forms\FormFieldGroup as FormFieldGroupComponent;
 // @todo: try to separate this from general trait
 use Softworx\RocXolid\Common\Repositories\File\Repository as FileRepository;
-use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
 
 /**
  * @todo: split into separate traits each having (ideally) one method for given action
@@ -461,34 +460,6 @@ trait Crudable
                 $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
 
                 $this->response->replace($form_field_component->getDomId('files', $field_name), $form_field_component->fetch('include.files'));
-            }
-        }
-
-        return $this->response->get();
-    }
-
-    public function imageUpload(CrudRequest $request, $id)
-    {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $this->setModel($repository->findOrFail($id));
-
-        $form = $repository->getForm('update');
-
-        $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel());
-
-        $image_repository = App::make(ImageRepository::class);
-
-        foreach ($request->file() as $data) {
-            foreach ($data as $field_name => $data_files) {
-                foreach ($data_files as $data_file) {
-                    $image = $image_repository->handleUpload($data_file, $this->getModel(), $field_name);
-                }
-
-                $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
-
-                $this->response->replace($form_field_component->getDomId('images', $field_name), $form_field_component->fetch('include.images'));
             }
         }
 

@@ -18,8 +18,7 @@
         "doctrine/dbal": "^2.9",
         "barryvdh/laravel-translation-manager": "^0.5",
         "spatie/laravel-permission": "^3.2",
-        "intervention/image": "^2.5",
-        "intervention/validation": "^1.4"
+        "intervention/image": "^2.5"
 	},
     "autoload": {
         "psr-4": {

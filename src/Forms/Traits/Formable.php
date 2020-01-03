@@ -9,6 +9,7 @@ use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
 use Softworx\RocXolid\Forms\Support\FormBuilder;
 
 // @todo - asi do FormService pichnut
+// @todo - check usage and reason
 trait Formable
 {
     protected $forms;
@@ -92,6 +93,7 @@ trait Formable
         if (isset(static::$form_class) && isset(static::$form_class[$param])) {
             return static::$form_class[$param];
         } else {
+            // @todo: Str case helper
             $form_class = str_replace('-', '', ucwords($param, '-')); // dash-separated to DashSeparated
             $reflection = new \ReflectionClass($this->getFormElementClass());
 

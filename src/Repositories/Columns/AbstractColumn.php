@@ -152,4 +152,9 @@ abstract class AbstractColumn implements Column, Optionable, Translatable
     {
         return $this->getOption('component.array', false);
     }
+
+    public function getComponentClass()
+    {
+        return static::$component_class;
+    }
 }

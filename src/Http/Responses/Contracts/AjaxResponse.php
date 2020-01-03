@@ -155,6 +155,13 @@ interface AjaxResponse
     public function redirect(string $url): AjaxResponse;
 
     /**
+     * Instruct the response receiver to reload current location.
+     *
+     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     */
+    public function reload(): AjaxResponse;
+
+    /**
      * Return the response in an array containing control keys / selectors and values / element's content.
      *
      * @return array

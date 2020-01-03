@@ -212,6 +212,16 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
+    public function reload(): AjaxResponse
+    {
+        $this->message_bag->add('reload', true);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get(): array
     {
         return $this->message_bag->jsonSerialize();

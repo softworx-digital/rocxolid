@@ -4,6 +4,9 @@ namespace Softworx\RocXolid\Models\Traits;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 
+/**
+ * Get all model's relationships.
+ */
 trait GetsRelationships
 {
     public function getAllRelationships()
@@ -13,7 +16,7 @@ trait GetsRelationships
         $relationships = [];
 
         foreach ((new \ReflectionClass($model))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            if (($method->class != get_class($model)) || !empty($method->getParameters()) || ($method->getName() == __FUNCTION__)) {
+            if (($method->class !== get_class($model)) || !empty($method->getParameters()) || ($method->getName() === __FUNCTION__)) {
                 continue;
             }
 
