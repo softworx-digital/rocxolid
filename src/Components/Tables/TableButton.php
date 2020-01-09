@@ -39,13 +39,25 @@ class TableButton extends Button implements ComponentTableButtonable
 
         if ($this->hasOption('controller-method')) {
             if ($this->getOption('ajax', false)) {
-                $this->mergeOptions([
-                    'attributes' => [
-                        'data-ajax-url' => $controller->getRoute($this->getOption('controller-method'), $model)
-                    ]
-                ]);
+                if ($this->hasOption('controller-method-params')) {
+                    $this->mergeOptions([
+                        'attributes' => [
+                            'data-ajax-url' => $controller->getRoute($this->getOption('controller-method'), $model, $this->getOption('controller-method-params'))
+                        ]
+                    ]);
+                } else {
+                    $this->mergeOptions([
+                        'attributes' => [
+                            'data-ajax-url' => $controller->getRoute($this->getOption('controller-method'), $model)
+                        ]
+                    ]);
+                }
             } else {
-                $this->setOption('url', $controller->getRoute($this->getOption('controller-method'), $model));
+                if ($this->hasOption('controller-method-params')) {
+                    $this->setOption('url', $controller->getRoute($this->getOption('controller-method'), $model, $this->getOption('controller-method-params')));
+                } else {
+                    $this->setOption('url', $controller->getRoute($this->getOption('controller-method'), $model));
+                }
             }
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));

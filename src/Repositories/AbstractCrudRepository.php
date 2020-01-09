@@ -336,28 +336,34 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     // @todo: better put this in some definition class
     protected function getFiltersDefinition()
     {
-        return $this->filters;
-        /*
-        if (empty($this->filters))
-        {
-            return $this->columns;
-        }
-        else
-        {
-            $this->filters;
-        }
-        */
+        return $this->adjustFiltersDefinition($this->filters);
+    }
+
+    protected function adjustFiltersDefinition($filters)
+    {
+        return $filters;
     }
 
     protected function getColumnsDefinition()
     {
-        return $this->columns;
+        return $this->adjustColumnsDefinition($this->columns);
+    }
+
+    protected function adjustColumnsDefinition($columns)
+    {
+        return $columns;
     }
 
     protected function getButtonsDefinition()
     {
-        return $this->buttons;
+        return $this->adjustButtonsDefinition($this->buttons);
     }
+
+    protected function adjustButtonsDefinition($buttons)
+    {
+        return $buttons;
+    }
+
     // @todo: component building options - better put this in a trait
     protected function setRoute($route_name): Repository
     {

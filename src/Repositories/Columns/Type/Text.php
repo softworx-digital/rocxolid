@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Repositories\Columns\Type;
 
+use Illuminate\Support\Collection;
 // contracts
 use Softworx\RocXolid\Repositories\Contracts\Column;
 // column types
@@ -27,5 +28,10 @@ class Text extends AbstractColumn
     protected function setShorten($max): Column
     {
         return $this->setComponentOptions('shorten', $max);
+    }
+
+    protected function setTranslate(Collection $translation): Column
+    {
+        return $this->setComponentOptions('translate', $translation);
     }
 }

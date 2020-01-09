@@ -43,6 +43,11 @@ trait Crudable
         return $this->system;
     }
 
+    public function getAllAttributes()
+    {
+        return array_unique(array_merge($this->getFillable(), $this->getHidden(), $this->getSystemAttributes()));
+    }
+
     public function getRowClass()
     {
         return null;

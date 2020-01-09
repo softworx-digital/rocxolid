@@ -2,11 +2,19 @@
 
 namespace Softworx\RocXolid\Forms\Validation;
 
+use App;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator as IlluminateValidator;
+// rocXolid services
+use Softworx\RocXolid\Services\ViewService;
 
+/**
+ *
+ */
 class Validator extends IlluminateValidator
 {
+    protected $exception = null;
+
     public function validateOnlyOne(string $attribute, $value, array $parameters): bool
     {
         if ($value === '') {
@@ -46,6 +54,35 @@ class Validator extends IlluminateValidator
     public function replaceAge(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(':age', implode(' / ', $parameters), $message);
+    }
+
+    /**
+     * @todo: so far serves only for Softworx\RocXolid\Communication\Contracts\Sendable
+     */
+    public function validateBladeTemplate(string $attribute, $value, array $parameters): bool
+    {
+        list($model_type, $model_id) = $parameters;
+
+        $model = $model_type::find($model_id);
+        $model->setEvent(App::make($model->event_type));
+        $variables = $model->getEvent()->getSendableVariables();
+
+        $value = str_replace('-&gt;', '->', $value);
+
+        try {
+            ViewService::render($value, $variables);
+        } catch (\Exception $e) {
+            $this->exception = $e;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function replaceBladeTemplate(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':error', $this->exception->getMessage(), $message);
     }
 
     public function validateIban(string $attribute, $value)

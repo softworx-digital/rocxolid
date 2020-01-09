@@ -30,6 +30,13 @@ class ButtonAnchor extends AbstractColumn
         return $this;
     }
 
+    public function setControllerMethodParams($controller_method_params): Column
+    {
+        $this->setComponentOptions('controller-method-params', $controller_method_params);
+
+        return $this;
+    }
+
     public function setPermissionsMethodGroup($permissions_method_group): Column
     {
         $this->setComponentOptions('permissions_method_group', $permissions_method_group);
