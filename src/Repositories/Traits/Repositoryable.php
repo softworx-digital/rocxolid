@@ -73,14 +73,9 @@ trait Repositoryable
             return static::$repository_param_class[$param];
         } elseif (isset(static::$repository_class)) {
             return static::$repository_class;
-        } else {
-            $repository_class = str_replace('-', '', ucwords($param, '-')); // dash-separated to DashSeparated
-            $reflection = new \ReflectionClass($this->getRepositoryElementClass());
-
-            $class = sprintf('%s\Repositories\%s\%s', $reflection->getNamespaceName(), $reflection->getShortName(), $form_class);
-
-            return $class;
         }
+
+        throw new \UnderflowException(sprintf('No repository class set for [%s] param [%s].', get_class($this), $param));
     }
 
     protected function getRepositoryBuilder(): RepositoryBuilderContract

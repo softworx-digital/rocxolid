@@ -48,33 +48,9 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function setRouteName(string $name): RoutableContract
+    public function hasRoute(): bool
     {
-        $this->route_name = $name;
-        $this->route = route($name);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRouteMethod(string $method): RoutableContract
-    {
-        $this->route_method = $method;
-        $this->route = action(sprintf('\%s@%s', get_class($this->getController()), $method));
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setTarget(string $target): RoutableContract
-    {
-        $this->target = $target;
-
-        return $this;
+        return isset($this->route);
     }
 
     /**
@@ -92,13 +68,50 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function getRoutePath(): string
+    public function setRouteName(string $name): RoutableContract
+    {
+        $this->route_name = $name;
+        $this->route = route($name);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasRouteName(): bool
+    {
+        return isset($this->route_name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRouteName(): string
     {
         if (!$this->hasRouteName()) {
             throw new \UnderflowException(sprintf('No route name set in [%s]', get_class($this)));
         }
 
-        return route($this->route_name, [], false);
+        return $this->route_name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTarget(string $target): RoutableContract
+    {
+        $this->target = $target;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTarget(): bool
+    {
+        return isset($this->target);
     }
 
     /**
@@ -116,17 +129,12 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function hasRoute(): bool
+    public function setRouteMethod(string $method): RoutableContract
     {
-        return isset($this->route);
-    }
+        $this->route_method = $method;
+        $this->route = action(sprintf('\%s@%s', get_class($this->getController()), $method));
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasRouteName(): bool
-    {
-        return isset($this->route_name);
+        return $this;
     }
 
     /**
@@ -140,9 +148,13 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function hasTarget(): bool
+    public function getRoutePath(): string
     {
-        return isset($this->target);
+        if (!$this->hasRouteName()) {
+            throw new \UnderflowException(sprintf('No route name set in [%s]', get_class($this)));
+        }
+
+        return route($this->route_name, [], false);
     }
 
     /**
@@ -151,5 +163,13 @@ trait Routable
     public function isRouteActive(): bool
     {
         return request()->fullUrlIs(sprintf('%s', $this->getRoute())) || request()->fullUrlIs(sprintf('%s/*', $this->getRoute()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRouteNameActive(): bool
+    {
+        return request()->routeIs($this->getRouteName());
     }
 }

@@ -11,4 +11,13 @@ class ActiveItem extends Item implements Controllable, Routable
 {
     use ControllableTrait;
     use RoutableTrait;
+
+    public function isRouteActive(): bool
+    {
+        if (parent::isRouteActive()) {
+            return true;
+        }
+
+        return get_class($this->getController()) === get_class(request()->route()->getController());
+    }
 }

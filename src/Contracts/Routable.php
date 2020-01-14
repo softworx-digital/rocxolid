@@ -22,6 +22,21 @@ interface Routable
     public function setRoute(string $route): Routable;
 
     /**
+     * Check if the route is assigned.
+     *
+     * @return bool
+     */
+    public function hasRoute(): bool;
+
+    /**
+     * Get the route.
+     *
+     * @return string
+     * @throws \UnderflowException If no route is set.
+     */
+    public function getRoute(): string;
+
+    /**
      * Set the route by its name.
      *
      * @param string $name Route name to set.
@@ -30,12 +45,19 @@ interface Routable
     public function setRouteName(string $name): Routable;
 
     /**
-     * Set the route method.
+     * Check if the route name is assigned.
      *
-     * @param string $method Route method to set.
-     * @return \Softworx\RocXolid\Contracts\Routable
+     * @return bool
      */
-    public function setRouteMethod(string $method): Routable;
+    public function hasRouteName(): bool;
+
+    /**
+     * Get the route name.
+     *
+     * @return string
+     * @throws \UnderflowException If no route name is set.
+     */
+    public function getRouteName(): string;
 
     /**
      * Set the route target (to be used in HTML anchor element).
@@ -46,20 +68,11 @@ interface Routable
     public function setTarget(string $target): Routable;
 
     /**
-     * Get the route object.
+     * Check if the route target is assigned.
      *
-     * @return string
-     * @throws \UnderflowException If no route is set.
+     * @return bool
      */
-    public function getRoute(): string;
-
-    /**
-     * Get the route path.
-     *
-     * @return string
-     * @throws \UnderflowException If no route path is set.
-     */
-    public function getRoutePath(): string;
+    public function hasTarget(): bool;
 
     /**
      * Get the route target.
@@ -70,25 +83,27 @@ interface Routable
     public function getTarget(): string;
 
     /**
-     * Check if the route is assigned.
+     * Set the route method.
      *
-     * @return bool
+     * @param string $method Route method to set.
+     * @return \Softworx\RocXolid\Contracts\Routable
      */
-    public function hasRoute(): bool;
+    public function setRouteMethod(string $method): Routable;
 
     /**
-     * Check if the route name is assigned.
+     * Check if the route method is assigned.
      *
      * @return bool
      */
-    public function hasRouteName(): bool;
+    public function hasRouteMethod(): bool;
 
     /**
-     * Check if the route target is assigned.
+     * Get the route path.
      *
-     * @return bool
+     * @return string
+     * @throws \UnderflowException If no route path is set.
      */
-    public function hasTarget(): bool;
+    public function getRoutePath(): string;
 
     /**
      * Check if the route is active (last client's request).
@@ -96,4 +111,11 @@ interface Routable
      * @return bool
      */
     public function isRouteActive(): bool;
+
+    /**
+     * Check if the route is active (last client's request) using route name for comparison.
+     *
+     * @return bool
+     */
+    public function isRouteNameActive(): bool;
 }
