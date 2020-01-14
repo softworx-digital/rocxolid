@@ -43,8 +43,7 @@ abstract class AbstractComponent implements Renderable, Translatable
     public static function build(
         TranslationPackageProvider $translation_package_provider = null,
         TranslationParamProvider $translation_param_provider = null
-    )
-    {
+    ) {
         $component = new static();
 
         if (!is_null($translation_package_provider)) {

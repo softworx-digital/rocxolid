@@ -72,7 +72,7 @@ trait FormFieldable
     public function destoyFormFieldGroup($name): FormFieldableContract
     {
         if ($this->getFormFieldGroups()->has($name)) {
-            $this->getFormFields($name)->each(function($field, $key) {
+            $this->getFormFields($name)->each(function ($field, $key) {
                 $this->destoyFormField($key);
             });
             $this->getFormFieldGroups()->forget($name);
@@ -89,7 +89,7 @@ trait FormFieldable
 
         return $this;
     }
-//////////////////////////// @TODO: subject to change
+    //////////////////////////// @TODO: subject to change
     public function getFormFields($group_name = null): Collection
     {
         if (is_null($this->_form_fields)) {

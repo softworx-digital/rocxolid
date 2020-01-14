@@ -16,7 +16,7 @@ interface Dashboardable
 {
     /**
      * Retrieve assigned dashboard class.
-     * 
+     *
      * @return string
      */
     public function getDashboardClass(): string;

@@ -18,7 +18,7 @@ trait HasTitleColumn
     public function getTitle()
     {
         if (is_array($this->getTitleColumn())) {
-            return implode(' ', array_filter(array_map(function($attribute) {
+            return implode(' ', array_filter(array_map(function ($attribute) {
                 return $this->{$attribute};
             }, $this->getTitleColumn())));
         }

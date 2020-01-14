@@ -105,7 +105,7 @@ class Validator extends IlluminateValidator
         $tempcheckvalue = intval(substr($tempiban, 0, 1));
         for ($strcounter = 1; $strcounter < strlen($tempiban); $strcounter++) {
             $tempcheckvalue *= 10;
-            $tempcheckvalue += intval(substr($tempiban,$strcounter,1));
+            $tempcheckvalue += intval(substr($tempiban, $strcounter, 1));
             $tempcheckvalue %= 97;
         }
         // only modulo 1 is iban
@@ -115,7 +115,7 @@ class Validator extends IlluminateValidator
     private function getIbanLength($iban)
     {
         $countrycode = substr($iban, 0, 2);
-        $lengths = array(
+        $lengths = [
             'AL' => 28,
             'AD' => 24,
             'AT' => 20,
@@ -198,7 +198,7 @@ class Validator extends IlluminateValidator
             'MZ' => 25,
             'SN' => 28,
             'UA' => 29
-        );
+        ];
         return isset($lengths[$countrycode]) ? $lengths[$countrycode] : false;
     }
 }

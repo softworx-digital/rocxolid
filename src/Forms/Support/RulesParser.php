@@ -35,7 +35,7 @@ class RulesParser
      */
     public function parse($rules)
     {
-        $attributes = array();
+        $attributes = [];
         $rules = $rule = (is_string($rules)) ? explode('|', $rules) : $rules;
 
         foreach ($rules as $rule) {
@@ -469,7 +469,7 @@ class RulesParser
      * @param  array  $params
      * @return string
      */
-    protected function getTitle($rule, $params = array())
+    protected function getTitle($rule, $params = [])
     {
         $params['attribute'] = $this->field->getOption('label');
 

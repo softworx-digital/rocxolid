@@ -6,7 +6,7 @@ trait Actionable
 {
     /**
      * Dynamically create route for given controller action.
-     * 
+     *
      * @param string $route_action
      * @return string
      */

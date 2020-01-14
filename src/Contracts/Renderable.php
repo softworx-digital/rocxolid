@@ -14,9 +14,9 @@ use Illuminate\View\View;
 interface Renderable
 {
     /**
-     * Possibility to dynamically set properties before rendering. 
+     * Possibility to dynamically set properties before rendering.
      * Can be overriden in specific Renderable class.
-     * 
+     *
      * @return \Softworx\RocXolid\Components\Contracts\Renderable
      */
     public function setPreRenderProperties(...$elements): Renderable;

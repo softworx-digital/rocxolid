@@ -5,6 +5,7 @@ namespace Softworx\RocXolid;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
+
 // use Vsch\TranslationManager\Translator; // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 
 /**

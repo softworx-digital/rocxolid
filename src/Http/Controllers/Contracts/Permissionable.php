@@ -14,7 +14,7 @@ interface Permissionable
 {
     /**
      * Check if user is permitted to given action.
-     * 
+     *
      * @param string $action
      * @return bool
      */

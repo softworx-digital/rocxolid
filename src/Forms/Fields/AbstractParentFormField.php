@@ -25,7 +25,7 @@ abstract class AbstractParentFormField extends AbstractFormField
 
     /**
      * Constructor.
-     * 
+     *
      * @param string $name
      * @param string $type
      * @param \Softworx\RocXolid\Forms\Contracts\Form $parent
@@ -46,7 +46,7 @@ abstract class AbstractParentFormField extends AbstractFormField
 
     /**
      * Clone with children.
-     * 
+     *
      * @return void
      */
     public function __clone()

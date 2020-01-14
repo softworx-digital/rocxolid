@@ -15,14 +15,14 @@ interface EventDispatchable
 {
     /**
      * Assign event dispatcher.
-     * 
+     *
      * @param \Illuminate\Contracts\Events\Dispatcher $event_dispatcher
      */
     public function setEventDispatcher(Dispatcher $event_dispatcher);
 
     /**
      * Retrieve event dispatcher.
-     * 
+     *
      * @return \Illuminate\Contracts\Events\Dispatcher
      * @throws \UnderflowException If no dispatcher is set.
      */
@@ -30,7 +30,7 @@ interface EventDispatchable
 
     /**
      * Check if the event dispatcher is assigned.
-     * 
+     *
      * @return bool
      */
     public function hasEventDispatcher(): bool;

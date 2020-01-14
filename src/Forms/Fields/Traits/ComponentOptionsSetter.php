@@ -97,8 +97,7 @@ trait ComponentOptionsSetter
 
     protected function adjustAttributesComponentOption($attributes)
     {
-        foreach ($attributes as $attribute => &$value)
-        {
+        foreach ($attributes as $attribute => &$value) {
             $method = sprintf('adjust%sComponentAttributeOption', Str::studly($attribute));
 
             if (method_exists($this, $method)) {

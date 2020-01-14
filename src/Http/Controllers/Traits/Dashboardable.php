@@ -27,7 +27,7 @@ trait Dashboardable
 
     /**
      * Create and retrieve dashboard object.
-     * 
+     *
      * @return \Softworx\RocXolid\Components\AbstractActiveComponent
      */
     protected function getDashboard(): AbstractActiveComponent

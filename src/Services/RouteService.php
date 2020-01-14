@@ -26,7 +26,7 @@ class RouteService
 
     /**
      * Get attached router.
-     * 
+     *
      * @return \Illuminate\Contracts\Routing\Registrar
      */
     public function getRouter(): RegistrarContract
@@ -56,7 +56,7 @@ class RouteService
 
     /**
      * Get current controller's action.
-     * 
+     *
      * @return string
      */
     public function getMethod(): string

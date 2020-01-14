@@ -430,8 +430,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
     {
         $param = sprintf('%s.%s', FormField::SINGLE_DATA_PARAM, $field);
 
-        if ($validate && !$this->getRequest()->has($param))
-        {
+        if ($validate && !$this->getRequest()->has($param)) {
             throw new \InvalidArgumentException(sprintf('Undefined [%s] param in request', $param));
         }
 
@@ -464,7 +463,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                                     ->updateParent();
                             }
                         });
-            });
+                });
         }
 
         return $this;
@@ -498,7 +497,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                                 ->setErrorMessage($messages, $index)
                                 ->updateComponent($index);
                         });
-                    });
+                });
         }
 
         return $this;

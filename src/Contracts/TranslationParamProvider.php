@@ -13,7 +13,7 @@ interface TranslationParamProvider
 {
     /**
      * Provide the translation param.
-     * 
+     *
      * @return string
      * @throws \UnderflowException If no translation param is set.
      */

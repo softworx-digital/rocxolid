@@ -13,7 +13,7 @@ interface TranslationPackageProvider
 {
     /**
      * Provide the translation package.
-     * 
+     *
      * @return string
      * @throws \UnderflowException If no translation package is set.
      */

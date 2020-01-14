@@ -15,7 +15,7 @@ class AbstractServiceProvider extends IlluminateServiceProvider
     /**
      * Expected format:
      *      'rocXolid.<package-name>.<file-name>' => '<path>'
-     * 
+     *
      * @var array $config_files Configuration files to be published and loaded.
      */
     protected $config_files = [];
@@ -33,11 +33,11 @@ class AbstractServiceProvider extends IlluminateServiceProvider
             ->bindAliases(AliasLoader::getInstance());
     }
 
-     /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
+    /**
+    * Bootstrap the application services.
+    *
+    * @return void
+    */
     public function boot()
     {
         $this

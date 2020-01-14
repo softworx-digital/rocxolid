@@ -21,7 +21,7 @@ trait Permissionable
             return true;
         }
 
-         // @todo: hotfixed, you can do better
+        // @todo: hotfixed, you can do better
         switch ($action) {
             case 'autocomplete':
                 return true;

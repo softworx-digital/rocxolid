@@ -86,7 +86,7 @@ abstract class AbstractCrudController extends AbstractController implements Perm
         $action = sprintf('\%s@%s', get_class($this), $route_action);
         $action_params = [];
 
-        array_walk($params, function($param) use (&$action_params) {
+        array_walk($params, function ($param) use (&$action_params) {
             if (is_array($param)) {
                 $action_params += $param;
             } else {
