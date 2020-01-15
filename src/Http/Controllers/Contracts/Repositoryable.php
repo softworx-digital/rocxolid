@@ -1,10 +1,17 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Contracts;
+namespace Softworx\RocXolid\Http\Controllers\Contracts;
 
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableComponent;
 
+/**
+ * Interface to connect the controller with a repository.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 interface Repositoryable
 {
     const REPOSITORY_PARAM = 'general';

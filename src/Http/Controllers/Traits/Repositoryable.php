@@ -1,12 +1,16 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use App;
-use Softworx\RocXolid\Repositories\Contracts\Repositoryable as RepositoryableContract;
+// rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Support\RepositoryBuilder;
 use Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder as RepositoryBuilderContract;
+// rocXolid repository support
+use Softworx\RocXolid\Repositories\Support\RepositoryBuilder;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable as RepositoryableContract;
+
 
 // @todo: put this to some kind of (Repository)Service?
 trait Repositoryable
