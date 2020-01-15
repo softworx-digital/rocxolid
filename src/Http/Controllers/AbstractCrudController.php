@@ -41,7 +41,7 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  * @version 1.0.0
  * @todo: add contracts to repository features traits
  */
-abstract class AbstractCrudController extends AbstractController implements Permissionable, Crudable, Dashboardable, Repositoryable, Modellable
+abstract class AbstractCrudController extends AbstractController implements Crudable, Permissionable, Dashboardable, Repositoryable, Modellable
 {
     use CrudableTrait;
     use PermissionableTrait;

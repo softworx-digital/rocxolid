@@ -4,12 +4,21 @@ namespace Softworx\RocXolid\Repositories\Support;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
+// rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder as RepositoryBuilderContract;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Events\AfterRepositoryCreation;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
+// rocXolid repository events
+use Softworx\RocXolid\Repositories\Events\AfterRepositoryCreation;
 
+/**
+ * Repository builder and dependencies connector.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 class RepositoryBuilder implements RepositoryBuilderContract
 {
     /**
@@ -32,7 +41,7 @@ class RepositoryBuilder implements RepositoryBuilderContract
     /**
      * Constructor.
      *
-     * @param Container  $app
+     * @param \Illuminate\Contracts\Container\Container $app
      * @param \Softworx\RocXolid\Repositories\Support\RepositoryFilterBuilder $repository_filter_builder
      * @param \Softworx\RocXolid\Repositories\Support\RepositoryColumnBuilder $repository_column_builder
      * @param \Illuminate\Contracts\Events\Dispatcher $event_dispatcher
@@ -48,16 +57,17 @@ class RepositoryBuilder implements RepositoryBuilderContract
     /**
      * Get instance of the repository which can be modified.
      *
+     * @param \Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable $controller
      * @param string $repository_class
      * @param array $custom_options
      * @return \Softworx\RocXolid\Repositories\Contracts\Repository
      */
-    public function buildRepository($repository_class, Repositoryable $repository_holder, array $custom_options = []): Repository
+    public function buildRepository(Repositoryable $controller, string $repository_class, array $custom_options = []): Repository
     {
         $repository = $this->app->make($this->checkRepositoryClass($repository_class));
 
         $this
-            ->setRepositoryDependencies($repository, $repository_holder)
+            ->setRepositoryDependencies($repository, $controller)
             ->setRepositoryOptions($repository, $custom_options);
 
         $repository
@@ -94,17 +104,17 @@ class RepositoryBuilder implements RepositoryBuilderContract
      * Set depedencies on existing repository instance.
      *
      * @param Softworx\RocXolid\Repositories\Contracts\Repository $repository
-     * @param
+     * @param \Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable $controller
      * @return Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder
      */
-    protected function setRepositoryDependencies(Repository &$repository, Repositoryable $repository_holder): RepositoryBuilderContract
+    protected function setRepositoryDependencies(Repository &$repository, Repositoryable $controller): RepositoryBuilderContract
     {
         $repository
             ->setRepositoryBuilder($this)
             ->setRepositoryFilterBuilder($this->repository_filter_builder)
             ->setRepositoryColumnBuilder($this->repository_column_builder)
             ->setEventDispatcher($this->event_dispatcher)
-            ->setController($repository_holder)
+            ->setController($controller)
             ->setRequest($this->app->make('RocXolidRepositoryRequest'));
 
         return $this;

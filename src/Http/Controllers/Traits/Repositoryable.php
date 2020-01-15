@@ -11,7 +11,6 @@ use Softworx\RocXolid\Repositories\Support\RepositoryBuilder;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable as RepositoryableContract;
 
-
 // @todo: put this to some kind of (Repository)Service?
 trait Repositoryable
 {
@@ -24,7 +23,7 @@ trait Repositoryable
 
     public function createRepository(string $class, string $param = RepositoryableContract::REPOSITORY_PARAM): Repository
     {
-        $repository = $this->getRepositoryBuilder()->buildRepository($class, $this);
+        $repository = $this->getRepositoryBuilder()->buildRepository($this, $class);
         $repository->setParam($param);
 
         return $repository;
