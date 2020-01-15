@@ -1,20 +1,32 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
 
 use App;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
-// rocXolid components
+// rocXolid form components
 use Softworx\RocXolid\Components\Forms\FormField;
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid forms
 use Softworx\RocXolid\Forms\ImageUploadForm;
+// rocXolid common repositories
 use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
 
-trait CanUploadImage
+/**
+ * Trait to upload and assign an image to a resource.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+trait UploadsImage
 {
+    /**
+     * Retrieve a form component to upload a file.
+     *
+     * @return \Softworx\RocXolid\Components\Forms\CrudForm
+     */
     public function getImageUploadFormComponent()
     {
         if (!$this->hasModel()) {
@@ -30,7 +42,12 @@ trait CanUploadImage
             ->setRepository($repository);
     }
 
-
+    /**
+     * Upload the image and assign it to specified resource.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param int $id
+     */
     public function imageUpload(CrudRequest $request, $id)
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));

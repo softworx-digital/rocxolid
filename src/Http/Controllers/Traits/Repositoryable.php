@@ -113,6 +113,7 @@ trait Repositoryable
     /**
      * Get repository builder.
      *
+     * @return \Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder
      * @todo: Subject to change - better use bindings.
      */
     protected function getRepositoryBuilder(): RepositoryBuilderContract
