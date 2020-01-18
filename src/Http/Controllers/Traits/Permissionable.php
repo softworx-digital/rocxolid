@@ -3,7 +3,8 @@
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use Auth;
-// rocXolid contracts
+use Illuminate\Foundation\Auth\User as Authenticatable;
+// rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
@@ -60,8 +61,7 @@ trait Permissionable
         return false;
     }
 
-    // @todo: type hints
-    protected function allowPermissionException($user, $action, $permission, Crudable $model = null)
+    protected function allowPermissionException(Authenticatable $user, string $action, string $permission, Crudable $model = null)
     {
         return false;
     }

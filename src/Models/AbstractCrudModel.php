@@ -88,7 +88,6 @@ class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchabl
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
     ];
 
     public function getAttributeViewValue($attribute)

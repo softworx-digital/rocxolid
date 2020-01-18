@@ -2,7 +2,10 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
+// rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Trait to remove a resource from storage.
@@ -17,13 +20,13 @@ trait DestroysModels
      * Display the specified resource destroy confirmation dialog.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function destroyConfirm(CrudRequest $request, $id)//: View
+    public function destroyConfirm(CrudRequest $request, Crudable $model)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $this->setModel($model);
 
-        $this->setModel($repository->findOrFail($id));
+        $repository = $this->getRepository($this->getRepositoryParam($request));
 
         $model_viewer_component = $this->getModelViewerComponent($this->getModel());
 
@@ -45,13 +48,13 @@ trait DestroysModels
      * Destroy the specified resource.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function destroy(CrudRequest $request, $id)//: Response - returns JSON for ajax calls
+    public function destroy(CrudRequest $request, Crudable $model)//: Response - returns JSON for ajax calls
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $this->setModel($model);
 
-        $this->setModel($repository->findOrFail($id));
+        $repository = $this->getRepository($this->getRepositoryParam($request));
 
         $model = $repository->deleteModel($this->getModel());
 

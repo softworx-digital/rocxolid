@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Services;
 
 use Route;
+use Str;
 
 // @todo: refator
 class CrudRouterService
@@ -23,14 +24,15 @@ class CrudRouterService
         $this->name = $name;
         $this->controller = $controller;
         $this->options = $options;
+        $param = Str::slug($this->name, '_');
 
         // CRUD routes for core features
-        Route::match(['put', 'patch'], $this->name . '/image-upload/{id?}', [
+        Route::match(['put', 'patch'], $this->name . sprintf('/image-upload/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.image-upload',
             'uses' => $this->controller . '@imageUpload',
         ]);
 
-        Route::match(['put', 'patch'], $this->name . '/file-upload/{id?}', [
+        Route::match(['put', 'patch'], $this->name . sprintf('/file-upload/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.file-upload',
             'uses' => $this->controller . '@fileUpload',
         ]);
@@ -50,68 +52,68 @@ class CrudRouterService
             'uses' => $this->controller . '@repositoryFilter',
         ]);
 
-        Route::post($this->name . '/repository-autocomplete/{id?}', [
+        Route::post($this->name . sprintf('/repository-autocomplete/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.repository-autocomplete',
             'uses' => $this->controller . '@repositoryAutocomplete',
         ]);
 
-        Route::post($this->name . '/repository-typeahead/{id?}', [
+        Route::post($this->name . sprintf('/repository-typeahead/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.repository-typeahead',
             'uses' => $this->controller . '@repositoryTypeahead',
         ]);
 
-        Route::post($this->name . '/form-reload/{id?}', [
-            'as' => 'crud.' . $this->name . '.formReload',
+        Route::post($this->name . sprintf('/form-reload/{%s?}', $param), [
+            'as' => 'crud.' . $this->name . '.form-reload',
             'uses' => $this->controller . '@formReload',
         ]);
 
-        Route::post($this->name . '/form-reload/group/{group}/{id?}', [
-            'as' => 'crud.' . $this->name . '.formReloadGroup',
+        Route::post($this->name . sprintf('/form-reload/group/{group}/{%s?}', $param), [
+            'as' => 'crud.' . $this->name . '.form-reload-group',
             'uses' => $this->controller . '@formReloadGroup',
         ]);
 
-        Route::post($this->name . '/form-validate/group/{group}/{id?}', [
-            'as' => 'crud.' . $this->name . '.formValidateGroup',
+        Route::post($this->name . sprintf('/form-validate/group/{group}/{%s?}', $param), [
+            'as' => 'crud.' . $this->name . '.form-validate-group',
             'uses' => $this->controller . '@formValidateGroup',
         ]);
 
-        Route::post($this->name . '/form-validate/field/{field}/{id?}', [
-            'as' => 'crud.' . $this->name . '.formValidateField',
+        Route::post($this->name . sprintf('/form-validate/field/{field}/{%s?}', $param), [
+            'as' => 'crud.' . $this->name . '.form-validate-field',
             'uses' => $this->controller . '@formValidateField',
         ]);
 
-        Route::post($this->name . '/{id}/{relation}/reorder', [
+        Route::post($this->name . sprintf('/{%s}/{relation}/reorder', $param), [
             'as' => 'crud.' . $this->name . '.reorder',
             'uses' => $this->controller . '@reorder',
         ]);
 
-        Route::get($this->name . '/{id}/translate/{lang}', [
-            'as' => 'crud.' . $this->name . '.translateItem',
+        Route::get($this->name . sprintf('/{%s}/translate/{lang}', $param), [
+            'as' => 'crud.' . $this->name . '.translate-item',
             'uses' => $this->controller . '@translateItem',
         ]);
 
-        Route::get($this->name . '/{id}/clone', [
-            'as' => 'crud.' . $this->name . '.cloneConfirm',
+        Route::get($this->name . sprintf('/clone/{%s}', $param), [
+            'as' => 'crud.' . $this->name . '.clone-confirm',
             'uses' => $this->controller . '@cloneConfirm',
         ]);
 
-        Route::post($this->name . '/{id}/clone', [
+        Route::post($this->name . sprintf('/clone/{%s}', $param), [
             'as' => 'crud.' . $this->name . '.clone',
             'uses' => $this->controller . '@clone',
         ]);
 
-        Route::get($this->name . '/{id}/destroyconfirm', [
-            'as' => 'crud.' . $this->name . '.destroyConfirm',
+        Route::get($this->name . sprintf('/destroy/{%s}', $param), [
+            'as' => 'crud.' . $this->name . '.destroy-confirm',
             'uses' => $this->controller . '@destroyConfirm',
         ]);
 
-        Route::get($this->name . '/{id}/detach', [
+        Route::get($this->name . sprintf('/{%s}/detach', $param), [
             'as' => 'crud.' . $this->name . '.detach',
             'uses' => $this->controller . '@detach',
         ]);
 
-        Route::get($this->name . '/{id}/toggle-pivot-data/{pivot_data}', [
-            'as' => 'crud.' . $this->name . '.togglePivotData',
+        Route::get($this->name . sprintf('/{%s}/toggle-pivot-data/{pivot_data}', $param), [
+            'as' => 'crud.' . $this->name . '.toggle-pivot-data',
             'uses' => $this->controller . '@togglePivotData',
         ]);
     }

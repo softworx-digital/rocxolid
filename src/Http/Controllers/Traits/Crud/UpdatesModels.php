@@ -2,7 +2,12 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
+// rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid form components
+use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Trait to update a resource.
@@ -17,13 +22,13 @@ trait UpdatesModels
      * Display the specified resource update form.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function edit(CrudRequest $request, $id)//: View
+    public function edit(CrudRequest $request, Crudable $model)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $this->setModel($model);
 
-        $this->setModel($repository->findOrFail($id));
+        $repository = $this->getRepository($this->getRepositoryParam($request));
 
         $form = $repository->getForm($this->getFormParam($request));
         $form
@@ -55,14 +60,14 @@ trait UpdatesModels
     /**
      * Update the edited model.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest
-     * @param int $id
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function update(CrudRequest $request, $id)//: Response
+    public function update(CrudRequest $request, Crudable $model)//: Response
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $this->setModel($model);
 
-        $this->setModel($repository->findOrFail($id));
+        $repository = $this->getRepository($this->getRepositoryParam($request));
 
         $form = $repository->getForm($this->getFormParam($request));
         $form

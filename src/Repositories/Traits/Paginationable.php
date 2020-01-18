@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Paginationable
 {
+    // @todo: configurable
     //private $_page_limit = 20;
     private $_page_limit = 30;
 

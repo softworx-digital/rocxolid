@@ -29,6 +29,7 @@ use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryO
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryFilterable as RepositoryFilterableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryAutocompleteable as RepositoryAutocompleteableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\ItemsReorderderable as ItemsReorderderableTrait;
+use Softworx\RocXolid\Http\Controllers\Traits\Actions;
 // rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
@@ -52,6 +53,9 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use RepositoryFilterableTrait;
     use RepositoryAutocompleteableTrait;
     use ItemsReorderderableTrait;
+    use Actions\ReloadsForm;
+    use Actions\ReloadsFormGroup;
+    use Actions\ClonesModels;
 
     /**
      * <repository-param> => <repository-class>

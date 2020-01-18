@@ -10,6 +10,8 @@ use Softworx\RocXolid\Components\Forms\FormField;
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid forms
 use Softworx\RocXolid\Forms\ImageUploadForm;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 // rocXolid common repositories
 use Softworx\RocXolid\Common\Repositories\Image\Repository as ImageRepository;
 
@@ -46,13 +48,13 @@ trait UploadsImage
      * Upload the image and assign it to specified resource.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function imageUpload(CrudRequest $request, $id)
+    public function imageUpload(CrudRequest $request, Crudable $model)
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $this->setModel($model);
 
-        $this->setModel($repository->findOrFail($id));
+        $repository = $this->getRepository($this->getRepositoryParam($request));
 
         $form = $repository->createForm(ImageUploadForm::class);
 
@@ -65,14 +67,22 @@ trait UploadsImage
             foreach ($data as $field_name => $data_files) {
                 foreach ($data_files as $data_file) {
                     $image = $image_repository->handleUpload($data_file, $this->getModel(), $field_name);
+
+                    $this->getModel()->onImageUpload($image, $this->response);
                 }
 
-                $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
+                // $form_field_component = (new FormField())->setFormField($form->getFormField($field_name));
 
-                $this->response->replace($form_field_component->getDomId('images', $field_name), $form_field_component->fetch('include.images'));
+                // $this->response->replace($form_field_component->getDomId('images', $field_name), $form_field_component->fetch('include.images'));
             }
         }
 
-        return $this->response->get();
+        $parent_image_upload_component = $this->getImageUploadFormComponent();
+
+        return $this->response
+            ->replace($parent_image_upload_component->getOption('id'), $parent_image_upload_component->fetch('upload'))
+            ->get();
+
+        // return $this->response->get();
     }
 }

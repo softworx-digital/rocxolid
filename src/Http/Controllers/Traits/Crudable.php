@@ -33,9 +33,6 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
-    use Actions\ReloadsForm;
-    use Actions\ReloadsFormGroup;
-    use Actions\ClonesModels;
 
     // protected static $model_class; // should be defined in specific class
 

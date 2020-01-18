@@ -2,7 +2,10 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
+// rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Trait to display specific resource.
@@ -18,11 +21,9 @@ trait ReadsModels
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      */
-    public function show(CrudRequest $request, $id)//: View
+    public function show(CrudRequest $request, Crudable $model)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $this->setModel($repository->findOrFail($id));
+        $this->setModel($model);
 
         $model_viewer_component = $this
             ->getModelViewerComponent($this->getModel())
