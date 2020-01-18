@@ -57,7 +57,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function setValue($value, $index = 0): ValueableContract
+    public function setValue($value, int $index = 0): ValueableContract
     {
         $this->getValues()->put($index, $this->adjustValueBeforeSet($value));
 

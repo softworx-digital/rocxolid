@@ -8,7 +8,7 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
 use Softworx\RocXolid\Components\AbstractActiveComponent;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Formable;
-use Softworx\RocXolid\Components\Contracts\FormComponentable;
+use Softworx\RocXolid\Components\Contracts\Componentable\Form as FormComponentable;
 // rocXolid controllers
 use Softworx\RocXolid\Http\Controllers\AbstractCrudController;
 

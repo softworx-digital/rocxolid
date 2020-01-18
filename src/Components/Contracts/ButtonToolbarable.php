@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Components\Contracts;
 
 use Softworx\RocXolid\Forms\Contracts\FormField;
+use Softworx\RocXolid\Components\Contracts\ButtonGroupable as ComponentButtonGroupable;
 
 /**
  * Enables object to be placed into button toolbar component and to get button groups assigned.

@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
      * @param  \Illuminate\Auth\AuthenticationException  $exception
      * @return \Illuminate\Http\Response
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+    protected function _unauthenticated($request, AuthenticationException $exception)
     {
         dd(__METHOD__);
         if ($exception instanceof RocXolidAuthenticationException) {
