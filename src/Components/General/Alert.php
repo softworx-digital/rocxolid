@@ -26,6 +26,11 @@ class Alert extends AbstractActiveComponent
     /**
      * @var string
      */
+    protected $text;
+
+    /**
+     * @var string
+     */
     protected $text_key;
 
     /**
@@ -57,7 +62,44 @@ class Alert extends AbstractActiveComponent
     }
 
     /**
-     * Type setter.
+     * Text setter.
+     *
+     * @param string $type
+     * @return \Softworx\RocXolid\Components\General\Alert
+     */
+    public function setText(string $text): Alert
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * Text assignment checker.
+     *
+     * @return bool
+     */
+    public function hasText(): bool
+    {
+        return isset($this->text);
+    }
+
+    /**
+     * Text getter.
+     *
+     * @return string
+     */
+    public function getText(): string
+    {
+        if (!$this->hasText()) {
+            throw new \RuntimeException(sprintf('Alert text not set in [%s]', get_class($this)));
+        }
+
+        return $this->text;
+    }
+
+    /**
+     * Text language key setter.
      *
      * @param string $type
      * @return \Softworx\RocXolid\Components\General\Alert
@@ -70,15 +112,25 @@ class Alert extends AbstractActiveComponent
     }
 
     /**
-     * Type getter.
+     * Text language key assignment checker.
+     *
+     * @return bool
+     */
+    public function hasTextKey(): bool
+    {
+        return isset($this->text_key);
+    }
+
+    /**
+     * Text language key getter.
      *
      * @return string
      * @throws \RuntimeException
      */
     public function getTextKey(): string
     {
-        if (!isset($this->text_key)) {
-            throw new \RuntimeException(sprintf('Alert text key not set in [%s]', get_class($this)));
+        if (!$this->hasTextKey()) {
+            throw new \RuntimeException(sprintf('Alert text language key not set in [%s]', get_class($this)));
         }
 
         return sprintf('text.%s', $this->text_key);

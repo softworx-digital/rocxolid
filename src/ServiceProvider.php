@@ -170,7 +170,7 @@ class ServiceProvider extends IlluminateServiceProvider
         $loader->alias('Html', \Collective\Html\HtmlFacade::class);
         $loader->alias('InterventionImage', \Intervention\Image\Facades\Image::class);
         // DEV
-        //$loader->alias('Debugbar', \Barryvdh\Debugbar\Facade::class);
+        $loader->alias('Debugbar', \Barryvdh\Debugbar\Facade::class);
 
         return $this;
     }
