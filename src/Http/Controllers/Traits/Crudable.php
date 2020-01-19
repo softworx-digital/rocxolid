@@ -41,6 +41,8 @@ trait Crudable
     public function __construct(AjaxResponse $response)
     {
         $this->response = $response;
+
+        $this->authorizeResource(static::$model_class);
     }
 
     public function getModelClass(): string

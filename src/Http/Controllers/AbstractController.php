@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Http\Controllers;
 
 use Illuminate\Routing\Controller as IlluminateController;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Routable;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
@@ -14,6 +15,7 @@ use Softworx\RocXolid\Traits\TranslationParamProvider as TranslationParamProvide
 
 abstract class AbstractController extends IlluminateController implements TranslationPackageProvider, TranslationParamProvider
 {
+    use AuthorizesRequests;
     use ActionableTrait;
     use TranslationPackageProviderTrait;
     use TranslationParamProviderTrait;

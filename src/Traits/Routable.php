@@ -128,6 +128,7 @@ trait Routable
 
     /**
      * {@inheritdoc}
+     * @todo: getController() not guaranteed
      */
     public function setRouteMethod(string $method): RoutableContract
     {
@@ -143,6 +144,18 @@ trait Routable
     public function hasRouteMethod(): bool
     {
         return isset($this->route_method);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRouteMethod(): string
+    {
+        if (!$this->hasRouteMethod()) {
+            throw new \UnderflowException(sprintf('No route method set in [%s]', get_class($this)));
+        }
+
+        return $this->route_method;
     }
 
     /**
