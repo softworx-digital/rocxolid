@@ -19,6 +19,11 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
         $this->setOptions($this->form_field->getOption('component'));
 
         // @todo: kinda "hotfixed", you can do better
+        if ($view_package = $this->getOption('view-package', false)) {
+            $this->setViewPackage($view_package);
+        }
+
+        // @todo: kinda "hotfixed", you can do better
         if ($placeholder = $this->getOption('attributes.placeholder', false)) {
             if (!is_numeric($placeholder)) {
                 $this->mergeOptions([

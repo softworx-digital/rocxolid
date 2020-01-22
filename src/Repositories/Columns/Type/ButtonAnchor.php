@@ -23,23 +23,23 @@ class ButtonAnchor extends AbstractColumn
         ],
     ];
 
-    public function setControllerMethod($controller_method): Column
+    public function setPolicyAbility($policy_ability): Column
     {
-        $this->setComponentOptions('controller-method', $controller_method);
+        $this->setComponentOptions('policy-ability', $policy_ability);
 
         return $this;
     }
 
-    public function setControllerMethodParams($controller_method_params): Column
+    public function setPolicyAbilityParams($policy_ability_params): Column
     {
-        $this->setComponentOptions('controller-method-params', $controller_method_params);
+        $this->setComponentOptions('policy-ability-params', $policy_ability_params);
 
         return $this;
     }
 
-    public function setPermissionsMethodGroup($permissions_method_group): Column
+    public function setPolicyAbilityGroup($permissions_policy_ability_group): Column
     {
-        $this->setComponentOptions('permissions_method_group', $permissions_method_group);
+        $this->setComponentOptions('permissions_policy_ability_group', $permissions_policy_ability_group);
 
         return $this;
     }

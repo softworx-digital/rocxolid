@@ -2,198 +2,75 @@
 
 namespace Softworx\RocXolid;
 
-use Illuminate\Contracts\View\View;
-use Illuminate\Routing\Router;
-use Illuminate\Foundation\AliasLoader;
+use App;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use Softworx\RocXolid\CrudRouter;
+use Illuminate\Filesystem\Filesystem;
+// rocXolid provider contracts
+use Softworx\RocXolid\Providers\Contracts\RepresentsPackage;
 
-// @todo: documentation
-// @todo: use for another rocXolid packages
-class AbstractServiceProvider extends IlluminateServiceProvider
+/**
+ * General service provider for rocXolid packages.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+class AbstractServiceProvider extends IlluminateServiceProvider implements RepresentsPackage
 {
-    /**
-     * Expected format:
-     *      'rocXolid.<package-name>.<file-name>' => '<path>'
-     *
-     * @var array $config_files Configuration files to be published and loaded.
-     */
-    protected $config_files = [];
+    const PACKAGE_CONFIG_FILE = 'composer.json';
 
     /**
-     * Register the application services.
-     *
-     * @return void
+     * {@inheritDoc}
      */
-    public function register()
+    public static function getPackageKey(): string
     {
-        $this
-            ->registerPackages()
-            ->bindContracts()
-            ->bindAliases(AliasLoader::getInstance());
+        return static::getPackageData()->name;
     }
 
     /**
-    * Bootstrap the application services.
-    *
-    * @return void
-    */
-    public function boot()
-    {
-        $this
-            ->configure()
-            ->load()
-            ->publish()
-            ->setRoutes($this->app->router)
-            ->setComposers()
-            ->setCommads();
-    }
-
-    /**
-     * Set configuration files for loading.
-     *
-     * @return \Illuminate\Support\ServiceProvider
+     * {@inheritDoc}
      */
-    private function configure(): IlluminateServiceProvider
+    public static function getTitle(): string
     {
-        foreach ($this->config_files as $key => $path) {
-            $path = realpath(__DIR__ . $path);
-
-            if (file_exists($path)) {
-                $this->mergeConfigFrom($path, $key);
-            }
+        if (!isset(static::getPackageData()->extra)) {
+            throw new \UnderflowException(sprintf('Package [%s] extra not set in [%s]', static::class, static::getPackageDataLocation()));
         }
 
-        return $this;
-    }
-
-    /**
-     * Load routes, migrations, views and translations.
-     *
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    private function load()
-    {
-        // customized views preference
-        // $this->loadViewsFrom(resource_path('views/vendor/softworx/<package-name>'), '<package-name>');
-        // ...
-        // pre-defined views fallback
-        // $this->loadViewsFrom(__DIR__ . '/../resources/views', '<package-name>');
-        // ...
-
-        return $this;
-    }
-
-    /**
-     * Expose config files and resources to be published.
-     *
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    private function publish()
-    {
-        // config files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\<package-name\ServiceProvider" --tag="<tag>" (--force to overwrite)
-        /*
-        $this->publishes([
-            ...
-        ], '<tag>');
-        */
-
-        return $this;
-    }
-
-    /**
-     * Define the routes for the application.
-     *
-     * @param  \Illuminate\Routing\Router $router
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    private function setRoutes(Router $router)
-    {
-        return $this;
-    }
-
-    /**
-     * Set view composers for blade templates.
-     *
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    private function setComposers(): IlluminateServiceProvider
-    {
-        // View::composer('<package-name>::<template-name>', <Composer>::class);
-
-        return $this;
-    }
-
-    /**
-     * Register required third-party packages, so they don't have to be added to config/app.php.
-     *
-     * @return \Illuminate\Support\ServiceProvider
-     */
-    private function registerPackages()
-    {
-        // $this->app->register(\<ThirdPartyPackageNamespace>\<ThirdPartyPackage>ServiceProvider::class);
-
-        return $this;
-    }
-
-    private function setCommads()
-    {
-        /*
-        foreach (config('rocXolid.<package-name>.commands') as $command => $handler)
-        {
-            $this->registerCommand(sprintf(config('rocXolid.<package-name>.command-binding-pattern'), $command), $handler);
+        if (!isset(static::getPackageData()->extra->rocXolid)) {
+            throw new \UnderflowException(sprintf('Package [%s] extra.rocXolid not set in [%s]', static::class, static::getPackageDataLocation()));
         }
-        */
 
-        return $this;
-    }
+        if (!isset(static::getPackageData()->extra->rocXolid->title)) {
+            throw new \UnderflowException(sprintf('Package [%s] extra.rocXolid.title not set in [%s]', static::class, static::getPackageDataLocation()));
+        }
 
-    private function registerCommand($binding, $handler)
-    {
-        /*
-        $this->app->singleton($binding, function($app) use ($handler)
-        {
-            return $app[$handler];
-        });
+        if (!isset(static::getPackageData()->extra->rocXolid->title->{App::getLocale()})) {
+            throw new \UnderflowException(sprintf('Package [%s] extra.rocXolid.title.%s not set in [%s]', static::class, App::getLocale(), static::getPackageDataLocation()));
+        }
 
-        $this->app->tag($binding, config('rocXolid.<package-name>.command-binding-tag'));
-
-        $this->commands($binding);
-        */
-
-        return $this;
+        return static::getPackageData()->extra->rocXolid->title->{App::getLocale()};
     }
 
     /**
-     * Bind contracts / facades, so they don't have to be added to config/app.php.
+     * Get package configuration.
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return array
+     * @throws \stdClass
      */
-    private function bindContracts()
+    private static function getPackageData(): \stdClass
     {
-        // rocXolid
-        // $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
-        // ...
-        // third-party
-        // ...
-
-        return $this;
+        return json_decode(app(Filesystem::class)->get(static::getPackageDataLocation()));
     }
 
     /**
-     * Bind aliases, so they don't have to be added to config/app.php.
+     * Get package configuration location.
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return string
      */
-    private function bindAliases(AliasLoader $loader)
+    private static function getPackageDataLocation(): string
     {
-        // rocXolid
-        // $loader->alias('<alias>', <Facade/>Contract>::class);
-        // ...
-        // third-party
-        // ...
+        $reflection = new \ReflectionClass(static::class);
 
-        return $this;
+        return sprintf('%s/%s', dirname(dirname($reflection->getFileName())), static::PACKAGE_CONFIG_FILE);
     }
 }

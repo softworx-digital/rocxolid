@@ -1,8 +1,15 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Utils;
 
-trait Actionable
+/**
+ * Utility trait to forge URL for controller's action.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+trait CreatesRoutes
 {
     /**
      * Dynamically create route for given controller action.

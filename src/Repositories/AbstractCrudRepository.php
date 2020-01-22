@@ -87,8 +87,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-info btn-sm margin-right-no',
                     'title-key' => 'show',
                 ],
-                'controller-method' => 'show',
-                'permissions-method-group' => 'read-only',
+                'policy-ability' => 'show',
+                'policy-ability-group' => 'read-only',
             ],
         ],
         'show-modal' => [
@@ -102,8 +102,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-info btn-sm margin-right-no',
                     'title-key' => 'show-modal',
                 ],
-                'controller-method' => 'show',
-                'permissions-method-group' => 'read-only',
+                'policy-ability' => 'show',
+                'policy-ability-group' => 'read-only',
             ],
         ],
         'edit' => [
@@ -116,8 +116,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-primary btn-sm margin-right-no',
                     'title-key' => 'edit',
                 ],
-                'controller-method' => 'edit',
-                'permissions-method-group' => 'write',
+                'policy-ability' => 'edit',
+                'policy-ability-group' => 'write',
             ],
         ],/*
         'edit-ajax' => [
@@ -130,7 +130,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                 'attributes' => [
                     'class' => 'btn btn-primary btn-sm',
                 ],
-                'controller-method' => 'edit',
+                'policy-ability' => 'edit',
             ],
         ],
         'delete' => [
@@ -142,7 +142,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                 'attributes' => [
                     'class' => 'btn btn-danger btn-sm'
                 ],
-                'controller-method' => 'destroyConfirm',
+                'policy-ability' => 'destroyConfirm',
             ],
         ],*/
         'delete-ajax' => [
@@ -156,8 +156,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-danger btn-sm margin-right-no',
                     'title-key' => 'delete',
                 ],
-                'controller-method' => 'destroyConfirm',
-                'permissions-method-group' => 'write',
+                'policy-ability' => 'destroyConfirm',
+                'policy-ability-group' => 'write',
             ],
         ],
     ];

@@ -253,37 +253,37 @@ trait Crudable
         return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->id);
     }
 
-    public function userCan($method_group)
+    public function userCan($policy_ability_group)
     {
         if (!config('rocXolid.admin.auth.check_permissions', false)) {
             return true;
         }
 
         $controller_class = sprintf('\%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
-        $permission = sprintf('\%s.%s', $controller_class, $method_group);
+        $permission = sprintf('\%s.%s', $controller_class, $policy_ability_group);
 
         if ($user = Auth::guard('rocXolid')->user()) {
             if (!config('rocXolid.admin.auth.check_permissions_root', false) && $user->isRoot()) {
                 return true;
             }
 
-            if ($this->allowPermissionException($user, $method_group, $permission)) {
+            if ($this->allowPermissionException($user, $policy_ability_group, $permission)) {
                 return true;
             }
 
             foreach ($user->permissions as $extra_permission) {
-                if (($extra_permission->controller_class === $controller_class) && ($extra_permission->controller_method_group === $method_group)) {
+                if (($extra_permission->controller_class === $controller_class) && ($extra_permission->policy_ability_group === $policy_ability_group)) {
                     return true;
-                } elseif (($method_group === 'read-only') && (($extra_permission->controller_class === $controller_class) && ($extra_permission->controller_method_group === 'write'))) {
+                } elseif (($policy_ability_group === 'read-only') && (($extra_permission->controller_class === $controller_class) && ($extra_permission->policy_ability_group === 'write'))) {
                     return true;
                 }
             }
 
             foreach ($user->roles as $role) {
                 foreach ($role->permissions as $permission) {
-                    if (($permission->controller_class === $controller_class) && ($permission->controller_method_group === $method_group)) {
+                    if (($permission->controller_class === $controller_class) && ($permission->policy_ability_group === $policy_ability_group)) {
                         return true;
-                    } elseif (($method_group === 'read-only') && (($permission->controller_class === $controller_class) && ($permission->controller_method_group === 'write'))) {
+                    } elseif (($policy_ability_group === 'read-only') && (($permission->controller_class === $controller_class) && ($permission->policy_ability_group === 'write'))) {
                         return true;
                     }
                 }
@@ -293,7 +293,7 @@ trait Crudable
         return false;
     }
 
-    protected function allowPermissionException(Authenticatable $user, string $method_group, string $permission)
+    protected function allowPermissionException(Authenticatable $user, string $policy_ability_group, string $permission)
     {
         return false;
     }

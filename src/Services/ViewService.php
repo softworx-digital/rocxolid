@@ -3,9 +3,10 @@
 namespace Softworx\RocXolid\Services;
 
 use App;
+use Arr;
+use Log;
 use View;
 use Blade;
-//use Debugbar;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\View\View as IlluminateView;
 use Softworx\RocXolid\Services\Contracts\ViewService as ViewServiceContract;
@@ -14,6 +15,7 @@ use Softworx\RocXolid\Components\Contracts\Controllable;
 use Softworx\RocXolid\Components\Contracts\Modellable;
 use Softworx\RocXolid\Services\Exceptions\ViewNotFoundException;
 
+// @todo: subject to refactoring
 class ViewService implements ViewServiceContract
 {
     /**
@@ -90,8 +92,6 @@ class ViewService implements ViewServiceContract
         $cache_key = $this->getCacheKey($component, $view_name);
 
         if (isset($this->cache[$cache_key])) {
-            //Debugbar::info('Getting from cache view: ' . $cache_key);
-
             return $this->cache[$cache_key];
         }
 
@@ -104,6 +104,7 @@ class ViewService implements ViewServiceContract
                 $path = array_shift($paths);
 
                 $current_component = App::make($component_class_name);
+                $current_component->setViewPackage(Arr::last($component->getViewPackages()));
 
                 $package_paths = $this->composePackageViewPaths($current_component, $path, $directory_separator, $view_name);
                 /**
@@ -126,8 +127,6 @@ class ViewService implements ViewServiceContract
         if (!$exists) {
             throw new ViewNotFoundException($component, $view_name, $search_paths);
         }
-
-        //Debugbar::info('Caching view: ' . $cache_key);
 
         $this->cache[$cache_key] = $path;
 

@@ -6,6 +6,8 @@ use Str;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\PackageManifest;
 use Illuminate\Filesystem\Filesystem;
+// rocXolid provider contracts
+use Softworx\RocXolid\Providers\Contracts\RepresentsPackage;
 
 /**
  * Service to access rocXolid packages.
@@ -33,7 +35,19 @@ class PackageService
     protected $file_system;
 
     /**
-     * Contructor.
+     * Get rocXolid package service provider based on package key.
+     *
+     * @return string
+     */
+    public function get(string $package_key): string
+    {
+        return $this->rocxolidPackages()->filter(function($package) use ($package_key) {
+            return $package::getPackageKey() === $package_key;
+        })->first() ?: '';
+    }
+
+    /**
+     * Constructor.
      *
      * @param \Illuminate\Foundation\PackageManifest $package_manifest Package manifest.
      */
@@ -51,7 +65,9 @@ class PackageService
     public function rocxolidPackages(): Collection
     {
         return collect($this->package_manifest->providers())->filter(function($class) {
-            return Str::startsWith($class, 'Softworx\\RocXolid\\');
+            $reflection = new \ReflectionClass($class);
+
+            return $reflection->implementsInterface(RepresentsPackage::class);
         });
     }
 
@@ -72,7 +88,7 @@ class PackageService
             } else {
                 return true;
             }
-        });
+        })->keys();
     }
 
     /**

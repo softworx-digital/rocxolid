@@ -2,24 +2,45 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
+use Illuminate\Support\Collection;
+
+/**
+ * Access to model's properties and methods to be used as tokens in content editing.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait HasTokenablePropertiesMethods
 {
-    public function hasTokenableProperties()
+    /**
+     * {@inheritDoc}
+     */
+    public function hasTokenableProperties(): bool
     {
         return property_exists($this, 'tokenable_properties');
     }
 
-    public function getTokenableProperties()
+    /**
+     * {@inheritDoc}
+     */
+    public function getTokenableProperties(): Collection
     {
         return collect(static::$tokenable_properties);
     }
 
-    public function hasTokenableMethods()
+    /**
+     * {@inheritDoc}
+     */
+    public function hasTokenableMethods(): bool
     {
         return property_exists($this, 'tokenable_methods');
     }
 
-    public function getTokenableMethods()
+    /**
+     * {@inheritDoc}
+     */
+    public function getTokenableMethods(): Collection
     {
         return collect(static::$tokenable_methods);
     }

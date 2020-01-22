@@ -40,18 +40,18 @@ trait Permissionable
             }
 
             foreach ($user->permissions as $extra_permission) {
-                if (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->controller_method_group == $action)) {
+                if (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->policy_ability_group == $action)) {
                     return true;
-                } elseif (($action == 'read-only') && (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->controller_method_group == 'write'))) {
+                } elseif (($action == 'read-only') && (($extra_permission->controller_class == sprintf('\%s', static::class)) && ($extra_permission->policy_ability_group == 'write'))) {
                     return true;
                 }
             }
 
             foreach ($user->roles as $role) {
                 foreach ($role->permissions as $permission) {
-                    if (($permission->controller_class === sprintf('\%s', static::class)) && ($permission->controller_method_group == $action)) {
+                    if (($permission->controller_class === sprintf('\%s', static::class)) && ($permission->policy_ability_group == $action)) {
                         return true;
-                    } elseif (($action === 'read-only') && (($permission->controller_class == sprintf('\%s', static::class)) && ($permission->controller_method_group == 'write'))) {
+                    } elseif (($action === 'read-only') && (($permission->controller_class == sprintf('\%s', static::class)) && ($permission->policy_ability_group == 'write'))) {
                         return true;
                     }
                 }

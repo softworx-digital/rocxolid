@@ -19,6 +19,7 @@ trait ReadsModels
     /**
      * Display the specified resource.
      *
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="view")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      */
     public function show(CrudRequest $request, Crudable $model)//: View

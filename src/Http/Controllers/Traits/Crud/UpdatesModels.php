@@ -21,6 +21,7 @@ trait UpdatesModels
     /**
      * Display the specified resource update form.
      *
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
@@ -60,6 +61,7 @@ trait UpdatesModels
     /**
      * Update the edited model.
      *
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */

@@ -2,11 +2,10 @@
 
 namespace Softworx\RocXolid;
 
-use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
-
-// use Vsch\TranslationManager\Translator; // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
+// @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
+// use Vsch\TranslationManager\Translator;
 
 /**
  * rocXolid package service provider.
@@ -15,7 +14,7 @@ use Illuminate\Foundation\AliasLoader;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-class ServiceProvider extends IlluminateServiceProvider
+class ServiceProvider extends AbstractServiceProvider
 {
     /**
      * @var array $listen Event listeners setup.
@@ -37,6 +36,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->app->register(Providers\ValidationServiceProvider::class);
         $this->app->register(Providers\PackagesServiceProvider::class);
         $this->app->register(Providers\CommandServiceProvider::class);
+        $this->app->register(Providers\ExtensionServiceProvider::class);
+        $this->app->register(Providers\FacadeServiceProvider::class);
 
         $this
             ->bindContracts()
@@ -53,16 +54,14 @@ class ServiceProvider extends IlluminateServiceProvider
         $this
             ->load()
             ->publish();
-
-        //\Debugbar::disable(); // @todo - zrejme pozdla usera enablovat / disablovat - najst kam spravne pichnut
     }
 
     /**
      * Load routes, migrations, views and translations.
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \Softworx\RocXolid\AbstractServiceProvider
      */
-    private function load(): IlluminateServiceProvider
+    private function load(): AbstractServiceProvider
     {
         // routes
         //$this->loadRoutesFrom(realpath(__DIR__ . '/../routes/web.php'));
@@ -77,9 +76,9 @@ class ServiceProvider extends IlluminateServiceProvider
     /**
      * Expose config files and resources to be published.
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \Softworx\RocXolid\AbstractServiceProvider
      */
-    private function publish(): IlluminateServiceProvider
+    private function publish(): AbstractServiceProvider
     {
         // configuration files
         // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="config" (--force to overwrite)
@@ -121,9 +120,9 @@ class ServiceProvider extends IlluminateServiceProvider
      * Template:
      *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \Softworx\RocXolid\AbstractServiceProvider
      */
-    private function bindContracts(): IlluminateServiceProvider
+    private function bindContracts(): AbstractServiceProvider
     {
         $this->app->singleton(
             Services\Contracts\ViewService::class,
@@ -157,20 +156,19 @@ class ServiceProvider extends IlluminateServiceProvider
      * Template:
      *      $loader->alias('<alias>', <Facade/Contract>::class);
      *
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \Softworx\RocXolid\AbstractServiceProvider
      */
-    private function bindAliases(AliasLoader $loader): IlluminateServiceProvider
+    private function bindAliases(AliasLoader $loader): AbstractServiceProvider
     {
         // rocXolid
         $loader->alias('ViewHelper', Helpers\View::class);
-        $loader->alias('RocXolidFormRequest', Http\Requests\FormRequest::class);
-        $loader->alias('RocXolidRepositoryRequest', Http\Requests\RepositoryRequest::class);
+        $loader->alias('Package', Facades\Package::class);
+        $loader->alias('RocXolidFormRequest', Http\Requests\FormRequest::class); // @todo: necessary?
+        $loader->alias('RocXolidRepositoryRequest', Http\Requests\RepositoryRequest::class); // @todo: necessary?
         // third-party
         $loader->alias('Form', \Collective\Html\FormFacade::class);
         $loader->alias('Html', \Collective\Html\HtmlFacade::class);
         $loader->alias('InterventionImage', \Intervention\Image\Facades\Image::class);
-        // DEV
-        $loader->alias('Debugbar', \Barryvdh\Debugbar\Facade::class);
 
         return $this;
     }

@@ -45,7 +45,7 @@ trait Crudable
         $this->authorizeResource(static::$model_class);
     }
 
-    public function getModelClass(): string
+    public static function getModelClass(): string
     {
         return static::$model_class;
     }

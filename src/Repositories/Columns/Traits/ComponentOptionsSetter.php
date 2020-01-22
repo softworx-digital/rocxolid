@@ -6,6 +6,11 @@ use Softworx\RocXolid\Repositories\Contracts\Column;
 
 trait ComponentOptionsSetter
 {
+    protected function setViewPackage($view_package): FormField
+    {
+        return $this->setComponentOptions('view-package', $view_package);
+    }
+
     protected function setTemplate($template): Column
     {
         return $this->setComponentOptions('template', $template);

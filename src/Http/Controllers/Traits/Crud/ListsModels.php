@@ -16,6 +16,7 @@ trait ListsModels
     /**
      * Display a listing of the resource.
      *
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="viewAll")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      */
     public function index(CrudRequest $request)//: View

@@ -45,6 +45,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         $this->setOptions($this->form->getOption('component'));
 
         $this
+            ->loadFormFieldGroupsComponents()
             ->loadFormFieldsComponents()
             ->organizeFormFieldsComponents();
 
@@ -111,9 +112,8 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         return $this->button_components;
     }
 
-    protected function loadFormFieldsComponents(): ComponentFormableContract
+    protected function loadFormFieldGroupsComponents(): ComponentFormableContract
     {
-        // field groups
         $this->field_group_components = new Collection();
 
         foreach ($this->getForm()->getFormFieldGroups() as $form_field_group) {
@@ -123,7 +123,11 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
             );
         }
 
-        // fields
+        return $this;
+    }
+
+    protected function loadFormFieldsComponents(): ComponentFormableContract
+    {
         $this->field_components = new Collection();
 
         foreach ($this->getForm()->getFormFields() as $form_field) {

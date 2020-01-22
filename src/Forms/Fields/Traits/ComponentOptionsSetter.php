@@ -7,6 +7,11 @@ use Softworx\RocXolid\Forms\Contracts\FormField;
 
 trait ComponentOptionsSetter
 {
+    protected function setViewPackage($view_package): FormField
+    {
+        return $this->setComponentOptions('view-package', $view_package);
+    }
+
     protected function setTemplate($template): FormField
     {
         return $this->setComponentOptions('template', $template);

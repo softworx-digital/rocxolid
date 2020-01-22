@@ -23,12 +23,10 @@ class PackagesServiceProvider extends IlluminateServiceProvider
     public function register(): IlluminateServiceProvider
     {
         $this->app->register(\Collective\Html\HtmlServiceProvider::class);
-        $this->app->register(\Barryvdh\TranslationManager\ManagerServiceProvider::class);
+        // $this->app->register(\Barryvdh\TranslationManager\ManagerServiceProvider::class);
         //$this->app->register(\Vsch\TranslationManager\ManagerServiceProvider::class);
         //$this->app->register(\Vsch\TranslationManager\TranslationServiceProvider::class);
-        $this->app->register(\Spatie\Permission\PermissionServiceProvider::class);
         $this->app->register(\Intervention\Image\ImageServiceProvider::class);
-        //$this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
 
         return $this;
     }

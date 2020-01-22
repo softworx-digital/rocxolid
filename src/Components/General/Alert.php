@@ -2,6 +2,8 @@
 
 namespace Softworx\RocXolid\Components\General;
 
+use Illuminate\Support\Collection;
+// rocXolid components
 use Softworx\RocXolid\Components\AbstractActiveComponent;
 
 /**
@@ -24,14 +26,14 @@ class Alert extends AbstractActiveComponent
     protected $type;
 
     /**
-     * @var string
+     * @var \Illuminate\Support\Collection
      */
-    protected $text;
+    protected $text = [];
 
     /**
-     * @var string
+     * @var \Illuminate\Support\Collection
      */
-    protected $text_key;
+    protected $text_key = [];
 
     /**
      * Type setter.
@@ -67,9 +69,28 @@ class Alert extends AbstractActiveComponent
      * @param string $type
      * @return \Softworx\RocXolid\Components\General\Alert
      */
-    public function setText(string $text): Alert
+    public function addText(string $text, string $wrapper = 'p'): Alert
     {
-        $this->text = $text;
+        $this->text = collect($this->text)->push([
+            'text' => $text,
+            'wrapper' => $wrapper
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Text language key setter.
+     *
+     * @param string $type
+     * @return \Softworx\RocXolid\Components\General\Alert
+     */
+    public function addTextKey(string $text_key, string $wrapper = 'p'): Alert
+    {
+        $this->text = collect($this->text)->push([
+            'key' => sprintf('text.%s', $text_key),
+            'wrapper' => $wrapper
+        ]);
 
         return $this;
     }
@@ -81,7 +102,7 @@ class Alert extends AbstractActiveComponent
      */
     public function hasText(): bool
     {
-        return isset($this->text);
+        return !empty($this->text);
     }
 
     /**
@@ -89,7 +110,7 @@ class Alert extends AbstractActiveComponent
      *
      * @return string
      */
-    public function getText(): string
+    public function getText(): Collection
     {
         if (!$this->hasText()) {
             throw new \RuntimeException(sprintf('Alert text not set in [%s]', get_class($this)));
@@ -97,44 +118,4 @@ class Alert extends AbstractActiveComponent
 
         return $this->text;
     }
-
-    /**
-     * Text language key setter.
-     *
-     * @param string $type
-     * @return \Softworx\RocXolid\Components\General\Alert
-     */
-    public function setTextKey(string $text_key): Alert
-    {
-        $this->text_key = $text_key;
-
-        return $this;
-    }
-
-    /**
-     * Text language key assignment checker.
-     *
-     * @return bool
-     */
-    public function hasTextKey(): bool
-    {
-        return isset($this->text_key);
-    }
-
-    /**
-     * Text language key getter.
-     *
-     * @return string
-     * @throws \RuntimeException
-     */
-    public function getTextKey(): string
-    {
-        if (!$this->hasTextKey()) {
-            throw new \RuntimeException(sprintf('Alert text language key not set in [%s]', get_class($this)));
-        }
-
-        return sprintf('text.%s', $this->text_key);
-    }
-
-
 }
