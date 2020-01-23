@@ -2,61 +2,80 @@
 
 namespace Softworx\RocXolid\Services;
 
-use App;
-use Arr;
-use Log;
+use Str;
 use View;
 use Blade;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
+use Illuminate\Support\Collection;
 use Illuminate\View\View as IlluminateView;
-use Softworx\RocXolid\Services\Contracts\ViewService as ViewServiceContract;
+use Illuminate\View\Factory as IlluminateViewFactory;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Renderable;
-use Softworx\RocXolid\Components\Contracts\Controllable;
-use Softworx\RocXolid\Components\Contracts\Modellable;
+// rocXolid services contracts
+use Softworx\RocXolid\Services\Contracts\ViewService as ViewServiceContract;
+// rocXolid services exceptions
 use Softworx\RocXolid\Services\Exceptions\ViewNotFoundException;
 
-// @todo: subject to refactoring
+/**
+ * Retrieves view for given object and view name.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 class ViewService implements ViewServiceContract
 {
     /**
-     * Directory name placeholder for general views.
+     * @param array
      */
-    const GENERIC_VIEW_DIRECTORY = '_generic'; // @todo: put his into config
-
-    protected $namespace_depth = [
-        'model' => 'Models',
-        'controller' => 'Controllers',
-        'component' => 'Components',
+    protected static $fallback_view_packages = [
+        'rocXolid',
     ];
-
-    protected $strip_from_class_name = [
-        'model' => 'Model',
-        'controller' => 'Controller',
-        'component' => 'Component',
-    ];
-
-    protected $cache = [];
 
     /**
-     * Returns desired view.
-     *
-     * @param Renderable $component Component to retrieve view for.
-     * @param string $view View name to retrieve.
-     * @param array $assignments View variables to assign.
-     * @return \Illuminate\View\View
-     * @throws \Exception
+     * @param array
      */
-    public function getView(Renderable $component, $view_name, $assignments = []): IlluminateView
+    protected static $fallback_view_dirs = [
+        '_generic',
+    ];
+
+    protected static $not_found_view_path = 'rocXolid::not-found';
+
+    /**
+     * Left here for possible experiments...
+     * Should represent some config of how to find the view path.
+     *
+     * @param array
+     */
+    protected static $preference = [
+        'getViewPackages',
+        'getViewDirectories',
+    ];
+
+    /**
+     * @var \Illuminate\Contracts\Cache\Repository
+     */
+    protected $cache;
+
+    /**
+     * Constructor.
+     *
+     * @param \Illuminate\Contracts\Cache\Repository $cache Cache storage.
+     */
+    public function __construct(CacheRepository $cache)
     {
-        //return View::make($this->getViewPath($component, $view_name), $assignments)->render();
-        return View::make($this->getViewPath($component, $view_name), $assignments);
+        $this->cache = $cache;
     }
 
-    public static function render($string, $data)
+    /**
+     * {@inheritDoc}
+     */
+    public static function render(string $content, array $data = []): string
     {
-        $data['__env'] = app(\Illuminate\View\Factory::class);
+        $data['__env'] = app(IlluminateViewFactory::class);
 
-        $php = Blade::compileString($string);
+        $php = Blade::compileString($content);
 
         $obLevel = ob_get_level();
         ob_start();
@@ -80,182 +99,177 @@ class ViewService implements ViewServiceContract
     }
 
     /**
-     * Gets full path for given view.
-     *
-     * @param Renderable $component Component to retrieve view for.
-     * @param string $view View name.
-     * @param string $directory_separator Path directory separator.
-     * @return string
+     * {@inheritDoc}
      */
-    public function getViewPath(Renderable $component, $view_name, $directory_separator = '.'): string
+    public function getView(Renderable $component, string $view_name, array $assignments = []): IlluminateView
+    {
+        try {
+            return View::make($this->getViewPath($component, $view_name), $assignments);
+        } catch (\Exception $e) {
+            return View::make($this->getNotFoundViewPath(), [ 'e' => $e ]);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getViewPath(Renderable $component, string $view_name): string
     {
         $cache_key = $this->getCacheKey($component, $view_name);
 
-        if (isset($this->cache[$cache_key])) {
-            return $this->cache[$cache_key];
+        if ($this->cache->has($cache_key)) {
+            return $this->cache->get($cache_key);
         }
 
-        $hierarchy = $this->getHierarchy($component, $directory_separator);
-        $search_paths = [];
+        $hierarchy = $this->getHierarchy($component);
 
-        foreach ($hierarchy as $param => $paths) {
-            do {
-                $component_class_name = key($paths);
-                $path = array_shift($paths);
+        $search_paths = collect();
 
-                $current_component = App::make($component_class_name);
-                $current_component->setViewPackage(Arr::last($component->getViewPackages()));
+        // looks better than using Collection::each()
+        foreach ($this->getViewPackages($component, $hierarchy) as $view_package) {
+            foreach ($this->getViewDirectories($component, $hierarchy) as $view_dir) {
+                $candidate = $this->composePackageViewPath($view_package, $view_dir, $view_name);
+                $search_paths->push($candidate);
 
-                $package_paths = $this->composePackageViewPaths($current_component, $path, $directory_separator, $view_name);
-                /**
-                 * Old approach, considering only given component's package, could be slower though.
-                 */
-                //$package_paths = $this->composePackageViewPaths($component, array_shift($paths), $directory_separator, $view_name);
+                if (View::exists($candidate)) {
+                    $this->cache->put($cache_key, $candidate);
 
-                foreach ($package_paths as $path) {
-                    $exists = View::exists($path);
-
-                    if ($exists) {
-                        break;
-                    }
+                    return $candidate;
                 }
-
-                $search_paths += $package_paths;
-            } while (!$exists && !empty($paths));
+            }
         }
 
-        if (!$exists) {
-            throw new ViewNotFoundException($component, $view_name, $search_paths);
-        }
+        /*
+         * this is kinda experimentory, to find out if it is possible to create the iterations dynamically
+         * maybe with the use of Collection::pipe()
+        collect(static::$preference)->each(function ($method) use ($component, $hierarchy) {
+            $this->$method($component, $hierarchy)
+            ...
+        });
+         */
 
-        $this->cache[$cache_key] = $path;
-
-        return $path;
+        throw new ViewNotFoundException($component, $view_name, $search_paths);
     }
 
-    protected function getHierarchy(Renderable $component, $directory_separator): array
+    /**
+     * Get view - placeholder path for not found templates.
+     *
+     * @return string
+     */
+    protected function getNotFoundViewPath(): string
     {
-        $hierarchy = [];
+        return static::$not_found_view_path;
+    }
 
-        /*
-        if (($component instanceof Modellable) && is_object($component->getModel()))
-        {
-            $hierarchy['model'] = $this->getGenericHierarchyNamespacePaths(
-                $this->getHierarchyNamespacePaths($component->getModel(), 'model', $directory_separator),
-                $directory_separator
-            );
-        }
-        */
+    /**
+     * Create hierarchical collection of components classes for future use.
+     * Start with given component and add its eligible parents.
+     *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component at the hierarchy top.
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getHierarchy(Renderable $component): Collection
+    {
+        $reflection = new \ReflectionClass($component);
 
-        /*
-        if (($component instanceof Controllable) && is_object($component->getController()))
-        {
-            $hierarchy['controller'] = $this->getGenericHierarchyNamespacePaths(
-                $this->getHierarchyNamespacePaths($component->getController(), 'controller', $directory_separator),
-                $directory_separator
-            );
-        }
-        */
+        $hierarchy = collect();
 
-        /*
-        $hierarchy['component'] = $this->getGenericHierarchyNamespacePaths(
-            $this->getHierarchyNamespacePaths($component, 'component', $directory_separator),
-            $directory_separator
+        do  {
+            $hierarchy->push([
+                'class' => $reflection->getName(),
+                'dir' => $this->getClassNameViewDirectory($reflection),
+            ]);
+        } while (
+            ($reflection = $reflection->getParentClass())
+            && $reflection->isInstantiable()
+            && $reflection->implementsInterface(Renderable::class)
         );
-        */
-
-        $hierarchy['component'] = $this->getHierarchyNamespacePaths($component, 'component', $directory_separator);
 
         return $hierarchy;
     }
 
     /**
-     * Creates hierarchical directory structures based on controller's
-     * parent hierarchy and namespace to be used in search for a view.
+     * Create priority collection of view packages to look for the view.
      *
-     * @param string $directory_separator Path directory separator.
-     * @return array
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @param \Illuminate\Support\Collection $hierarchy Component hierarchy.
+     * @return \Illuminate\Support\Collection
      */
-    protected function getHierarchyNamespacePaths($object, $param, $directory_separator): array
+    protected function getViewPackages(Renderable $component, Collection $hierarchy): Collection
     {
-        $reflection = new \ReflectionClass($object);
-        $hierarchy = [];
-        $hierarchy[$reflection->getName()] = $reflection;
-        $generic = [];
+        $hierarchy_view_packages = $hierarchy->pluck('class')->map(function($class_name) {
+            return app($class_name)->getViewPackage();
+        })->toArray();
 
-        while (($parent = $reflection->getParentClass())
-            && $parent->isInstantiable()
-            //&& (strpos($reflection->getNamespaceName(), $parent->getNamespaceName()) !== false)) // allow mixing up totally different packages
-            && (strpos($parent->getNamespaceName(), $this->namespace_depth[$param]) !== false)
-            && ($interfaces = class_implements($parent->getName()))
-            && (($param != 'component') || in_array(Renderable::class, $interfaces))) {
-            $reflection = $parent;
-
-            $hierarchy[$parent->getName()] = $reflection;
-        }
-
-        return array_map(
-            function ($reflection) use ($param, $directory_separator) {
-                //$dir = str_replace($this->strip_from_class_name[$param], '', $reflection->getShortName());
-                $dir = $reflection->getShortName();
-                $dir = preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $dir); // CamelCase to camel-case
-
-                $path = substr($reflection->getNamespaceName(), strpos($reflection->getNamespaceName(), $this->namespace_depth[$param]) + strlen($this->namespace_depth[$param]));
-                $path = preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $path); // CamelCase to camel-case
-                $path = explode('\\', $path);
-
-                $interfaces = class_implements($reflection->getName());
-
-                if (empty($interfaces) || !in_array(Renderable::class, $interfaces)) {
-                    $path[] = $param;
-                }
-
-                $path[] = $dir;
-
-                return strtolower(implode($directory_separator, array_filter($path)));
-            },
-            $hierarchy
-        );
+        return collect(array_merge(
+            [ $component->getViewPackage() ],
+            $hierarchy_view_packages,
+            static::$fallback_view_packages
+        ))->unique();
     }
 
-    protected function getGenericHierarchyNamespacePaths($hierarchy, $directory_separator): array
+    /**
+     * Create priority collection of view directories inside package to look for the view.
+     *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @param \Illuminate\Support\Collection $hierarchy Component hierarchy.
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getViewDirectories(Renderable $component, Collection $hierarchy): Collection
     {
-        $paths = $hierarchy;
+        /*
+        $hierarchy_view_dirs = $hierarchy->pluck('class')->map(function($class_name) {
+            return app($class_name)->getViewDirectory();
+        })->toArray();
+        */
 
-        array_map(
-            function ($path, $i) use (&$paths, $directory_separator) {
-                array_splice($paths, ($i * 2) + 1, 0, sprintf('%s%s%s', $path, $directory_separator, self::GENERIC_VIEW_DIRECTORY));
-            },
-            $hierarchy,
-            array_keys($hierarchy)
-        );
+        $hierarchy_view_dirs = $hierarchy->pluck('dir')->toArray();
 
-        return $paths;
+        return collect(array_merge(
+            [ $component->getViewDirectory() ],
+            $hierarchy_view_dirs,
+            static::$fallback_view_dirs
+        ))->filter()->unique();
     }
 
-    protected function composePackageViewPaths(Renderable $component, $path, $directory_separator, $view_name): array
+    /**
+     * Create directory path based on component's fully qualified name.
+     *
+     * @param \ReflectionClass $reflection Component's reflection.
+     * @return string
+     */
+    protected function getClassNameViewDirectory(\ReflectionClass $reflection): string
     {
-        $view_path = implode($directory_separator, array_filter([
-            $component->getViewDirectory(),
-            $path,
-            $view_name
-        ]));
+        $path = Str::after($reflection->getName(), 'Components\\');
+        $path = collect(explode('\\', $path));
 
-        if ($component->hasViewPackage()) {
-            $package_view_paths = [];
-
-            foreach ($component->getViewPackages() as $package) {
-                $package_view_paths[] = sprintf('%s::%s', $package, $view_path);
-            }
-
-            return $package_view_paths;
-        } else {
-            return (array)$view_path;
-        }
+        return $path->map(function($dir) {
+            return Str::kebab($dir);
+        })->implode('.');
     }
 
-    protected function getCacheKey(Renderable $component, $view_name): string
+    /**
+     * Create full view path based on given package, package subdirectory and view name.
+     *
+     * @param string $view_package View package to get the view from.
+     * @param string $view_dir Directory inside the package.
+     * @param string $view_name View name.
+     * @return string
+     */
+    protected function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string
     {
-        return sprintf('%s-%s', get_class($component), $view_name);
+        return sprintf('%s::%s.%s', $view_package, $view_dir, $view_name);
+    }
+
+    /**
+     * Generate key for caching the view paths.
+     *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @param string $view_name View name.
+     * @return string
+     */
+    protected function getCacheKey(Renderable $component, string $view_name): string
+    {
+        return sprintf('%s-%s-%s', get_class($component), $component->getViewPackage(), $view_name);
     }
 }

@@ -4,6 +4,7 @@ namespace Softworx\RocXolid\Components\General;
 
 use Illuminate\Support\Collection;
 // rocXolid components
+use Softworx\RocXolid\Components\General\Button;
 use Softworx\RocXolid\Components\AbstractActiveComponent;
 
 /**
@@ -34,6 +35,11 @@ class Alert extends AbstractActiveComponent
      * @var \Illuminate\Support\Collection
      */
     protected $text_key = [];
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $buttons = [];
 
     /**
      * Type setter.
@@ -67,13 +73,14 @@ class Alert extends AbstractActiveComponent
      * Text setter.
      *
      * @param string $type
+     * @param string $wrapper
      * @return \Softworx\RocXolid\Components\General\Alert
      */
     public function addText(string $text, string $wrapper = 'p'): Alert
     {
         $this->text = collect($this->text)->push([
             'text' => $text,
-            'wrapper' => $wrapper
+            'wrapper' => $wrapper,
         ]);
 
         return $this;
@@ -83,13 +90,33 @@ class Alert extends AbstractActiveComponent
      * Text language key setter.
      *
      * @param string $type
+     * @param string $wrapper
      * @return \Softworx\RocXolid\Components\General\Alert
      */
     public function addTextKey(string $text_key, string $wrapper = 'p'): Alert
     {
         $this->text = collect($this->text)->push([
             'key' => sprintf('text.%s', $text_key),
-            'wrapper' => $wrapper
+            'wrapper' => $wrapper,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Collection content setter.
+     *
+     * @param \Illuminate\Support\Collection $collection
+     * @param string $wrapper
+     * @param string $item_wrapper
+     * @return \Softworx\RocXolid\Components\General\Alert
+     */
+    public function addCollection(Collection $collection, string $wrapper = 'ul', string $item_wrapper = 'li'): Alert
+    {
+        $this->text = collect($this->text)->push([
+            'collection' => $collection,
+            'wrapper' => $wrapper,
+            'item_wrapper' => $wrapper,
         ]);
 
         return $this;
@@ -108,7 +135,7 @@ class Alert extends AbstractActiveComponent
     /**
      * Text getter.
      *
-     * @return string
+     * @return \Illuminate\Support\Collection
      */
     public function getText(): Collection
     {
@@ -117,5 +144,28 @@ class Alert extends AbstractActiveComponent
         }
 
         return $this->text;
+    }
+
+    /**
+     * Button setter.
+     *
+     * @param string $type
+     * @return \Softworx\RocXolid\Components\General\Alert
+     */
+    public function addButton(Button $button): Alert
+    {
+        $this->buttons = collect($this->buttons)->push($button);
+
+        return $this;
+    }
+
+    /**
+     * Buttons getter.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getButtons(): Collection
+    {
+        return $this->buttons;
     }
 }

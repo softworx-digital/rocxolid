@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Services\Contracts;
 
 use Illuminate\View\View;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Renderable;
 
 /**
@@ -15,22 +16,31 @@ use Softworx\RocXolid\Contracts\Renderable;
 interface ViewService
 {
     /**
-     * Searches for given view.
+     * Compile given content as a blade template.
      *
-     * @param Renderable $component Component to retrieve view for.
-     * @param string $view View (file w/out 'blade.php'') name to retrieve.
-     * @param array $assignments View variables to assign.
-     * @return \Illuminate\View\View
-     */
-    public function getView(Renderable $component, $view_name, $assignments = []): View;
-
-    /**
-     * Gets full path for given view.
-     *
-     * @param Renderable $component Component to retrieve view for.
-     * @param string $view View name.
-     * @param string $directory_separator Path directory separator.
+     * @param string $content Blade template content.
+     * @param array $data Template data.
      * @return string
      */
-    public function getViewPath(Renderable $component, $view_name, $directory_separator = '.'): string;
+    public static function render(string $content, array $data = []): string;
+
+    /**
+     * Return view for given component.
+     *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component to retrieve view for.
+     * @param string $view View name to retrieve.
+     * @param array $assignments View variables to assign.
+     * @return \Illuminate\View\View
+     * @throws \Exception
+     */
+    public function getView(Renderable $component, string $view_name, array $assignments = []): View;
+
+    /**
+     * Get full view path for given view.
+     *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component to retrieve view path for.
+     * @param string $view View name to get path for.
+     * @return string
+     */
+    public function getViewPath(Renderable $component, string $view_name): string;
 }

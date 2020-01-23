@@ -55,11 +55,11 @@ interface Renderable
     public function setViewPackage(string $package): Renderable;
 
     /**
-     * Return view packages set to the component.
+     * Return view package set to the component.
      *
-     * @return array
+     * @return string
      */
-    public function getViewPackages(): array;
+    public function getViewPackage(): string;
 
     /**
      * Set a view directory of the view package to the component.

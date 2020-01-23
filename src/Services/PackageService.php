@@ -35,21 +35,25 @@ class PackageService
     protected $file_system;
 
     /**
-     * Get rocXolid package service provider based on package key.
+     * Get rocXolid package service provider class name based on package key.
+     * Return empty string if not found.
      *
-     * @return string
+     * @param string $package_key Package key (name) to get package service provider for.
+     * @return string|null
      */
-    public function get(string $package_key): string
+    public function get(string $package_key): ?string
     {
         return $this->rocxolidPackages()->filter(function($package) use ($package_key) {
             return $package::getPackageKey() === $package_key;
-        })->first() ?: '';
+        })->first();
     }
 
     /**
      * Constructor.
      *
-     * @param \Illuminate\Foundation\PackageManifest $package_manifest Package manifest.
+     * @param \Illuminate\Foundation\PackageManifest $package_manifest Package manifest to access service providers.
+     * @param \Illuminate\Filesystem\Filesystem $file_system File system to access file contents.
+     * @return \Softworx\RocXolid\Services\PackageService
      */
     public function __construct(PackageManifest $package_manifest, Filesystem $file_system)
     {
@@ -58,7 +62,7 @@ class PackageService
     }
 
     /**
-     * Get all rocXolid packages.
+     * Get all rocXolid packages (service providers' class names).
      *
      * @return \Illuminate\Support\Collection
      */
@@ -74,6 +78,8 @@ class PackageService
     /**
      * Get class list based on common namespace and possible filter (for eg. interface implementation).
      *
+     * @param string $namespace
+     * @param \Closure $filter
      * @return \Illuminate\Support\Collection
      */
     public function getPackageClasses(string $namespace, \Closure $filter = null): Collection

@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid\Forms\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection; // @todo: needed?
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\FormHelper;
 

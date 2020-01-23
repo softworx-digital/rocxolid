@@ -2,7 +2,9 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use Illuminate\Support\Collection;
+// rocXolid contracts
+use Softworx\RocXolid\Contracts\Valueable;
+// rocXolid form fields
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
 class CollectionCheckbox extends AbstractFormField
@@ -74,12 +76,18 @@ class CollectionCheckbox extends AbstractFormField
         }
     }
 
-    public function isFieldValue($value, $index = 0)
+    public function setValue($value, int $index = 0): Valueable
     {
-        if (!$this->getFieldValue($index) instanceof Collection) {
-            $this->setValue(new Collection($this->getFieldValue($index)));
+        // coming from submitted data
+        if (is_array($value)) {
+            $value = collect($value)->filter()->keys();
         }
 
-        return  $this->getFieldValue($index)->contains($value);
+        return parent::setValue($value, $index);
+    }
+
+    public function isFieldValue($value, $index = 0)
+    {
+        return $this->getFieldValue($index)->contains($value);
     }
 }

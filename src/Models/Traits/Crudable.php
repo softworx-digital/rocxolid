@@ -2,36 +2,28 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
-use App;
-use DB;
 use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-// relations
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-// components
+// rocXolid model traits
+use Softworx\RocXolid\Models\Traits\HasTitleColumn;
+use Softworx\RocXolid\Models\Traits\HasRelationships;
+// rocXolid components
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
- * @TODO: refactor?
+ * @todo: subject to refactoring
  */
 trait Crudable
 {
+    use HasTitleColumn;
+    use HasRelationships;
+
     public function getModelViewerComponent()
     {
-        return App::make($this->getControllerClass())->getModelViewerComponent($this);
+        return app($this->getControllerClass())->getModelViewerComponent($this);
     }
 
     public function getExtraAttributes()
@@ -62,71 +54,7 @@ trait Crudable
             $name = Str::kebab((new \ReflectionClass($this))->getShortName());
         }
 
-        return $singular ? $name : str_plural($name);
-    }
-
-    public function resolvePolymorphism($data, $action = null)
-    {
-        foreach ($data as $attribute => $value) {
-            if (substr($attribute, -5) === '_type') {
-                $id_attribute = sprintf('%s_id', substr($attribute, 0, -5));
-
-                if (array_key_exists($id_attribute, $data)) {
-                    $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
-
-                    if (method_exists($this, $method)) {
-                        $this->$attribute = $this->$method();
-                        $this->$id_attribute = $data[$id_attribute];
-                    } else {
-                        $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
-
-                        if (!$type) {
-                            throw new \InvalidArgumentException(sprintf('Cannot resolve polymorph param [%s] for [%s], provide either [%s] method or configure in [rocXolid.main.polymorphism.%s]', $attribute, static::class, $method, $value));
-                        }
-
-                        $this->$attribute = $type;
-                        $this->$id_attribute = $data[$id_attribute];
-                    }
-                }
-            }
-        }
-
-        return $this;
-    }
-
-    public function fillRelationships($data, $action = null)
-    {
-        foreach ($this->getRelationshipMethods() as $method) {
-            if ($this->$method() instanceof BelongsTo) {
-                $attribute = sprintf('%s_id', $method);
-
-                if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-                    $associate = $this->$method()->getRelated()->findOrFail($data[$attribute]);
-
-                    $this->$method()->associate($associate);
-                }
-            } elseif ($this->$method() instanceof HasMany) {
-                $attribute = $method;
-
-                if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-                    $objects = [];
-
-                    foreach ($data[$attribute] as $id) {
-                        $objects[] = $this->$method()->getRelated()->findOrFail($id);
-                    }
-
-                    $this->$method()->saveMany($objects);
-                }
-            } elseif ($this->$method() instanceof BelongsToMany) {
-                $attribute = $method;
-
-                if (array_key_exists($attribute, $data)) {
-                    $this->$method()->sync($data[$attribute]);
-                }
-            }
-        }
-
-        return $this;
+        return $singular ? $name : Str::plural($name);
     }
 
     public function fillCustom($data, $action = null)
@@ -161,7 +89,7 @@ trait Crudable
 
     public function getCrudController()
     {
-        return App::make($this->getControllerClass());
+        return app($this->getControllerClass());
     }
 
     public function getControllerClass()
@@ -196,14 +124,14 @@ trait Crudable
     {
         $action = sprintf('%s@%s', $this->getControllerClass(), $method);
 
-        return action($action, [$this] + $params);
+        return action($action, [ $this ] + $params);
     }
 
     public function getAppControllerRoute($method = 'show', $params = []): string
     {
         $action = sprintf('%s@%s', $this->getAppControllerClass(), $method);
 
-        return action($action, [$this] + $params);
+        return action($action, [ $this ] + $params);
     }
 
     public function getShowAttributes($except = [], $with = [])
@@ -226,7 +154,8 @@ trait Crudable
 
     public function isJsonAttribute($attribute)
     {
-        return false;
+        // @todo: you can do (maybe) better than checking substring
+        return (substr($attribute, -5) === '_json');
     }
 
     public function isColorAttribute($attribute)
@@ -235,19 +164,7 @@ trait Crudable
         return (substr($attribute, -5) === 'color');
     }
 
-    public function getRelationshipMethods($except = []): array
-    {
-        if (!property_exists($this, 'relationships')) {
-            return [];
-        }
-
-        if (!is_array($except)) {
-            $except = [ $except ];
-        }
-
-        return array_diff($this->relationships, $except);
-    }
-
+    // @TODO: this doesn't belong here
     public function getUploadPath()
     {
         return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->id);

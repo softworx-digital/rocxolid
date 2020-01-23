@@ -71,9 +71,9 @@ trait Renderable
     /**
      * {@inheritdoc}
      */
-    public function getViewPackages(): array
+    public function getViewPackage(): string
     {
-        return (array)$this->view_package;
+        return $this->view_package;
     }
 
     /**

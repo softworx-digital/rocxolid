@@ -21,12 +21,12 @@ trait ValidatesFormGroup
      * Validate group of Create/Update form fields.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param string $group
+     * @param string $field_group
      * @param mixed $id
      * @todo: verify if $int can be type hinted as int
      * @todo: ugly approach
      */
-    public function formValidateGroup(CrudRequest $request, string $group, $id = null)//: Response
+    public function formValidateGroup(CrudRequest $request, string $field_group, $id = null)//: Response
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
 
@@ -49,9 +49,9 @@ trait ValidatesFormGroup
 
         // @todo: najprv getnutie groupy z formu
         // @todo: ak sa da, tak nie submit formularu, ale len validaciu groupy
-        $form->submitGroup($group);
+        $form->submitGroup($field_group);
 
-        $form_field_group = $form->getFormFieldGroup($group);
+        $form_field_group = $form->getFormFieldGroup($field_group);
 
         // this is needed for composing the fields
         $form_component = CrudFormComponent::build($this, $this)
@@ -63,8 +63,8 @@ trait ValidatesFormGroup
             ->setFormFieldGroup($form_field_group);
 
         $this->response->replace(
-            $form_field_group_component->getDomId($group),
-            $form_component->fetch('include.fieldset-only-group', ['group' => $group])
+            $form_field_group_component->getDomId($field_group),
+            $form_component->fetch('include.fieldset-only-group', ['group' => $field_group])
         );
 
         if (!$form->isValid()) {

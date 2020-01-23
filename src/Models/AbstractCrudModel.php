@@ -3,15 +3,14 @@
 namespace Softworx\RocXolid\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// model contracts
+// rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
-// model traits
+// rocXolid model traits
 use Softworx\RocXolid\Models\Traits\Crudable as CrudableTrait;
-use Softworx\RocXolid\Models\Traits\HasTitleColumn;
 use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearchableTrait;
-// user management traits
-use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes;
+// rocXolid user management traits
+use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: this doesn't belong here, another approach without dependency on UserManagement?
 
 /**
  *
@@ -19,7 +18,6 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes;
 class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
 {
     use CrudableTrait;
-    use HasTitleColumn;
     use HasUserAttributes;
     use AutocompleteSearchableTrait;
 
@@ -88,6 +86,7 @@ class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchabl
     protected $dates = [
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 
     public function getAttributeViewValue($attribute)

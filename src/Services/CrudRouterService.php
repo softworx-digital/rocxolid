@@ -67,12 +67,12 @@ class CrudRouterService
             'uses' => $this->controller . '@formReload',
         ]);
 
-        Route::post($this->name . sprintf('/form-reload/group/{group}/{%s?}', $param), [
+        Route::post($this->name . sprintf('/form-reload/group/{field_group}/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.form-reload-group',
             'uses' => $this->controller . '@formReloadGroup',
         ]);
 
-        Route::post($this->name . sprintf('/form-validate/group/{group}/{%s?}', $param), [
+        Route::post($this->name . sprintf('/form-validate/group/{field_group}/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.form-validate-group',
             'uses' => $this->controller . '@formValidateGroup',
         ]);

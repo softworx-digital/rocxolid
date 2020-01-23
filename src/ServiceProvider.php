@@ -2,8 +2,10 @@
 
 namespace Softworx\RocXolid;
 
+use Cache;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
 // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 // use Vsch\TranslationManager\Translator;
 
@@ -146,6 +148,12 @@ class ServiceProvider extends AbstractServiceProvider
             return new Services\FormService();
         });
         */
+
+        $this->app->when(Services\ViewService::class)
+            ->needs(IlluminateCacheRepository::class)
+            ->give(function () {
+                return Cache::store('array');
+            });
 
         return $this;
     }

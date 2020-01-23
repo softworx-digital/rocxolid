@@ -121,7 +121,7 @@ class PermissionReaderService
             '%s.%s.%s',
             $package,
             Str::kebab((new \ReflectionClass($controller::getModelClass()))->getShortName()),
-            Str::kebab($method->annotation->getPolicyAbility())
+            is_scalar($method) ? $method : Str::kebab($method->annotation->getPolicyAbility())
         );
     }
 }
