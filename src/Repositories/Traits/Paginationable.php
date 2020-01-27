@@ -15,6 +15,7 @@ trait Paginationable
 
     private $_paginator = null;
 
+    // @todo: model has perPage property
     public function getPageLimit()
     {
         return $this->_page_limit;

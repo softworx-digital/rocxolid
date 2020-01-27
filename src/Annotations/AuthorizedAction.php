@@ -10,20 +10,24 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target("METHOD")
  */
-final class AuthorizedAction
+final class AuthorizedAction extends AbstractAuthorizedAnnotation
 {
     /**
      * @Required
+     * @var string
      */
     protected $policy_ability_group;
 
     /**
      * @Required
+     * @var string
      */
     protected $policy_ability;
 
     public function __construct(array $values)
     {
+        parent::__construct($values);
+
         $this->policy_ability_group = $values['policy_ability_group'];
         $this->policy_ability = $values['policy_ability'];
     }

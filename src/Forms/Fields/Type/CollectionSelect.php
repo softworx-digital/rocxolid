@@ -61,7 +61,7 @@ class CollectionSelect extends AbstractFormField
         return $this->collection;
     }
 
-    public function getFieldName($index = 0)
+    public function getFieldName(int $index = 0): string
     {
         if ($this->isArray()) {
             return sprintf('%s[%s][%s]', self::ARRAY_DATA_PARAM, $index, $this->name);

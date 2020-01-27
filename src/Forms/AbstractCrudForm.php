@@ -119,8 +119,19 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                 $this
                     ->getFormField($attribute)
                         //->setValue($value, $index)
-                        ->setValue($relation->pluck(sprintf('%s.id', $relation->getRelated()->getTable())))
+                        ->setValue($relation->pluck(sprintf(
+                            '%s.%s',
+                            $relation->getRelated()->getTable(),
+                            $relation->getRelated()->getKeyName()
+                        )))
                         ->updateParent();
+
+                if (filled($relation->getPivotColumns())) {
+                    $this
+                        ->getFormField($attribute)
+                        ->setPivotData($relation->get()->pluck('pivot'))
+                        ->updateParent();
+                }
             }
         });
 

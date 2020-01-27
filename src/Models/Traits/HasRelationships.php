@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Models\Traits;
 
 use Str;
+use Log;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,11 +21,25 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
 
 trait HasRelationships
 {
-    public function hasRelationshipMethods(): bool
+    public function getReflectedRelationshipMethods()
     {
-        return !empty($this->getRelationshipMethods());
+        $reflect = new \ReflectionClass($this);
+        $methods = collect($reflect->getMethods())->filter(function($method) {
+            return is_subclass_of((string)$method->getReturnType(), \Illuminate\Database\Eloquent\Relations\Relation::class);
+        });
+
+        return $methods;
     }
 
+    public function hasRelationshipMethods(): bool
+    {
+        return !$this->getRelationshipMethods()->isEmpty();
+    }
+
+    /**
+     * Get all relationship methods to show in model detail screen.
+     *
+     */
     public function getRelationshipMethods(...$except): Collection
     {
         if (!property_exists($this, 'relationships')) {
@@ -96,6 +111,7 @@ trait HasRelationships
     // @todo: subject to refactoring, don't like the current approach
     public function fillRelationships(array $data, string $action = null): Crudable
     {
+Log::debug(__METHOD__, $data);
         $this->getRelationshipMethods()->each(function($relation) use ($data, $action) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));

@@ -55,6 +55,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use ItemsReorderderableTrait; // @todo: add only where needed
     use Actions\ReloadsForm;
     use Actions\ReloadsFormGroup;
+    use Actions\ValidatesFormGroup;
     use Actions\ClonesModels;
 
     /**

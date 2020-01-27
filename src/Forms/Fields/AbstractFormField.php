@@ -3,26 +3,33 @@
 namespace Softworx\RocXolid\Forms\Fields;
 
 use Illuminate\Support\Collection;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable;
+use Softworx\RocXolid\Contracts\PivotValueable;
 use Softworx\RocXolid\Contracts\ErrorMessageable;
 use Softworx\RocXolid\Contracts\Optionable;
 use Softworx\RocXolid\Contracts\Translatable;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Contracts\FormFieldable;
+// rocXolid traits
 use Softworx\RocXolid\Traits\Valueable as ValueableTrait;
+use Softworx\RocXolid\Traits\PivotValueable as PivotValueableTrait;
 use Softworx\RocXolid\Traits\ErrorMessageable as ErrorMessageableTrait;
 use Softworx\RocXolid\Traits\MethodOptionable as MethodOptionableTrait;
 use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
+// rocXolid form field traits
 use Softworx\RocXolid\Forms\Fields\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
 
-abstract class AbstractFormField implements FormField, Valueable, ErrorMessageable, Optionable, Translatable
+abstract class AbstractFormField implements FormField, Valueable, PivotValueable, Optionable, ErrorMessageable, Translatable
 {
     use ValueableTrait;
-    use ErrorMessageableTrait;
+    use PivotValueableTrait;
     use MethodOptionableTrait;
-    use TranslatableTrait;
+    use ErrorMessageableTrait;
     use ComponentOptionsSetterTrait;
+    use TranslatableTrait; // @todo: needed?
 
     /**
      * Name of the field.
@@ -198,6 +205,7 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
         return $this->getOption('component.array', false);
     }
 
+    // @todo: kinda hacky, don't like this approach
     public function updateParent()
     {
         // @todo - zavolat parent update + spravne setnuty parent ?
@@ -236,14 +244,33 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
     /**
      * Get HTML name of the field.
      *
+     * @param int $index Field index.
      * @return string
      */
-    public function getFieldName($index = 0)
+    public function getFieldName(int $index = 0): string
     {
         if ($this->isArray()) {
             return sprintf('%s[%s][%s]', self::ARRAY_DATA_PARAM, $index, $this->name);
         } else {
             return sprintf('%s[%s]', self::SINGLE_DATA_PARAM, $this->name);
+        }
+    }
+
+    /**
+     * Get HTML name of the pivot field.
+     *
+     * @param string $attribute Pivot attribute name.
+     * @param int $index Field index.
+     * @return string
+     */
+    public function getPivotFieldName(string $attribute, $index = 0): string
+    {
+        dd(__METHOD__, '-- TODO --');
+
+        if ($this->isArray()) {
+            return sprintf('%s[%s][%s][pivot][%s]', self::ARRAY_DATA_PARAM, $index, $this->name, $attribute);
+        } else {
+            return sprintf('%s[pivot][%s][%s]', self::SINGLE_DATA_PARAM, $this->name, $attribute);
         }
     }
 
@@ -269,6 +296,11 @@ abstract class AbstractFormField implements FormField, Valueable, ErrorMessageab
     public function isFieldValue($value, $index = 0)
     {
         return ($this->getFieldValue($index) == $value);
+    }
+
+    public function getFinalValue()
+    {
+        return $this->getValue();
     }
 
     /**

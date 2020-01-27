@@ -15,7 +15,7 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: 
 /**
  *
  */
-class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
+abstract class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
 {
     use CrudableTrait;
     use HasUserAttributes;

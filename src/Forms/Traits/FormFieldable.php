@@ -46,7 +46,7 @@ trait FormFieldable
 
     public function setFormFieldGroups($form_field_groups): FormFieldableContract
     {
-        $this->_form_field_groups = new Collection($form_field_groups);
+        $this->_form_field_groups = collect($form_field_groups);
 
         return $this;
     }
@@ -54,7 +54,7 @@ trait FormFieldable
     public function getFormFieldGroups(): Collection
     {
         if (is_null($this->_form_field_groups)) {
-            $this->_form_field_groups = new Collection();
+            $this->_form_field_groups = collect();
         }
 
         return $this->_form_field_groups;
@@ -85,7 +85,7 @@ trait FormFieldable
 
     public function setFormFields($form_fields): FormFieldableContract
     {
-        $this->_form_fields = new Collection($form_fields);
+        $this->_form_fields = collect($form_fields);
 
         return $this;
     }
@@ -93,7 +93,7 @@ trait FormFieldable
     public function getFormFields($group_name = null): Collection
     {
         if (is_null($this->_form_fields)) {
-            $this->_form_fields = new Collection();
+            $this->_form_fields = collect();
         }
 
         if (!is_null($group_name)) {
@@ -126,13 +126,13 @@ trait FormFieldable
 
     public function getFormFieldsValues(): Collection
     {
-        $form_fields_values = new Collection();
+        $form_fields_values = collect();
 
         foreach ($this->getFormFields() as $form_field) {
             if (empty($form_field->getValue()) && ($form_field->getValue() !== '0')) {
                 $form_fields_values->put($form_field->getName(), null);
             } else {
-                $form_fields_values->put($form_field->getName(), $form_field->getValue());
+                $form_fields_values->put($form_field->getName(), $form_field->getFinalValue());
             }
         }
 

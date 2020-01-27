@@ -19,7 +19,7 @@ trait DestroysModels
     /**
      * Display the specified resource destroy confirmation dialog.
      *
-     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete")
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
@@ -48,7 +48,7 @@ trait DestroysModels
     /**
      * Destroy the specified resource.
      *
-     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete")
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */

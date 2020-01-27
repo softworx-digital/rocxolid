@@ -19,7 +19,7 @@ trait CreatesModels
     /**
      * Display the specified resource create form.
      *
-     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create")
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      */
     public function create(CrudRequest $request)//: View
@@ -58,7 +58,7 @@ trait CreatesModels
     /**
      * Store the created model.
      *
-     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create")
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest
      */
     public function store(CrudRequest $request)//: Response
