@@ -18,7 +18,8 @@
         "doctrine/annotations": "1.6.1",
         "doctrine/dbal": "^2.9",
         "intervention/image": "^2.5",
-        "barryvdh/laravel-translation-manager": "^0.5"
+        "barryvdh/laravel-translation-manager": "^0.5",
+        "staudenmeir/eloquent-has-many-deep": "^1.11"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2"

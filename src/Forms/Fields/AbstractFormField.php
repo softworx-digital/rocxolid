@@ -293,7 +293,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $value;
     }
 
-    public function isFieldValue($value, $index = 0)
+    public function isFieldValue($value, $index = 0): bool
     {
         return ($this->getFieldValue($index) == $value);
     }

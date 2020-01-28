@@ -26,6 +26,16 @@ class ModelRelation extends AbstractColumn
         return $this;
     }
 
+    public function getRelationModel(CrudableModel $model): CrudableModel
+    {
+        return $model->{$this->getOption('relation.name')}()->getRelated();
+    }
+
+    public function getRelationModelClass(CrudableModel $model): string
+    {
+        return get_class($model->{$this->getOption('relation.name')}()->getRelated());
+    }
+
     public function getRelationItems(CrudableModel $model): Collection
     {
         return $model->{$this->getOption('relation.name')}()->get();

@@ -31,9 +31,9 @@ final class AuthorizedRelation extends AbstractAuthorizedAnnotation
             $this->policy_abilities = json_decode($this->fixJSON($values['policy_abilities']));
 
             if (is_null($this->policy_abilities)) {
-                throw new \RuntimeException(sprintf('Invalid JSON format for policy abilities given: %s', $this->policy_abilities));
+                throw new \RuntimeException(sprintf('Invalid JSON format for policy abilities given: %s', $values['policy_abilities']));
             } elseif (!is_array($this->policy_abilities)) {
-                throw new \RuntimeException(sprintf('Invalid type for policy abilities given: %s, JSON array expected', $this->policy_abilities));
+                throw new \RuntimeException(sprintf('Invalid type for policy abilities given: %s, JSON array expected', $values['policy_abilities']));
             }
         }
     }

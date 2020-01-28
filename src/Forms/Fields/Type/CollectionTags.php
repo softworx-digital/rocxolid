@@ -69,7 +69,7 @@ class CollectionTags extends AbstractFormField
     }
 
     /*
-        public function isFieldValue($value, $index = 0)
+        public function isFieldValue($value, $index = 0): bool
         {
             if (!$this->getFieldValue($index) instanceof Collection)
             {

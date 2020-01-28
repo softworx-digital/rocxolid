@@ -12,7 +12,6 @@ use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Permissionable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
 // rocXolid component contracts
@@ -22,7 +21,6 @@ use Softworx\RocXolid\Components\Contracts\Modellable as ModellableComponent;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 // rocXolid controller traits
 use Softworx\RocXolid\Http\Controllers\Traits\Crudable as CrudableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\Permissionable as PermissionableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\Dashboardable as DashboardableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\Repositoryable as RepositoryableTrait;
 use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryOrderableTrait;
@@ -42,10 +40,9 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  * @version 1.0.0
  * @todo: add contracts to repository features traits
  */
-abstract class AbstractCrudController extends AbstractController implements Crudable, Permissionable, Dashboardable, Repositoryable, Modellable
+abstract class AbstractCrudController extends AbstractController implements Crudable, Dashboardable, Repositoryable, Modellable
 {
     use CrudableTrait;
-    use PermissionableTrait;
     use DashboardableTrait;
     use ModellableTrait;
     use RepositoryableTrait;

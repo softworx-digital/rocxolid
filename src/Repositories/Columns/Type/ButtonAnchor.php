@@ -23,54 +23,47 @@ class ButtonAnchor extends AbstractColumn
         ],
     ];
 
-    public function setPolicyAbility($policy_ability): Column
+    public function setPolicyAbility(string $policy_ability): Column
     {
         $this->setComponentOptions('policy-ability', $policy_ability);
 
         return $this;
     }
 
-    public function setPolicyAbilityParams($policy_ability_params): Column
-    {
-        $this->setComponentOptions('policy-ability-params', $policy_ability_params);
-
-        return $this;
-    }
-
-    public function setPolicyAbilityGroup($permissions_policy_ability_group): Column
-    {
-        $this->setComponentOptions('permissions_policy_ability_group', $permissions_policy_ability_group);
-
-        return $this;
-    }
-
-    public function setTel($model_attribute): Column
-    {
-        $this->setComponentOptions('tel', $model_attribute);
-
-        return $this;
-    }
-
-    public function setMailto($model_attribute): Column
-    {
-        $this->setComponentOptions('mailto', $model_attribute);
-
-        return $this;
-    }
-
-    protected function setUrl($url): Column
+    protected function setUrl(string $url): Column
     {
         return $this
             ->setComponentOptions('url', $url)
             ->setAjax($this->getOption('component.ajax', false)); // reset ajax url
     }
 
-    protected function setRoute($route_name): Column
+    protected function setAction(string $action): Column
     {
-        return $this->setUrl($this->makeRoute($route_name));
+        return $this->setComponentOptions('action', $action);
     }
 
-    protected function setAjax($ajax): Column
+    public function setRouteParams(array $route_params): Column
+    {
+        $this->setComponentOptions('route-params', $route_params);
+
+        return $this;
+    }
+
+    public function setTel(string $model_attribute): Column
+    {
+        $this->setComponentOptions('tel', $model_attribute);
+
+        return $this;
+    }
+
+    public function setMailto(string $model_attribute): Column
+    {
+        $this->setComponentOptions('mailto', $model_attribute);
+
+        return $this;
+    }
+
+    protected function setAjax(bool $ajax): Column
     {
         if ($ajax) {
             $this

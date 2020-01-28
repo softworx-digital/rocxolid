@@ -14,7 +14,7 @@ use Softworx\RocXolid\Services\PackageService;
 use Softworx\RocXolid\Annotations\AuthorizedAction;
 use Softworx\RocXolid\Annotations\AuthorizedRelation;
 // rocXolid controller contracts
-use Softworx\RocXolid\Http\Controllers\Contracts\Permissionable;
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable as CrudableController;
 // rocXolid models contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
@@ -182,7 +182,7 @@ class PermissionScannerService
         return $this->package_service->getPackageClasses($namespace, function($class) {
             $reflection = new \ReflectionClass($class);
 
-            return $reflection->implementsInterface(Permissionable::class) && !$reflection->isAbstract();
+            return $reflection->implementsInterface(CrudableController::class) && !$reflection->isAbstract();
         });
     }
 

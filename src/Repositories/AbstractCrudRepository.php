@@ -87,8 +87,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-info btn-sm margin-right-no',
                     'title-key' => 'show',
                 ],
-                'policy-ability' => 'show',
-                'policy-ability-group' => 'read-only',
+                'policy-ability' => 'view',
+                'action' => 'show',
             ],
         ],
         'show-modal' => [
@@ -102,8 +102,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-info btn-sm margin-right-no',
                     'title-key' => 'show-modal',
                 ],
-                'policy-ability' => 'show',
-                'policy-ability-group' => 'read-only',
+                'policy-ability' => 'view',
+                'action' => 'show',
             ],
         ],
         'edit' => [
@@ -116,8 +116,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-primary btn-sm margin-right-no',
                     'title-key' => 'edit',
                 ],
-                'policy-ability' => 'edit',
-                'policy-ability-group' => 'write',
+                'policy-ability' => 'update',
+                'action' => 'edit',
             ],
         ],/*
         'edit-ajax' => [
@@ -156,8 +156,8 @@ abstract class AbstractCrudRepository implements Repository, Requestable
                     'class' => 'btn btn-danger btn-sm margin-right-no',
                     'title-key' => 'delete',
                 ],
-                'policy-ability' => 'destroyConfirm',
-                'policy-ability-group' => 'write',
+                'policy-ability' => 'delete',
+                'action' => 'destroyConfirm',
             ],
         ],
     ];
@@ -268,7 +268,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
             ->first($columns);
     }
 
-    protected function applyIntenalFilters() // @todo: missing return type
+    protected function applyIntenalFilters(): EloquentBuilder
     {
         $query = $this->getQuery();
 

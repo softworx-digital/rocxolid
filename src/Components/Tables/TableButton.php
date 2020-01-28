@@ -37,27 +37,15 @@ class TableButton extends Button implements ComponentTableButtonable
         $model = $elements[1];
         $controller = $table->getRepository()->getController();
 
-        if ($this->hasOption('policy-ability')) {
+        if ($this->hasOption('action')) {
             if ($this->getOption('ajax', false)) {
-                if ($this->hasOption('policy-ability-params')) {
-                    $this->mergeOptions([
-                        'attributes' => [
-                            'data-ajax-url' => $controller->getRoute($this->getOption('policy-ability'), $model, $this->getOption('policy-ability-params'))
-                        ]
-                    ]);
-                } else {
-                    $this->mergeOptions([
-                        'attributes' => [
-                            'data-ajax-url' => $controller->getRoute($this->getOption('policy-ability'), $model)
-                        ]
-                    ]);
-                }
+                $this->mergeOptions([
+                    'attributes' => [
+                        'data-ajax-url' => $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', []))
+                    ]
+                ]);
             } else {
-                if ($this->hasOption('policy-ability-params')) {
-                    $this->setOption('url', $controller->getRoute($this->getOption('policy-ability'), $model, $this->getOption('policy-ability-params')));
-                } else {
-                    $this->setOption('url', $controller->getRoute($this->getOption('policy-ability'), $model));
-                }
+                $this->setOption('url', $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])));
             }
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));

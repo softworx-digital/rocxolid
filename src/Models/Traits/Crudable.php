@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // rocXolid model traits
+use Softworx\RocXolid\Models\Traits\HasOwner;
 use Softworx\RocXolid\Models\Traits\HasTitleColumn;
 use Softworx\RocXolid\Models\Traits\HasRelationships;
 // rocXolid components
@@ -18,6 +19,7 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
  */
 trait Crudable
 {
+    use HasOwner;
     use HasTitleColumn;
     use HasRelationships;
 
@@ -168,51 +170,6 @@ trait Crudable
     public function getUploadPath()
     {
         return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->id);
-    }
-
-    public function userCan($policy_ability_group)
-    {
-        if (!config('rocXolid.admin.auth.check_permissions', false)) {
-            return true;
-        }
-
-        $controller_class = sprintf('\%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
-        $permission = sprintf('\%s.%s', $controller_class, $policy_ability_group);
-
-        if ($user = Auth::guard('rocXolid')->user()) {
-            if (!config('rocXolid.admin.auth.check_permissions_root', false) && $user->isRoot()) {
-                return true;
-            }
-
-            if ($this->allowPermissionException($user, $policy_ability_group, $permission)) {
-                return true;
-            }
-
-            foreach ($user->permissions as $extra_permission) {
-                if (($extra_permission->controller_class === $controller_class) && ($extra_permission->policy_ability_group === $policy_ability_group)) {
-                    return true;
-                } elseif (($policy_ability_group === 'read-only') && (($extra_permission->controller_class === $controller_class) && ($extra_permission->policy_ability_group === 'write'))) {
-                    return true;
-                }
-            }
-
-            foreach ($user->roles as $role) {
-                foreach ($role->permissions as $permission) {
-                    if (($permission->controller_class === $controller_class) && ($permission->policy_ability_group === $policy_ability_group)) {
-                        return true;
-                    } elseif (($policy_ability_group === 'read-only') && (($permission->controller_class === $controller_class) && ($permission->policy_ability_group === 'write'))) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    protected function allowPermissionException(Authenticatable $user, string $policy_ability_group, string $permission)
-    {
-        return false;
     }
 
     // @TODO: this doesn't belong here

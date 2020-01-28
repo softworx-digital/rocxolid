@@ -80,14 +80,14 @@ class CollectionCheckbox extends AbstractFormField
     {
         // coming from submitted data
         if (is_array($value)) {
-            $value = collect($value)->filter()->keys();
+            $value = collect($value);
         }
 
         return parent::setValue($value, $index);
     }
 
-    public function isFieldValue($value, $index = 0)
+    public function isFieldValue($value, $index = 0): bool
     {
-        return $this->getFieldValue($index)->contains($value);
+        return $this->getFieldValue($index) && $this->getFieldValue($index)->contains($value);
     }
 }

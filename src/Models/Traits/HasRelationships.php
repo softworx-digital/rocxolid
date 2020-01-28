@@ -95,7 +95,13 @@ trait HasRelationships
                         $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
 
                         if (!$type) {
-                            throw new \InvalidArgumentException(sprintf('Cannot resolve polymorph param [%s] for [%s], provide either [%s] method or configure in [rocXolid.main.polymorphism.%s]', $attribute, static::class, $method, $value));
+                            throw new \InvalidArgumentException(sprintf(
+                                'Cannot resolve polymorph param [%s] for [%s], provide either [%s] method or configure in [rocXolid.main.polymorphism.%s]',
+                                $attribute,
+                                static::class,
+                                $method,
+                                $value
+                            ));
                         }
 
                         $this->$attribute = $type;
@@ -111,7 +117,6 @@ trait HasRelationships
     // @todo: subject to refactoring, don't like the current approach
     public function fillRelationships(array $data, string $action = null): Crudable
     {
-Log::debug(__METHOD__, $data);
         $this->getRelationshipMethods()->each(function($relation) use ($data, $action) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));
