@@ -3,7 +3,11 @@
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\FormField;
+// rocXolid form fields
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
 class CollectionSelect extends AbstractFormField
@@ -38,7 +42,8 @@ class CollectionSelect extends AbstractFormField
             $this->collection = $option;
         } else {
             $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
-            $query = $model::query();
+            // $query = $model::query();
+            $query = $model::withoutGlobalScope(app(OwnedScope::class));
 
             if (isset($option['filters'])) {
                 foreach ($option['filters'] as $filter) {

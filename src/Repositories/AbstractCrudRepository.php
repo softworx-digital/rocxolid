@@ -63,14 +63,21 @@ abstract class AbstractCrudRepository implements Repository, Requestable
      * @var CrudRequest
      */
     protected $request;
+
     /**
      * @var CrudableModel
      */
     protected $model;
+
     /**
      * @var \Illuminate\Database\Query\Builder
      */
     protected $query;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $without_scopes;
 
     protected $repo_options = [];
 
@@ -167,6 +174,13 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $this;
     }
 
+    public function withoutScopes(Collection $scopes): Repository
+    {
+        $this->without_scopes = $scopes;
+
+        return $this;
+    }
+
     public function getModel(): CrudableModel
     {
         if (is_null($this->model)) {
@@ -231,6 +245,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function all(array $columns = ['*']): Collection
     {
         return $this
+            ->applyWithoutScopes()
             ->applyOrder()
             ->applyFilters()
             ->applyIntenalFilters()
@@ -240,6 +255,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function count(): int
     {
         return $this
+            ->applyWithoutScopes()
             ->applyOrder()
             ->applyFilters()
             ->applyIntenalFilters()
@@ -249,6 +265,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function find(int $id, array $columns = ['*']): CrudableModel
     {
         return $this
+            ->applyWithoutScopes()
             ->applyIntenalFilters()
             ->find($id, $columns);
     }
@@ -256,6 +273,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function findOrFail(int $id, array $columns = ['*']): CrudableModel
     {
         return $this
+            ->applyWithoutScopes()
             ->applyIntenalFilters()
             ->findOrFail($id, $columns);
     }
@@ -263,6 +281,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function findBy(string $attribute, $value, array $columns = ['*']): CrudableModel
     {
         return $this
+            ->applyWithoutScopes()
             ->applyIntenalFilters()
             ->where($attribute, '=', $value)
             ->first($columns);
@@ -271,6 +290,13 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     protected function applyIntenalFilters(): EloquentBuilder
     {
         $query = $this->getQuery();
+
+        return $query;
+    }
+
+    public function applyWithoutScopes(): EloquentBuilder
+    {
+        $query = $this->getQuery()->withoutGlobalScopes($this->without_scopes->toArray());
 
         return $query;
     }
@@ -306,11 +332,13 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $model;
     }
 
+    // @todo: what's this
     public function delete(array $id) // @todo: missing return type
     {
         return $this->getModel()->canBeDeleted() && $this->getModel()->destroy($id);
     }
 
+    // @todo: and this
     public function deleteModel(CrudableModel $model): CrudableModel
     {
         if ($model->canBeDeleted()) {

@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Services;
 
-use Str;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;

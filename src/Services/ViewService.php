@@ -2,14 +2,14 @@
 
 namespace Softworx\RocXolid\Services;
 
-use Str;
 use View;
 use Blade;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\View\View as IlluminateView;
 use Illuminate\View\Factory as IlluminateViewFactory;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Renderable;
 // rocXolid services contracts

@@ -2,8 +2,12 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
+// rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid filters
 use Softworx\RocXolid\Filters\StartsWith;
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 
 /**
  *

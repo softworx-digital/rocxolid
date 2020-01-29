@@ -126,7 +126,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                         )))
                         ->updateParent();
 
-                if (filled($relation->getPivotColumns())) {
+                if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
                     $this
                         ->getFormField($attribute)
                         ->setPivotData($relation->get()->pluck('pivot'))

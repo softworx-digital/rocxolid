@@ -2,8 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
-use Str;
-use Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
@@ -79,6 +80,7 @@ trait HasRelationships
         return $relationships;
     }
 
+    // @todo: ugly? and combine with HasRelationships::resolvePolymorphType()
     public function resolvePolymorphism(array $data, string $action = null): Crudable
     {
         foreach ($data as $attribute => $value) {
@@ -114,6 +116,36 @@ trait HasRelationships
         return $this;
     }
 
+    // @todo: ugly
+    public function resolvePolymorphType(Collection $data): string
+    {
+        foreach ($data as $attribute => $value) {
+            if (substr($attribute, -5) === '_type') {
+                $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
+
+                if (method_exists($this, $method)) {
+                    return $this->$method();
+                } else {
+                    $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
+
+                    if (!$type) {
+                        throw new \InvalidArgumentException(sprintf(
+                            'Cannot resolve polymorph param [%s] for [%s], provide either [%s] method or configure in [rocXolid.main.polymorphism.%s]',
+                            $attribute,
+                            static::class,
+                            $method,
+                            $value
+                        ));
+                    }
+
+                    return $type;
+                }
+            }
+        }
+
+        return false;
+    }
+
     // @todo: subject to refactoring, don't like the current approach
     public function fillRelationships(array $data, string $action = null): Crudable
     {
@@ -140,7 +172,8 @@ trait HasRelationships
         $attribute = sprintf('%s_id', $relation);
 
         if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-            $associate = $this->$relation()->getRelated()->findOrFail($data[$attribute]);
+            // @todo: kinda hotfixed
+            $associate = $this->$relation()->getRelated()->withoutGlobalScope(app(OwnedScope::class))->findOrFail($data[$attribute]);
 
             $this->$relation()->associate($associate);
         }
@@ -156,7 +189,7 @@ trait HasRelationships
             $objects = [];
 
             foreach ($data[$attribute] as $id) {
-                $objects[] = $this->$relation()->getRelated()->findOrFail($id);
+                $objects[] = $this->$relation()->getRelated()->withoutGlobalScope(app(OwnedScope::class))->findOrFail($id);
             }
 
             $this->$relation()->saveMany($objects);
@@ -170,7 +203,7 @@ trait HasRelationships
         $attribute = $relation;
 
         if (array_key_exists($attribute, $data)) {
-            $this->$relation()->sync($data[$attribute]);
+            $this->$relation()->withoutGlobalScope(app(OwnedScope::class))->sync($data[$attribute]);
         }
 
         return $this;

@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Services;
 
 use Route;
-use Str;
+use Illuminate\Support\Str;
 
 // @todo: refator
 class CrudRouterService

@@ -4,9 +4,14 @@ namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use DB;
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
+// rocXolid filters
 use Softworx\RocXolid\Filters\StartsWith;
+// rocXolid form field types
+use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 
+// @todo: refactor
 class CollectionSelectAutocomplete extends CollectionSelect
 {
     const LIMIT = 10;
@@ -46,7 +51,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
             $this->collection = $option;
             $this->collection_loaded = true;
         } else {
-            $this->collection = new Collection();
+            $this->collection = collect();
             $this->collection_model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
             $this->collection_model_column = $option['column'];
             $this->collection_model_method = isset($option['method']) ? $option['method'] : null;
@@ -68,31 +73,40 @@ class CollectionSelectAutocomplete extends CollectionSelect
                 $query = (new $filter['class']())->apply($query, $model, $filter['data']);
             }
 
-            $this->collection = $query->take(static::LIMIT)->pluck(
-                sprintf(
+            $this->collection = $query
+                ->withoutGlobalScope(app(OwnedScope::class))
+                ->take(static::LIMIT)
+                ->pluck(sprintf(
+                    '%s.%s',
+                    $this->collection_model->getTable(),
+                    $this->collection_model_column
+                ), sprintf(
+                    '%s.id',
+                    $this->collection_model->getTable()
+                ));
+        } else {
+            $value = (($this->getValue() instanceof Collection) && $this->getValue()->isEmpty()) ? null : $this->getValue();
+
+            $this->collection = $this->collection_model
+                ->withoutGlobalScope(app(OwnedScope::class))
+                ->where(sprintf('%s.id', $this->collection_model->getTable()), $value)
+                ->take(static::LIMIT)
+                ->pluck(sprintf(
                     '%s.%s',
                     $this->collection_model->getTable(),
                     $this->collection_model_column
                 ),
-                sprintf('%s.id', $this->collection_model->getTable())
-            );
-        } else {
-            $value = (($this->getValue() instanceof Collection) && $this->getValue()->isEmpty()) ? null : $this->getValue();
-
-            $this->collection = $this->collection_model->where(sprintf('%s.id', $this->collection_model->getTable()), $value)->take(static::LIMIT)
-                ->pluck(
-                    sprintf(
-                        '%s.%s',
-                        $this->collection_model->getTable(),
-                        $this->collection_model_column
-                    ),
-                    sprintf('%s.id', $this->collection_model->getTable())
-                );
+                sprintf(
+                    '%s.id',
+                    $this->collection_model->getTable()
+                ));
         }
 
         if (!is_null($this->collection_model_method) && method_exists($this->collection_model, $this->collection_model_method)) {
             $this->collection = $this->collection->map(function (&$item, $id) {
-                return $this->collection_model->find($id)->{$this->collection_model_method}();
+                return $this->collection_model
+                    ->withoutGlobalScope(app(OwnedScope::class))
+                    ->find($id)->{$this->collection_model_method}();
             });
         }
 

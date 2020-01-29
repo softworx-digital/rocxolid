@@ -4,9 +4,20 @@ namespace Softworx\RocXolid\Models\Traits;
 
 use Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+// relations
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\FormField;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits\HasOwner;
 use Softworx\RocXolid\Models\Traits\HasTitleColumn;
@@ -134,6 +145,52 @@ trait Crudable
         $action = sprintf('%s@%s', $this->getAppControllerClass(), $method);
 
         return action($action, [ $this ] + $params);
+    }
+
+    /**
+     * Create route params for model's relation actions.
+     *
+     * @param string $attribute Name of the attribute - relation on parent's side.
+     * @param string $relation Name of the relation on child's side.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model Parent model.
+     * @return array
+     */
+    public function getRouteRelationParam(string $attribute, string $relation, ?CrudableModel $model = null): array
+    {
+        $relation_name = $relation;
+        $relation = $this->$relation();
+
+        if ($relation instanceof MorphTo) {
+            return [
+                sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
+                sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
+            ] + ($model ? [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
+            ] : []);
+        } elseif ($relation instanceof MorphToMany) {
+            return [
+                sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
+                sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
+            ] + ($model ? [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
+            ] : []);
+        } elseif ($relation instanceof BelongsTo) {
+            return [
+                sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
+                sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
+            ] + ($model ? [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
+            ] : []);
+        } else {
+            throw new \RuntimeException(sprintf(
+                'Unsupported relation type [%s] for [%s->%s()]',
+                get_class($relation),
+                get_class($this),
+                $relation->getRelationName(),
+            ));
+        }
     }
 
     public function getShowAttributes($except = [], $with = [])

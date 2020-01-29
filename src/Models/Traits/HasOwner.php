@@ -23,7 +23,7 @@ trait HasOwner
      */
     public static function bootHasOwner()
     {
-        static::addGlobalScope(new OwnedScope());
+        static::addGlobalScope(app(OwnedScope::class));
     }
 
     /**
