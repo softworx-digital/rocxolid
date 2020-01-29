@@ -49,6 +49,10 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
      */
     // protected $fillable = [];
 
+    protected $guarded = [
+        'id'
+    ];
+
     /**
      * Model relationship methods.
      *
