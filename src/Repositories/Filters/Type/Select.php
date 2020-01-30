@@ -35,7 +35,7 @@ class Select extends AbstractFilter
         foreach ($option_values as $value => &$title) {
             $title = $this->translate(sprintf('%s_options.%s', $this->getName(), $title));
         }
-    
+
         $this->collection = collect($option_values);
 
         return $this;
@@ -44,7 +44,7 @@ class Select extends AbstractFilter
     public function getCollection(): Collection
     {
         $collection = $this->collection;
-        $collection->prepend($this->getOption('component.label.title'), '');
+        $collection->prepend($this->getOption($this->translate('component.label.title')), '');
 
         return $collection;
     }

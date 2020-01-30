@@ -5,6 +5,8 @@ namespace Softworx\RocXolid\Forms;
 use DB;
 use Config;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
@@ -114,23 +116,31 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             }
         });
 
-        $this->getModelRelationships()->each(function ($relation, $attribute) {
-            if ($this->hasFormField($attribute)) {
-                $this
-                    ->getFormField($attribute)
-                        //->setValue($value, $index)
-                        ->setValue($relation->pluck(sprintf(
-                            '%s.%s',
-                            $relation->getRelated()->getTable(),
-                            $relation->getRelated()->getKeyName()
-                        )))
-                        ->updateParent();
+        $user = auth('rocXolid')->user();
 
-                if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
+        $this->getModelRelationships()->each(function ($relation, $attribute) use ($user) {
+
+            if (!$user
+                || (($relation instanceof HasOneOrMany) && ($user->can('update', [ $this->getModel(), $attribute ])))
+                || (($relation instanceof BelongsToMany) && ($user->can('assign', [ $this->getModel(), $attribute ])))) {
+
+                if ($this->hasFormField($attribute)) {
                     $this
                         ->getFormField($attribute)
-                        ->setPivotData($relation->get()->pluck('pivot'))
-                        ->updateParent();
+                            //->setValue($value, $index)
+                            ->setValue($relation->pluck(sprintf(
+                                '%s.%s',
+                                $relation->getRelated()->getTable(),
+                                $relation->getRelated()->getKeyName()
+                            )))
+                            ->updateParent();
+
+                    if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
+                        $this
+                            ->getFormField($attribute)
+                            ->setPivotData($relation->get()->pluck('pivot'))
+                            ->updateParent();
+                    }
                 }
             }
         });
@@ -212,8 +222,33 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
         $fields = $this->adjustFieldsDefinition($fields);
         $fields = $this->adjustFieldsValidationDefinition($fields);
+        $fields = $this->filterFieldsDefinitionByPermissions($fields);
 
         return $fields;
+    }
+
+    protected function filterFieldsDefinitionByPermissions(array $fields): array
+    {
+        if (!$user = auth('rocXolid')->user()) {
+            return $fields;
+        }
+
+        return collect($fields)->filter(function($definition, $field_name) use ($user) {
+            // for now, leave scalar fields untouched
+            if (!method_exists($this->getModel(), $field_name)) {
+                return true;
+            } elseif ($this->getModel()->$field_name() instanceof HasOneOrMany) {
+                return $user->can('update', [ $this->getModel(), $field_name ]);
+            } elseif ($this->getModel()->$field_name() instanceof BelongsToMany) {
+                return $user->can('assign', [ $this->getModel(), $field_name ]);
+            } else {
+                throw new \RuntimeException(sprintf(
+                    'Unsupported relation type [%s] - field [%s]',
+                    get_class($this->getModel()->$field_name()).
+                    $field_name
+                ));
+            }
+        })->toArray();
     }
 
     // @todo: "hotfixed", you can do better
@@ -228,6 +263,29 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         }
 
         return $fields;
+    }
+
+    protected function getButtonsDefinition(): array
+    {
+        // @todo: "hotfixed", you can do better
+        $buttons = $this->buttons;
+
+        $buttons = $this->adjustButtonsDefinition($buttons);
+        $buttons = $this->filterButtonsDefinitionByPermissions($buttons);
+
+        return $buttons;
+    }
+
+    protected function filterButtonsDefinitionByPermissions(array $buttons): array
+    {
+        if (!$user = auth('rocXolid')->user()) {
+            return $buttons;
+        }
+
+        return collect($buttons)->filter(function($definition, $button_name) use ($user) {
+// @todo
+            return true;
+        })->toArray();
     }
 
     protected function getModelAttributes(): Collection

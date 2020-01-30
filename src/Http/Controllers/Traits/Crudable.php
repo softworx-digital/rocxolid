@@ -172,8 +172,6 @@ trait Crudable
 
     protected function destroyResponse(CrudRequest $request, CrudableModel $model)
     {
-dd(__METHOD__);
-
         if ($request->ajax()) {
             return $this->response->redirect($this->getRoute('index'))->get();
         } else {

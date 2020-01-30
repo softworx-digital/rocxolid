@@ -27,8 +27,9 @@ trait ReloadsForm
     public function formReload(CrudRequest $request, ?Crudable $model = null)//: Response
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
+        $model = $model ?? $repository->getModel();
 
-        $this->setModel($model ?? $repository->getModel());
+        $this->setModel($model);
 
         // @todo: refactor to clearly identify the form we want to get, not artificially like this
         // put form->options['route-action'], or full identification data into the request
