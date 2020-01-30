@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Repositories;
 use App;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Scope;
 // relations
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-// rocXolid fundamentals
+// rocXolid utils
 use Softworx\RocXolid\Helpers\View as ViewHelper;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid contracts
@@ -30,6 +31,8 @@ use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\EventDispatchable;
 use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid repository traits
 use Softworx\RocXolid\Repositories\Traits\Buildable;
 use Softworx\RocXolid\Repositories\Traits\Orderable;
@@ -75,9 +78,16 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     protected $query;
 
     /**
-     * @var \Illuminate\Support\Collection
+     * @var array
      */
-    protected $without_scopes;
+    protected $with_scopes = [
+        OwnedScope::class,
+    ];
+
+    /**
+     * @var array
+     */
+    protected $without_scopes = [];
 
     protected $repo_options = [];
 
@@ -174,9 +184,16 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $this;
     }
 
-    public function withoutScopes(Collection $scopes): Repository
+    public function withScops(Scope $scope): Repository
     {
-        $this->without_scopes = $scopes;
+        $this->with_scopes[] = $scope;
+
+        return $this;
+    }
+
+    public function withoutScope(Scope $scope): Repository
+    {
+        $this->without_scopes[] = $scope;
 
         return $this;
     }
@@ -245,7 +262,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function all(array $columns = ['*']): Collection
     {
         return $this
-            ->applyWithoutScopes()
+            ->applyScopes()
             ->applyOrder()
             ->applyFilters()
             ->applyIntenalFilters()
@@ -255,7 +272,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function count(): int
     {
         return $this
-            ->applyWithoutScopes()
+            ->applyScopes()
             ->applyOrder()
             ->applyFilters()
             ->applyIntenalFilters()
@@ -265,7 +282,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function find(int $id, array $columns = ['*']): CrudableModel
     {
         return $this
-            ->applyWithoutScopes()
+            ->applyScopes()
             ->applyIntenalFilters()
             ->find($id, $columns);
     }
@@ -273,7 +290,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function findOrFail(int $id, array $columns = ['*']): CrudableModel
     {
         return $this
-            ->applyWithoutScopes()
+            ->applyScopes()
             ->applyIntenalFilters()
             ->findOrFail($id, $columns);
     }
@@ -281,7 +298,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     public function findBy(string $attribute, $value, array $columns = ['*']): CrudableModel
     {
         return $this
-            ->applyWithoutScopes()
+            ->applyScopes()
             ->applyIntenalFilters()
             ->where($attribute, '=', $value)
             ->first($columns);
@@ -294,11 +311,11 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $query;
     }
 
-    public function applyWithoutScopes(): EloquentBuilder
+    protected function applyScopes(): EloquentBuilder
     {
-        $query = $this->getQuery()->withoutGlobalScopes($this->without_scopes->toArray());
-
-        return $query;
+        return $this->getQuery()
+            ->withGlobalScopes($this->with_scopes)
+            ->withoutGlobalScopes($this->without_scopes);
     }
 
     public function createModel(array $data): CrudableModel

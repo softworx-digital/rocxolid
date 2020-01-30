@@ -6,18 +6,34 @@ namespace Softworx\RocXolid\Http\Controllers\Traits;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid filters
 use Softworx\RocXolid\Filters\StartsWith;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 
 /**
+ * Trait to enable autocompletion feature for form fields.
  *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo: refactor this feature
  */
 trait RepositoryAutocompleteable
 {
-    public function repositoryAutocomplete(CrudRequest $request, $id = null)//: View
+    /**
+     * Process incoming autocomplete-field request.
+     * Retrieve the field upon request param, set appropriate filter to the field's collection.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @todo: use scopes rather than filter
+     * @todo: parameter naming convention ('f' is ugly)
+     */
+    public function repositoryAutocomplete(CrudRequest $request, ?Crudable $model = null)//: View
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
-        $model = $id ? $repository->find($id) : $repository->getModel();
+        $model = $model ?? $repository->getModel();
         // @todo: the repository calls the controller to get the model, which can be different from
         // what is needed (eg. user registration controller vs. city_id)
         $model->setQueryString($request->get('q', null));

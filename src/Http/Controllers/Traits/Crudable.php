@@ -50,7 +50,7 @@ trait Crudable
         return static::$model_class;
     }
 
-    // @todo: maybe some other approach
+    // @todo: maybe some different approach
     public function isModelActionAvailable(CrudableModel $model, $action)
     {
         return true;

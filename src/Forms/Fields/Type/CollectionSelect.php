@@ -42,8 +42,8 @@ class CollectionSelect extends AbstractFormField
             $this->collection = $option;
         } else {
             $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
-            // $query = $model::query();
-            $query = $model::withoutGlobalScope(app(OwnedScope::class));
+            $query = $model::query();
+            // $query = $model::withoutGlobalScope(app(OwnedScope::class));
 
             if (isset($option['filters'])) {
                 foreach ($option['filters'] as $filter) {

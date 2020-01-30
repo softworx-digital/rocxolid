@@ -74,7 +74,6 @@ class CollectionSelectAutocomplete extends CollectionSelect
             }
 
             $this->collection = $query
-                ->withoutGlobalScope(app(OwnedScope::class))
                 ->take(static::LIMIT)
                 ->pluck(sprintf(
                     '%s.%s',
@@ -88,7 +87,6 @@ class CollectionSelectAutocomplete extends CollectionSelect
             $value = (($this->getValue() instanceof Collection) && $this->getValue()->isEmpty()) ? null : $this->getValue();
 
             $this->collection = $this->collection_model
-                ->withoutGlobalScope(app(OwnedScope::class))
                 ->where(sprintf('%s.id', $this->collection_model->getTable()), $value)
                 ->take(static::LIMIT)
                 ->pluck(sprintf(
@@ -105,7 +103,6 @@ class CollectionSelectAutocomplete extends CollectionSelect
         if (!is_null($this->collection_model_method) && method_exists($this->collection_model, $this->collection_model_method)) {
             $this->collection = $this->collection->map(function (&$item, $id) {
                 return $this->collection_model
-                    ->withoutGlobalScope(app(OwnedScope::class))
                     ->find($id)->{$this->collection_model_method}();
             });
         }

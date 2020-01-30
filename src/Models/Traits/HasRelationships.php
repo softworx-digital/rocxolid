@@ -173,7 +173,7 @@ trait HasRelationships
 
         if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
             // @todo: kinda hotfixed
-            $associate = $this->$relation()->getRelated()->withoutGlobalScope(app(OwnedScope::class))->findOrFail($data[$attribute]);
+            $associate = $this->$relation()->getRelated()->findOrFail($data[$attribute]);
 
             $this->$relation()->associate($associate);
         }
@@ -189,7 +189,7 @@ trait HasRelationships
             $objects = [];
 
             foreach ($data[$attribute] as $id) {
-                $objects[] = $this->$relation()->getRelated()->withoutGlobalScope(app(OwnedScope::class))->findOrFail($id);
+                $objects[] = $this->$relation()->getRelated()->findOrFail($id);
             }
 
             $this->$relation()->saveMany($objects);
@@ -203,7 +203,7 @@ trait HasRelationships
         $attribute = $relation;
 
         if (array_key_exists($attribute, $data)) {
-            $this->$relation()->withoutGlobalScope(app(OwnedScope::class))->sync($data[$attribute]);
+            $this->$relation()->sync($data[$attribute]);
         }
 
         return $this;

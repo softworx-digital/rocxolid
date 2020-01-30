@@ -24,7 +24,8 @@ trait HasOwner
      */
     public static function bootHasOwner()
     {
-        static::addGlobalScope(app(OwnedScope::class));
+        // @todo: commented out until better solution found, caused several problems
+        // static::addGlobalScope(app(OwnedScope::class));
     }
 
     /**
