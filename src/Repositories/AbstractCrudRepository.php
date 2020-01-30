@@ -311,11 +311,15 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $query;
     }
 
-    protected function applyScopes(): EloquentBuilder
+    protected function applyScopes(): Repository
     {
-        return $this->getQuery()
-            ->withGlobalScopes($this->with_scopes)
-            ->withoutGlobalScopes($this->without_scopes);
+        collect($this->with_scopes)->each(function ($scope) {
+            $this->query = $this->getQuery()->withGlobalScope($scope, app($scope));
+        });
+
+        $this->query = $this->getQuery()->withoutGlobalScopes($this->without_scopes);
+
+        return $this;
     }
 
     public function createModel(array $data): CrudableModel

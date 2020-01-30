@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Repositories\Traits;
 use Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+// @todo: refactor together with repo
 trait Paginationable
 {
     // @todo: configurable
@@ -45,6 +46,7 @@ trait Paginationable
         $this
             ->getQuery();
         $this
+            ->applyScopes()
             ->applyOrder()
             ->applyFilters()
             ->applyIntenalFilters();

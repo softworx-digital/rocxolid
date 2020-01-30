@@ -39,16 +39,12 @@ class Owned implements Scope
         }
 
         // nothing to apply if user has policy.scope.all permissions
-        if ($user->can('viewAny', [ get_class($model), get_class($model), 'policy.scope.all' ])) {
+        if ($user->can('viewAnyAll', [ $model, $model ])) {
             return;
         }
 
         // scoping users first // @todo: kinda hotfixed, find some nicer approach
         if ($model instanceof $user) {
-            if ($user->can('view', [ get_class($model), $model, null, 'policy.scope.all' ])) {
-                return;
-            }
-
             $this->handleUserScope($builder, $model, $user);
         // a true model-user ownership
         } elseif (($relation = $model->getOwnershipRelation()) && ($relation->getRelated() instanceof $user)) {
