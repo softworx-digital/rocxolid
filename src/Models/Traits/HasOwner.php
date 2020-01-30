@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
+use Illuminate\Support\Collection;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 // rocXolid model scopes
@@ -34,7 +35,13 @@ trait HasOwner
      */
     public function isOwnership(Authorizable $user): bool
     {
-        return $this->getOwnershipRelation($user)->get()->is($user);
+        $owner = $this->getOwnershipRelation($user)->get();
+
+        if ($owner instanceof Collection) {
+            return $owner->contains($user);
+        }
+
+        return $owner->is($user);
     }
 
     /**

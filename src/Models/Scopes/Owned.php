@@ -33,12 +33,12 @@ class Owned implements Scope
     {
         $user = auth('rocXolid')->user();
 
-        // nothing to owner-scope not having a user instance
+        // nothing to apply not having a user instance
         if (!$user) {
             return;
         }
 
-        // nothing to owner-scope if user has policy.scope.all permissions
+        // nothing to apply if user has policy.scope.all permissions
         if ($user->can('viewAny', [ get_class($model), get_class($model), 'policy.scope.all' ])) {
             return;
         }

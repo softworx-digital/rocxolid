@@ -167,7 +167,9 @@ trait Crudable
             ] + ($model ? [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
-            ] : []);
+            ] : [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($this->$relation_name))->getShortName()),
+            ]);
         } elseif ($relation instanceof MorphToMany) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
@@ -175,7 +177,9 @@ trait Crudable
             ] + ($model ? [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
-            ] : []);
+            ] : [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($this->$relation_name))->getShortName()),
+            ]);
         } elseif ($relation instanceof BelongsTo) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
