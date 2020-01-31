@@ -71,7 +71,7 @@ class Validator extends IlluminateValidator
 
         try {
             ViewService::render($value, $variables);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->exception = $e;
 
             return false;

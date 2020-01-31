@@ -98,7 +98,7 @@ class PermissionScannerService
             $methods = collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function (&$method) {
                 try {
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedAction::class);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // @todo: nicer handling
                     dd(__METHOD__, $method, $e->getMessage());
                 }
@@ -151,7 +151,7 @@ class PermissionScannerService
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedRelation::class);
 
                     return !is_null($method->annotation) && $this->isValidPermissionRelationMethod($reflection, $method);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // @todo: nicer handling
                     dd(__METHOD__, $method, $e->getMessage());
                 }

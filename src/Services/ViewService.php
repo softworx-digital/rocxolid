@@ -83,7 +83,7 @@ class ViewService implements ViewServiceContract
 
         try {
             eval('?' . '>' . $php);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             while (ob_get_level() > $obLevel) {
                 ob_end_clean();
             }
@@ -105,7 +105,7 @@ class ViewService implements ViewServiceContract
     {
         try {
             return View::make($this->getViewPath($component, $view_name), $assignments);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return View::make($this->getNotFoundViewPath(), [ 'e' => $e ]);
         }
     }

@@ -74,7 +74,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
             }
 
             $this->collection = $query
-                ->take(static::LIMIT)
+                // ->take(static::LIMIT)
                 ->pluck(sprintf(
                     '%s.%s',
                     $this->collection_model->getTable(),
@@ -88,7 +88,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
 
             $this->collection = $this->collection_model
                 ->where(sprintf('%s.id', $this->collection_model->getTable()), $value)
-                ->take(static::LIMIT)
+                // ->take(static::LIMIT)
                 ->pluck(sprintf(
                     '%s.%s',
                     $this->collection_model->getTable(),
