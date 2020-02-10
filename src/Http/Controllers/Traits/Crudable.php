@@ -2,10 +2,6 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-use App;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -25,6 +21,7 @@ use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 
 /**
  * @todo: split into separate traits each having (ideally) one method for given action
+ * @todo: type hints
  */
 trait Crudable
 {

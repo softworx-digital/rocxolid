@@ -155,12 +155,19 @@ trait HasRelationships
 
             $data = method_exists($this, $adjust_method) ? $this->$adjust_method($data) : $data;
 
-            if ($this->$relation() instanceof BelongsTo) {
-                $this->fillBelongsTo($relation, $data);
-            } elseif ($this->$relation() instanceof HasMany) {
-                $this->fillHasMany($relation, $data);
-            } elseif ($this->$relation() instanceof BelongsToMany) {
-                $this->fillBelongsToMany($relation, $data);
+            // possibility to adjust the data and its structure before assignment
+            $fill_method = sprintf('fill%s', Str::studly($relation));
+
+            if (method_exists($this, $fill_method)) {
+                $this->$fill_method($data);
+            } else {
+                if ($this->$relation() instanceof BelongsTo) {
+                    $this->fillBelongsTo($relation, $data);
+                } elseif ($this->$relation() instanceof HasMany) {
+                    $this->fillHasMany($relation, $data);
+                } elseif ($this->$relation() instanceof BelongsToMany) {
+                    $this->fillBelongsToMany($relation, $data);
+                }
             }
         });
 

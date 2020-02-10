@@ -57,7 +57,7 @@ class Validator extends IlluminateValidator
     }
 
     /**
-     * @todo: so far serves only for Softworx\RocXolid\Communication\Contracts\Sendable
+     * @todo: so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
      */
     public function validateBladeTemplate(string $attribute, $value, array $parameters): bool
     {

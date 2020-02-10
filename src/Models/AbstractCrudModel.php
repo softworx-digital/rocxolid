@@ -93,7 +93,7 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
         'deleted_at',
     ];
 
-    public function getAttributeViewValue($attribute)
+    public function getAttributeViewValue(string $attribute)
     {
         return $this->$attribute;
     }
