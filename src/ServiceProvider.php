@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid;
 
 use Cache;
-use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
 // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider

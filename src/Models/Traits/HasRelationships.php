@@ -155,7 +155,7 @@ trait HasRelationships
 
             $data = method_exists($this, $adjust_method) ? $this->$adjust_method($data) : $data;
 
-            // possibility to adjust the data and its structure before assignment
+            // possibility to do custom relationship handling
             $fill_method = sprintf('fill%s', Str::studly($relation));
 
             if (method_exists($this, $fill_method)) {

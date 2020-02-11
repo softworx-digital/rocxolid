@@ -77,6 +77,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         Type::TARRAY        => Input::class,
         Type::SIMPLE_ARRAY  => Input::class,
         Type::JSON_ARRAY    => Input::class,
+        Type::JSON          => Input::class,
         Type::OBJECT        => Input::class,
     ];
     /**
