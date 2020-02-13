@@ -83,27 +83,27 @@ interface Routable
     public function getTarget(): string;
 
     /**
-     * Set the route controller method.
+     * Set the route controller action.
      *
-     * @param string $method Route method to set.
+     * @param string $action Route action to set.
      * @return \Softworx\RocXolid\Contracts\Routable
      */
-    public function setRouteMethod(string $method): Routable;
+    public function setRouteAction(string $action): Routable;
 
     /**
-     * Check if the route controller method is assigned.
+     * Check if the route controller action is assigned.
      *
      * @return bool
      */
-    public function hasRouteMethod(): bool;
+    public function hasRouteAction(): bool;
 
     /**
-     * Get the route controller method.
+     * Get the route controller action.
      *
      * @return string
-     * @throws \UnderflowException If no route controller method is set.
+     * @throws \UnderflowException If no route controller action is set.
      */
-    public function getRouteMethod(): string;
+    public function getRouteAction(): string;
 
     /**
      * Get the route path.

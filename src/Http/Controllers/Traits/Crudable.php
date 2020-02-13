@@ -39,7 +39,7 @@ trait Crudable
     {
         $this->response = $response;
 
-        $this->authorizeResource(static::$model_class);
+        $this->authorizeResource(static::getModelClass(), static::getModelClass()::getAuthorizationParameter());
     }
 
     public static function getModelClass(): string

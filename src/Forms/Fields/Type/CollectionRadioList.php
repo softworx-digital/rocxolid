@@ -14,6 +14,7 @@ class CollectionRadioList extends AbstractFormField
 
     protected $default_options = [
         'type-template' => 'collection-radio-list',
+        'collection-item-template' => 'include.labeled',
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -48,6 +49,11 @@ class CollectionRadioList extends AbstractFormField
         }
 
         return $this;
+    }
+
+    public function setCollectionItemTemplate($option)
+    {
+        $this->setComponentOptions('collection-item-template', $option);
     }
 
     public function getCollection()

@@ -210,7 +210,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         if ($relation instanceof BelongsTo) {
             $related = $relation->getRelated();
 
-            $column = $doctrine_connection->getDoctrineColumn($relation->getParent()->getTable(), $attribute);
+            $column = $doctrine_connection->getDoctrineColumn($relation->getParent()->getTable(), $relation->getForeignKeyName());
 
             return [
                 'type' => CollectionSelect::class,

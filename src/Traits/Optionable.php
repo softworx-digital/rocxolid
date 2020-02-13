@@ -38,7 +38,7 @@ trait Optionable
      */
     public function setOptions(array $options): OptionableContract
     {
-        $this->options = new Collection($options);
+        $this->options = collect($options);
 
         return $this;
     }
@@ -52,7 +52,7 @@ trait Optionable
         $parts = explode('.', $option);
 
         while (($key = array_shift($parts)) && $options->has($key) && !empty($parts)) {
-            $options = new Collection($options->get($key));
+            $options = collect($options->get($key));
         }
 
         if ($options->has($key)) {
@@ -70,7 +70,7 @@ trait Optionable
     public function getOptions(): Collection
     {
         if (is_null($this->options)) {
-            $this->options = new Collection();
+            $this->options = collect();
         }
 
         if (is_array($this->options)) {
@@ -86,7 +86,7 @@ trait Optionable
     public function mergeOptions(array $options): OptionableContract
     {
         //$this->options = $this->getOptions()->merge($new_options); // doesn't deep merge
-        $this->options = new Collection(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo: problem possible if object at the end
+        $this->options = collect(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo: problem possible if object at the end
 
         return $this;
     }
@@ -104,7 +104,7 @@ trait Optionable
             throw new \UnderflowException(sprintf('Option [%s] is not set', $option));
         }
 
-        $this->options = new Collection($options);
+        $this->options = collect($options);
 
         return $this;
     }

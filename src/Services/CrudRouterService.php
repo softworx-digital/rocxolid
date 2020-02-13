@@ -116,6 +116,11 @@ class CrudRouterService
             'as' => 'crud.' . $this->name . '.toggle-pivot-data',
             'uses' => $this->controller . '@togglePivotData',
         ]);
+
+        Route::get($this->name . sprintf('/{%s}/switch/enability', $param), [
+            'as' => 'crud.' . $this->name . '.switch-enability',
+            'uses' => $this->controller . '@switchEnability',
+        ]);
     }
 
     /**

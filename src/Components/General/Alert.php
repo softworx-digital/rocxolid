@@ -166,6 +166,6 @@ class Alert extends AbstractActiveComponent
      */
     public function getButtons(): Collection
     {
-        return $this->buttons;
+        return collect($this->buttons);
     }
 }

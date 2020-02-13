@@ -50,6 +50,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use RepositoryFilterableTrait;
     use RepositoryAutocompleteableTrait; // @todo: consider different approach
     use ItemsReorderderableTrait; // @todo: add only where needed
+    use Actions\SwitchesEnability;
     use Actions\ReloadsForm;
     use Actions\ReloadsFormGroup;
     use Actions\ValidatesFormGroup;

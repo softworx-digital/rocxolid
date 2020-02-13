@@ -26,9 +26,9 @@ trait Routable
     protected $route_name;
 
     /**
-     * @var string $route_method Route method.
+     * @var string $route_action Route action.
      */
-    protected $route_method;
+    protected $route_action;
 
     /**
      * @var string $target Route target (to be used in HTML anchor element).
@@ -130,10 +130,10 @@ trait Routable
      * {@inheritdoc}
      * @todo: getController() not guaranteed
      */
-    public function setRouteMethod(string $method): RoutableContract
+    public function setRouteAction(string $action): RoutableContract
     {
-        $this->route_method = $method;
-        $this->route = action(sprintf('\%s@%s', get_class($this->getController()), $method));
+        $this->route_action = $action;
+        $this->route = action(sprintf('\%s@%s', get_class($this->getController()), $action));
 
         return $this;
     }
@@ -141,21 +141,21 @@ trait Routable
     /**
      * {@inheritdoc}
      */
-    public function hasRouteMethod(): bool
+    public function hasRouteAction(): bool
     {
-        return isset($this->route_method);
+        return isset($this->route_action);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRouteMethod(): string
+    public function getRouteAction(): string
     {
-        if (!$this->hasRouteMethod()) {
-            throw new \UnderflowException(sprintf('No route method set in [%s]', get_class($this)));
+        if (!$this->hasRouteAction()) {
+            throw new \UnderflowException(sprintf('No route action set in [%s]', get_class($this)));
         }
 
-        return $this->route_method;
+        return $this->route_action;
     }
 
     /**

@@ -34,6 +34,11 @@ trait Crudable
     use HasTitleColumn;
     use HasRelationships;
 
+    public static function getAuthorizationParameter(): ?string
+    {
+        return null;
+    }
+
     public function getModelViewerComponent()
     {
         return app($this->getControllerClass())->getModelViewerComponent($this);

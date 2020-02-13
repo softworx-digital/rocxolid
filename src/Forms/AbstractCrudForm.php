@@ -7,6 +7,7 @@ use Config;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
@@ -119,9 +120,9 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         $user = auth('rocXolid')->user();
 
         $this->getModelRelationships()->each(function ($relation, $attribute) use ($user) {
-
             if (!$user
                 || (($relation instanceof HasOneOrMany) && ($user->can('update', [ $this->getModel(), $attribute ])))
+                || (($relation instanceof BelongsTo) && ($user->can('update', [ $this->getModel(), $attribute ])))
                 || (($relation instanceof BelongsToMany) && ($user->can('assign', [ $this->getModel(), $attribute ])))) {
 
                 if ($this->hasFormField($attribute)) {
@@ -239,12 +240,14 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                 return true;
             } elseif ($this->getModel()->$field_name() instanceof HasOneOrMany) {
                 return $user->can('update', [ $this->getModel(), $field_name ]);
+            } elseif ($this->getModel()->$field_name() instanceof BelongsTo) {
+                return $user->can('update', [ $this->getModel(), $field_name ]);
             } elseif ($this->getModel()->$field_name() instanceof BelongsToMany) {
                 return $user->can('assign', [ $this->getModel(), $field_name ]);
             } else {
                 throw new \RuntimeException(sprintf(
                     'Unsupported relation type [%s] - field [%s]',
-                    get_class($this->getModel()->$field_name()).
+                    get_class($this->getModel()->$field_name()),
                     $field_name
                 ));
             }
