@@ -9,6 +9,6 @@ class NotMe
 {
     public function apply($query, Crudable $model)
     {
-        return $query->where(sprintf('%s.id', $model->getTable()), '!=', $model->id);
+        return $query->where(sprintf('%s.id', $model->getTable()), '!=', $model->getKey());
     }
 }

@@ -24,8 +24,8 @@ trait ItemsReorderderable
         }
 
         foreach ($model->$relation as $item) {
-            if (isset($order[$item->id]) && isset($item->{$item::POSITION_COLUMN})) {
-                $item->{$item::POSITION_COLUMN} = $order[$item->id];
+            if (isset($order[$item->getKey()]) && isset($item->{$item::POSITION_COLUMN})) {
+                $item->{$item::POSITION_COLUMN} = $order[$item->getKey()];
                 $item->save();
             }
         }

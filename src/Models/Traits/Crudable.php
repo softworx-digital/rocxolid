@@ -235,7 +235,7 @@ trait Crudable
     // @TODO: this doesn't belong here
     public function getUploadPath()
     {
-        return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->id);
+        return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->getKey());
     }
 
     // @TODO: this doesn't belong here

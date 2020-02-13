@@ -33,8 +33,8 @@ trait CanClone
     {
         $class = (new \ReflectionClass($this))->getName();
 
-        if ($clone_log->has($class) && array_key_exists($this->id, $clone_log->get($class))) { // prevent once cloned
-            return $class::find($clone_log->get($class)[$this->id]);
+        if ($clone_log->has($class) && array_key_exists($this->getKey(), $clone_log->get($class))) { // prevent once cloned
+            return $class::find($clone_log->get($class)[$this->getKey()]);
         }
 
         $clone = $this->replicate();
@@ -48,7 +48,7 @@ trait CanClone
         }
 
         $clone_log->put($class, $clone_log->get($class) + [
-            $this->id => $clone->id
+            $this->getKeyName() => $clone->getKey()
         ]);
 
         if ($with_relations) {
@@ -152,8 +152,8 @@ trait CanClone
     {
         $class = (new \ReflectionClass($this))->getName();
 
-        if ($clone_log->has($class) && array_key_exists($this->id, $clone_log->get($class))) {
-            return $class::find($clone_log->get($class)[$this->id]);
+        if ($clone_log->has($class) && array_key_exists($this->getKey(), $clone_log->get($class))) {
+            return $class::find($clone_log->get($class)[$this->getKey()]);
         }
 
         return null;
@@ -163,7 +163,7 @@ trait CanClone
     {
         $class = (new \ReflectionClass($this))->getName();
 
-        if ($clone_log->has($class) && ($original_id = array_search($this->id, $clone_log->get($class)))) {
+        if ($clone_log->has($class) && ($original_id = array_search($this->getKey(), $clone_log->get($class)))) {
             return $class::find($original_id);
         }
 
