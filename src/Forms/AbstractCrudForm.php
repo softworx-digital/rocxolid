@@ -107,6 +107,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     public function setFieldsModelValues(): Form
     {
+debug($this->getModelAttributes());
         $this->getModelAttributes()->each(function ($value, $attribute) {
             if ($this->hasFormField($attribute)) {
                 $this

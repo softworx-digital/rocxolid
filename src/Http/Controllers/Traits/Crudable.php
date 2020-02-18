@@ -53,6 +53,22 @@ trait Crudable
         return true;
     }
 
+    public function makeForm(string $param, ?CrudableModel $model, ?string $form_class = null)
+    {
+        $repository = $this->getRepository($param);
+        $model = $model ?? $repository->getModel();
+
+        $this->setModel($model);
+
+        if (is_null($form_class)) {
+            $form = $repository->getForm($param);
+        } else {
+            $form = $repository->createForm($form_class, $param);
+        }
+
+        return $form;
+    }
+
     protected function success(CrudRequest $request, Repository $repository, AbstractCrudForm $form, $action)
     {
         $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), $action);
@@ -152,7 +168,7 @@ trait Crudable
                     ->get();
             }
         } else {
-            // @todo: hotfixed, you can do better
+            // @todo: "hotfixed", you can do better
             if ($action == 'update') {
                 $action = 'edit';
             }
@@ -178,9 +194,7 @@ trait Crudable
 
     protected function getFormParam(CrudRequest $request, $method = null)
     {
-        if (is_null($method)) {
-            list($controller, $method) = explode('@', $request->route()->getActionName());
-        }
+        $method = $method ?? $request->route()->getActionMethod();
 
         if ($request->filled('_section')) {
             $method = sprintf('%s.%s', $method, $request->_section);
@@ -199,7 +213,7 @@ trait Crudable
 
     protected function getRepositoryParam(CrudRequest $request, $default = Repositoryable::REPOSITORY_PARAM)
     {
-        list($controller, $method) = explode('@', $request->route()->getActionName());
+        $method = $request->route()->getActionMethod();
         /*
         if ($request->filled('_section'))
         {

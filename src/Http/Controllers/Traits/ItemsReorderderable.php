@@ -2,18 +2,30 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
+// rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
+ * Trait to enable reordering of objects.
  *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
 trait ItemsReorderderable
 {
-    public function reorder(CrudRequest $request, $id, $relation)//: View
+    /**
+     * Process incoming request.
+     * Retrieve the object order and reset the position column.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string $relation
+     */
+    public function reorder(CrudRequest $request, Crudable $model, string $relation)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-        $model = $id ? $repository->find($id) : $repository->getModel();
-
         if (($input = $request->input('_data', false)) && is_array($input) && ($input = reset($input))) {
             $order = [];
             foreach ($input as $position => $item_data) {

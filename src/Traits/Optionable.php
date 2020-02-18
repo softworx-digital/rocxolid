@@ -60,6 +60,7 @@ trait Optionable
         } elseif (!is_null($default)) {
             return $default;
         } else {
+            // @todo: include some element identificator
             throw new \InvalidArgumentException(sprintf("Invalid option [%s] requested, available:\n%s", $option, implode("\n", $this->getOptionsKeys())));
         }
     }

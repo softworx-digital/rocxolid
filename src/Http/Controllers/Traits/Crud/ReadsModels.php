@@ -39,7 +39,8 @@ trait ReadsModels
                 ->getDashboard()
                 ->setModelViewerComponent($model_viewer_component)
                 ->render('model', [
-                    'model_viewer_template' => 'show'
+                    'model_viewer_template' => 'show',
+                    'tab' => $request->query('tab', null),
                 ]);
         }
     }

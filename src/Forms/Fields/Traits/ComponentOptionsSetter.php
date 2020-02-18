@@ -52,6 +52,11 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('label', $label);
     }
 
+    protected function setUnits($units): FormField
+    {
+        return $this->setComponentOptions('units', $units);
+    }
+
     protected function setSelectValueChallange($select_value_challange): FormField
     {
         return $this->setComponentOptions('select-value-challange', $select_value_challange);

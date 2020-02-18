@@ -179,7 +179,7 @@ trait HasRelationships
         $attribute = sprintf('%s_id', $relation);
 
         if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-            // @todo: kinda hotfixed
+            // @todo: kinda "hotfixed"
             $associate = $this->$relation()->getRelated()->findOrFail($data[$attribute]);
 
             $this->$relation()->associate($associate);

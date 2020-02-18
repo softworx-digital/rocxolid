@@ -16,7 +16,7 @@ class CrudRouterService
 
     public static function create($name, $controller, $options = [])
     {
-        return new static($name, $controller, $options = []);
+        return new static($name, $controller, $options);
     }
 
     public function __construct($name, $controller, $options)
@@ -24,6 +24,7 @@ class CrudRouterService
         $this->name = $name;
         $this->controller = $controller;
         $this->options = $options;
+
         $param = Str::slug($this->name, '_');
 
         // CRUD routes for core features
@@ -42,37 +43,37 @@ class CrudRouterService
             'uses' => $this->controller . '@search',
         ]);
 
-        Route::get($this->name . '/repository-order-by/{param}/{order_by_column}/{order_by_direction?}', [
+        Route::get($this->name . '/repository/order-by/{param}/{order_by_column}/{order_by_direction?}', [
             'as' => 'crud.' . $this->name . '.repository-order',
             'uses' => $this->controller . '@repositoryOrderBy',
         ]);
 
-        Route::post($this->name . '/repository-filter/{param}', [
+        Route::post($this->name . '/repository/filter/{param}', [
             'as' => 'crud.' . $this->name . '.repository-filter',
             'uses' => $this->controller . '@repositoryFilter',
         ]);
 
-        Route::post($this->name . sprintf('/repository-autocomplete/{%s?}', $param), [
+        Route::post($this->name . sprintf('/repository/autocomplete/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.repository-autocomplete',
             'uses' => $this->controller . '@repositoryAutocomplete',
         ]);
 
-        Route::post($this->name . sprintf('/repository-typeahead/{%s?}', $param), [
+        Route::post($this->name . sprintf('/repository/typeahead/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.repository-typeahead',
             'uses' => $this->controller . '@repositoryTypeahead',
         ]);
 
-        Route::post($this->name . sprintf('/form-reload/{%s?}', $param), [
+        Route::post($this->name . sprintf('/form/reload/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.form-reload',
             'uses' => $this->controller . '@formReload',
         ]);
 
-        Route::post($this->name . sprintf('/form-reload/group/{field_group}/{%s?}', $param), [
+        Route::post($this->name . sprintf('/form/reload/group/{field_group}/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.form-reload-group',
             'uses' => $this->controller . '@formReloadGroup',
         ]);
 
-        Route::post($this->name . sprintf('/form-validate/group/{field_group}/{%s?}', $param), [
+        Route::post($this->name . sprintf('/form/validate/group/{field_group}/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.form-validate-group',
             'uses' => $this->controller . '@formValidateGroup',
         ]);

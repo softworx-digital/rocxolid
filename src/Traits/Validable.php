@@ -36,7 +36,7 @@ trait Validable
         $messages = array_merge($validation['error_messages'], $messages);
 
         $this->validator = $this->getValidatorFactory()->make($this->getValidationData($validation), $rules, $messages);
-        $this->validator->setAttributeNames($validation['attributes']);
+        $this->validator->setAttributeNames($validation['translation']);
 
         return $this;
     }
@@ -49,7 +49,7 @@ trait Validable
         $messages = array_merge($validation['error_messages'], $messages);
 
         $this->validator = $this->getValidatorFactory()->make($this->getRequest()->only($validation['attributes']), $rules, $messages);
-        $this->validator->setAttributeNames($validation['attributes']);
+        $this->validator->setAttributeNames($validation['translation']);
 
         return $this;
     }

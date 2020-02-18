@@ -39,9 +39,15 @@ trait Crudable
         return null;
     }
 
-    public function getModelViewerComponent()
+    public function getModelViewerComponent(string $view_package = null)
     {
-        return app($this->getControllerClass())->getModelViewerComponent($this);
+        $model_viewer = app($this->getControllerClass())->getModelViewerComponent($this);
+
+        if (!is_null($view_package)) {
+            $model_viewer->setViewPackage($view_package);
+        }
+
+        return $model_viewer;
     }
 
     public function getExtraAttributes()

@@ -185,6 +185,16 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     }
 
     /**
+     * Check if the field component is required.
+     *
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return in_array('required', $this->getOption('validation.rules', []));
+    }
+
+    /**
      * @return Form
      */
     public function getForm(): Form

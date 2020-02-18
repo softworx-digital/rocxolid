@@ -4,6 +4,8 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 // rocXolid form components
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 use Softworx\RocXolid\Components\Forms\FormFieldGroup as FormFieldGroupComponent;
@@ -22,14 +24,12 @@ trait ReloadsFormGroup
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param string $field_group
-     * @param mixed $id
-     * @todo: verify if $int can be type hinted as int
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function formReloadGroup(CrudRequest $request, string $field_group, $id = null)//: Response
+    public function formReloadGroup(CrudRequest $request, string $field_group, ?Crudable $model = null)//: Response
     {
         $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $model = $id ? $repository->findOrFail($id) : $repository->getModel();
+        $model = $model ?? $repository->getModel();
 
         $this->setModel($model);
 
@@ -59,7 +59,7 @@ trait ReloadsFormGroup
 
         $this->response->replace(
             $form_field_group_component->getDomId($field_group),
-            $form_component->fetch('include.fieldset-only-group', ['group' => $field_group])
+            $form_component->fetch('include.fieldset-only-group', [ 'group' => $field_group, 'show' => !$request->has('hide') ])
         );
 
         return $this->response->get();

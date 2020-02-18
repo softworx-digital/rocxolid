@@ -22,7 +22,7 @@ use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 trait RepositoryAutocompleteable
 {
     /**
-     * Process incoming autocomplete-field request.
+     * Process the incoming autocomplete-field request.
      * Retrieve the field upon request param, set appropriate filter to the field's collection.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
