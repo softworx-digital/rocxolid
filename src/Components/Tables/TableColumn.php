@@ -19,6 +19,11 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
         $this->setOptions($this->table_column->getOption('component'));
 
+        // @todo: kinda "hotfixed", you can do better
+        if ($view_package = $this->getOption('view-package', false)) {
+            $this->setViewPackage($view_package);
+        }
+
         return $this;
     }
 

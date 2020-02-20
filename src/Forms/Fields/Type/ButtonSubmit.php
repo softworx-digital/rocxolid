@@ -21,7 +21,6 @@ class ButtonSubmit extends Button
 
     protected function setAjax($ajax): FormField
     {
-debug($this->form);
         $this
             ->setComponentOptions('ajax', true)
             ->setComponentOptions('attributes', [

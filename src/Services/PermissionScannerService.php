@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Doctrine\Common\Annotations\AnnotationReader;
 // rocXolid services
@@ -208,8 +209,18 @@ class PermissionScannerService
                 'Invalid method [%s::%s()] return type, [%s] expected, [%s] declared',
                 $reflection->getName(),
                 $method->getName(),
-                implode(' or ', [ HasOneOrMany::class, BelongsToMany::class ]),
+                implode(' or ', [ HasOneOrMany::class, BelongsToMany::class, BelongsTo::class ]),
                 $method_return_type
+            ));
+        }
+
+        if (!$this->isValidPermissionBelongsToRelationMethodRelation($method)) {
+            throw new \RuntimeException(sprintf(
+                'Invalid method [%s::%s()] policy abilities, [%s] expected, [%s] declared',
+                $reflection->getName(),
+                $method->getName(),
+                'assign',
+                json_encode($method->annotation->getPolicyAbilities())
             ));
         }
 
@@ -234,11 +245,30 @@ class PermissionScannerService
             return true;
         }
 
+        if (in_array($method_return_type, [ BelongsTo::class ])) {
+            return true;
+        }
+
         if (is_subclass_of($method_return_type, HasOneOrMany::class) || is_subclass_of($method_return_type, BelongsToMany::class)) {
             return true;
         }
 
         return false;
+    }
+
+    private function isValidPermissionBelongsToRelationMethodRelation(\ReflectionMethod $method)
+    {
+        $method_return_type = (string)$method->getReturnType();
+
+        if (($method_return_type === BelongsTo::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
+            return false;
+        }
+
+        if (is_subclass_of($method_return_type, BelongsTo::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
+            return false;
+        }
+
+        return true;
     }
 
     private function isValidPermissionBelongsToManyRelationMethodRelation(\ReflectionMethod $method)

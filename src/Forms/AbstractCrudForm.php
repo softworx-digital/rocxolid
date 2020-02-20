@@ -107,7 +107,6 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     public function setFieldsModelValues(): Form
     {
-debug($this->getModelAttributes());
         $this->getModelAttributes()->each(function ($value, $attribute) {
             if ($this->hasFormField($attribute)) {
                 $this
@@ -242,7 +241,7 @@ debug($this->getModelAttributes());
             } elseif ($this->getModel()->$field_name() instanceof HasOneOrMany) {
                 return $user->can('update', [ $this->getModel(), $field_name ]);
             } elseif ($this->getModel()->$field_name() instanceof BelongsTo) {
-                return $user->can('update', [ $this->getModel(), $field_name ]);
+                return $user->can('assign', [ $this->getModel(), $field_name ]);
             } elseif ($this->getModel()->$field_name() instanceof BelongsToMany) {
                 return $user->can('assign', [ $this->getModel(), $field_name ]);
             } else {

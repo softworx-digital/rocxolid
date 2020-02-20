@@ -6,7 +6,7 @@ use Softworx\RocXolid\Repositories\Contracts\Filter;
 
 trait ComponentOptionsSetter
 {
-    protected function setViewPackage($view_package): FormField
+    protected function setViewPackage($view_package): Filter
     {
         return $this->setComponentOptions('view-package', $view_package);
     }
