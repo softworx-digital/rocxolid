@@ -185,13 +185,24 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     }
 
     /**
-     * Check if the field component is required.
+     * Check if the field is required.
      *
      * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return in_array('required', $this->getOption('validation.rules', []));
+    }
+
+    /**
+     * Check if the field has maximum length declared.
+     *
+     * @return bool
+     */
+    public function isMaxlength(): bool
+    {
+        return in_array('max', $this->getOption('validation.rules', []))
+            || in_array('maxplain', $this->getOption('validation.rules', []));
     }
 
     /**

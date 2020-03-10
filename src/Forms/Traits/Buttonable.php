@@ -69,6 +69,13 @@ trait Buttonable
         return $this->_buttons;
     }
 
+    public function hasButtons(): bool
+    {
+        // @todo: temporary fix, caused troubles for modal forms
+        return true;
+        // return $this->getButtons()->isEmpty();
+    }
+
     public function getButtonToolbar($name): FormField
     {
         if ($this->getButtontoolbars()->has($name)) {

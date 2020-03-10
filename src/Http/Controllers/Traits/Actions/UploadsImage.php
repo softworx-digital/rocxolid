@@ -52,6 +52,7 @@ trait UploadsImage
      * Retrieve a form component to upload multiple images.
      *
      * @return \Softworx\RocXolid\Components\Forms\CrudForm
+     * @todo verify type hints
      */
     public function getGalleryUploadFormComponent()
     {
@@ -73,8 +74,9 @@ trait UploadsImage
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return array
      */
-    public function imageUpload(CrudRequest $request, Crudable $model)
+    public function imageUpload(CrudRequest $request, Crudable $model): array
     {
         $this->setModel($model);
 
@@ -106,6 +108,19 @@ trait UploadsImage
             }
         }
 
+        return $this->onImageUpload($request, $model, $model_attribute);
+    }
+
+    /**
+     * On image upload handler.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string $model_attribute
+     * @return array
+     */
+    protected function onImageUpload(CrudRequest $request, Crudable $model, string $model_attribute): array
+    {
         if ($this->getModel()->$model_attribute() instanceof MorphOne) {
             $parent_image_upload_component = $this->getImageUploadFormComponent();
         } elseif ($this->getModel()->$model_attribute() instanceof MorphMany) {

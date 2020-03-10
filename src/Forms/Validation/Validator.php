@@ -2,19 +2,32 @@
 
 namespace Softworx\RocXolid\Forms\Validation;
 
-use App;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator as IlluminateValidator;
+// third-party
+use DvK\Laravel\Vat\Facades\Validator as VatValidator;
 // rocXolid services
 use Softworx\RocXolid\Services\ViewService;
 
 /**
+ * Validator extension.
  *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
 class Validator extends IlluminateValidator
 {
     protected $exception = null;
 
+    /**
+     * Validate that an attribute is the only one defined among attributes defined in parameters.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
     public function validateOnlyOne(string $attribute, $value, array $parameters): bool
     {
         if ($value === '') {
@@ -30,6 +43,15 @@ class Validator extends IlluminateValidator
         return true;
     }
 
+    /**
+     * Replace all place-holders for the only_one rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
     public function replaceOnlyOne(string $message, string $attribute, string $rule, array $parameters): string
     {
         $translated = [];
@@ -41,30 +63,208 @@ class Validator extends IlluminateValidator
         return str_replace(':parameters', implode(', ', $translated), $message);
     }
 
+    /**
+     * Validate value represents ratio in the form of a fragment.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateRatio(string $attribute, $value, array $parameters): bool
+    {
+        $match = preg_match('/^([0-9]+)\/([0-9]+)$/', $value, $matches);
+
+        if (!$match) {
+            return false;
+        }
+
+        list($m, $numerator, $denominator) = $matches;
+
+        return $match && (($numerator < $denominator) || (((int)$numerator === 1) && ((int)$denominator === 1)));
+    }
+
+    /**
+     * Validate value represents EU VAT number.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateEuvat(string $attribute, $value, array $parameters): bool
+    {
+        return empty($value) || VatValidator::validate($value);
+    }
+
+    /**
+     * Validate that value represents fully qualified class name.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
     public function validateClassExists(string $attribute, $value, array $parameters): bool
     {
         return class_exists($value);
     }
 
+    /**
+     * Validate that a date is older than age.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
     public function validateAge(string $attribute, $value, array $parameters): bool
     {
         return Carbon::now()->diff(Carbon::make($value))->y >= ($parameters[0] ?? 0);
     }
 
+    /**
+     * Replace all place-holders for the age rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
     public function replaceAge(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(':age', implode(' / ', $parameters), $message);
     }
 
     /**
+     * Validate that a plain (with stripped tags) text is shorter than maximum.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateMaxplain(string $attribute, $value, array $parameters): bool
+    {
+        return $this->validateMax($attribute, strip_tags($value), $parameters);
+    }
+
+    /**
+     * Replace all place-holders for the maxplain rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceMaxplain(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':max', implode(' ', $parameters), $message);
+    }
+
+    /**
+     * Validate that a value is (localized) decimal number.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateDecimal(string $attribute, $value, array $parameters): bool
+    {
+        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
+            return preg_match(sprintf('/([0-9]+)(%s([0-9]+))?/', $user->address->country->currency_decimal_separator), $value);
+        }
+
+        return is_numeric($value);
+    }
+
+    /**
+     * Validate that a (localized) decimal number is greater than another attribute.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateGtdecimal(string $attribute, $value, array $parameters): bool
+    {
+        return $this->validateGt($attribute, $this->getNormalizedDecimalNumber($value), $parameters);
+    }
+
+    /**
+     * Validate that a value is (localized) decimal latitude.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateLatitude(string $attribute, $value, array $parameters): bool
+    {
+        return preg_match('/^([-]?(([0-8]?[0-9])(\.(\d+))?)|(90(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+    }
+
+    /**
+     * Validate that a value is (localized) decimal longitude.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateLongitude(string $attribute, $value, array $parameters): bool
+    {
+        return preg_match('/^([-]?((((1[0-7][0-9])|([0-9]?[0-9]))(\.(\d+))?)|180(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+    }
+
+    /**
+     * Replace all place-holders for the after_or_equal rule.
+     * @todo: "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceAfterOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
+    }
+
+    /**
+     * Replace all place-holders for the before_or_equal rule.
+     * @todo: "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceBeforeOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
+    }
+
+    /**
+     * Validate that a value is syntactically correct blade template.
      * @todo: so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
      */
     public function validateBladeTemplate(string $attribute, $value, array $parameters): bool
     {
         list($model_type, $model_id) = $parameters;
 
         $model = $model_type::find($model_id);
-        $model->setEvent(App::make($model->event_type));
+        $model->setEvent(app($model->event_type));
         $variables = $model->getEvent()->getSendableVariables();
 
         $value = str_replace('-&gt;', '->', $value);
@@ -80,41 +280,71 @@ class Validator extends IlluminateValidator
         return true;
     }
 
+    /**
+     * Replace all place-holders for the blade_template rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
     public function replaceBladeTemplate(string $message, string $attribute, string $rule, array $parameters): string
     {
         return str_replace(':error', $this->exception->getMessage(), $message);
     }
 
-    public function validateIban(string $attribute, $value)
+    /**
+     * Validate that a value is a IBAN.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateIban(string $attribute, $value, array $parameters)
     {
         // build replacement arrays
         $iban_replace_chars = range('A', 'Z');
+
         foreach (range(10, 35) as $tempvalue) {
             $iban_replace_values[] = strval($tempvalue);
         }
+
         // prepare string
         $tempiban = strtoupper($value);
         $tempiban = str_replace(' ', '', $tempiban);
+
         // check iban length
         if ($this->getIbanLength($tempiban) != strlen($tempiban)) {
             return false;
         }
+
         // build checksum
         $tempiban = substr($tempiban, 4).substr($tempiban, 0, 4);
         $tempiban = str_replace($iban_replace_chars, $iban_replace_values, $tempiban);
         $tempcheckvalue = intval(substr($tempiban, 0, 1));
+
         for ($strcounter = 1; $strcounter < strlen($tempiban); $strcounter++) {
             $tempcheckvalue *= 10;
             $tempcheckvalue += intval(substr($tempiban, $strcounter, 1));
             $tempcheckvalue %= 97;
         }
+
         // only modulo 1 is iban
         return $tempcheckvalue == 1;
     }
 
-    private function getIbanLength($iban)
+    /**
+     * IBAN length helper.
+     *
+     * @param string $iban
+     * @return int|null
+     */
+    private function getIbanLength(string $iban): ?int
     {
         $countrycode = substr($iban, 0, 2);
+
         $lengths = [
             'AL' => 28,
             'AD' => 24,
@@ -199,6 +429,23 @@ class Validator extends IlluminateValidator
             'SN' => 28,
             'UA' => 29
         ];
+
         return isset($lengths[$countrycode]) ? $lengths[$countrycode] : false;
+    }
+
+    /**
+     * Normalize decimal number representation according to logged user locale.
+     *
+     * @param string $value
+     * @return string
+     */
+    private function getNormalizedDecimalNumber(string $value): string
+    {
+        // @todo: "hotfixed", find something more appropriate
+        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
+            $value = str_replace($user->address->country->currency_decimal_separator, '.', $value);
+        }
+
+        return $value;
     }
 }

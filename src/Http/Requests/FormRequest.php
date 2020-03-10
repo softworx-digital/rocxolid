@@ -36,6 +36,7 @@ class FormRequest extends IlluminateFormRequest
             'attributes' => [],
             'rules' => [],
             'error_messages' => [],
+            'translation' => [],
         ];
 
         foreach ($fields as $name => $field) {
