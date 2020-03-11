@@ -307,12 +307,12 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
         foreach ($this->getModel()->getFillable() as $attribute) {
             if (!in_array($attribute, $this->getModel()->getHidden())) {
-                $attributes->put($attribute, $this->getModel()->exists ? $this->getModel()->$attribute : null);
+                $attributes->put($attribute, $this->getModel()->exists ? $this->getModel()->getAttributeFieldValue($attribute) : null);
             }
         }
 
         foreach ($this->getModel()->getExtraAttributes() as $attribute) {
-            $attributes->put($attribute, $this->getModel()->exists ? $this->getModel()->$attribute : null);
+            $attributes->put($attribute, $this->getModel()->exists ? $this->getModel()->getAttributeFieldValue($attribute) : null);
         }
 
         return $attributes;

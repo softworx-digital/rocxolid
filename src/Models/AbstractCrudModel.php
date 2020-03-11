@@ -13,7 +13,11 @@ use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearch
 use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: this doesn't belong here, another approach without dependency on UserManagement?
 
 /**
+ * rocXolid base CRUDable model class.
  *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
 abstract class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
 {
@@ -68,7 +72,8 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
     protected $extra = [];
 
     /**
-     * Model system attributes - not to be shown in model viewer.
+     * Model system attributes.
+     * These attributes are not shown in model viewer and omitted in forms.
      *
      * @var array
      */
@@ -84,6 +89,7 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
 
     /**
      * Date attributes.
+     * These attributes are formatted according to localization in the front-end.
      *
      * @var array
      */
@@ -93,8 +99,27 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
         'deleted_at',
     ];
 
-    public function getAttributeViewValue(string $attribute)
-    {
-        return $this->$attribute;
-    }
+    /**
+     * Date & time attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $date_times = [];
+
+    /**
+     * Decimal attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $decimals = [];
+
+    /**
+     * Enum attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $enums = [];
 }

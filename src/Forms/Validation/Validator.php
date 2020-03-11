@@ -175,7 +175,7 @@ class Validator extends IlluminateValidator
     public function validateDecimal(string $attribute, $value, array $parameters): bool
     {
         if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
-            return preg_match(sprintf('/([0-9]+)(%s([0-9]+))?/', $user->address->country->currency_decimal_separator), $value);
+            return preg_match(sprintf('/^(([0-9]+)(%s([0-9]+))?)$/', $user->address->country->currency_decimal_separator), $value);
         }
 
         return is_numeric($value);
@@ -192,6 +192,20 @@ class Validator extends IlluminateValidator
     public function validateGtdecimal(string $attribute, $value, array $parameters): bool
     {
         return $this->validateGt($attribute, $this->getNormalizedDecimalNumber($value), $parameters);
+    }
+
+    /**
+     * Replace all place-holders for the gtdecimal rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceGtdecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        return str_replace(':value', $parameters[0], $message);
     }
 
     /**

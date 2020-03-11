@@ -20,8 +20,9 @@ use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits\HasOwner;
-use Softworx\RocXolid\Models\Traits\HasTitleColumn;
+use Softworx\RocXolid\Models\Traits\HasAttributes;
 use Softworx\RocXolid\Models\Traits\HasRelationships;
+use Softworx\RocXolid\Models\Traits\HasTitleColumn;
 // rocXolid components
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
@@ -31,8 +32,9 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 trait Crudable
 {
     use HasOwner;
-    use HasTitleColumn;
+    use HasAttributes;
     use HasRelationships;
+    use HasTitleColumn;
 
     public static function getAuthorizationParameter(): ?string
     {
