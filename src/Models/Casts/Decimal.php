@@ -2,7 +2,8 @@
 
 namespace Softworx\RocXolid\Models\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+// @todo: appliable for Laravel 7, currently this class is not used
+// use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 /**
  * Enables usa of localized decimal values.
@@ -11,7 +12,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-class Decimal implements CastsAttributes
+class Decimal // implements CastsAttributes
 {
     /**
      * Cast the given value.

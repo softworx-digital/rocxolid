@@ -23,13 +23,22 @@ class UploadImage extends UploadFile
         'label' => false,
         // upload url
         'upload-url' => null,
+        // image preview
+        'image-preview' => true,
         // image preview size
         'image-preview-size' => 'small',
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control'
+            'class' => 'form-control',
+            'accept' => 'image/*',
+            // 'data-maxsize' => '5242880', // 5 MB
         ],
     ];
+
+    protected function setImagePreview($preview): FormField
+    {
+        return $this->setComponentOptions('image-preview', $preview);
+    }
 
     protected function setImagePreviewSize($preview_size): FormField
     {
