@@ -119,6 +119,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
         $user = auth('rocXolid')->user();
 
+        // check permissions for relation fields
         $this->getModelRelationships()->each(function ($relation, $attribute) use ($user) {
             if (!$user
                 || (($relation instanceof HasOneOrMany) && ($user->can('update', [ $this->getModel(), $attribute ])))
