@@ -2,17 +2,11 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
-use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 // relations
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\FormField;
@@ -23,8 +17,6 @@ use Softworx\RocXolid\Models\Traits\HasOwner;
 use Softworx\RocXolid\Models\Traits\HasAttributes;
 use Softworx\RocXolid\Models\Traits\HasRelationships;
 use Softworx\RocXolid\Models\Traits\HasTitleColumn;
-// rocXolid components
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * @todo: subject to refactoring
@@ -238,40 +230,5 @@ trait Crudable
     {
         // @todo: you can do (maybe) better than checking substring
         return (substr($attribute, -5) === 'color');
-    }
-
-    // @TODO: this doesn't belong here
-    public function getUploadPath()
-    {
-        return sprintf('%s/%s', strtolower((new \ReflectionClass($this))->getShortName()), $this->getKey());
-    }
-
-    // @TODO: this doesn't belong here
-    public function getImageSizes($attribute)
-    {
-        if (property_exists($this, 'image_sizes')) {
-            $image_sizes = $this->image_sizes;
-        } elseif (property_exists($this, 'default_image_sizes')) {
-            $image_sizes = $this->default_image_sizes;
-        } else {
-            throw new \InvalidArgumentException(sprintf('Model [%s] has no image sizes definition', (new \ReflectionClass($this))->getName()));
-        }
-
-        if (!isset($image_sizes[$attribute])) {
-            throw new \InvalidArgumentException(sprintf('Invalid image attribute [%s] requested, [%s] available', $attribute, implode(', ', array_keys($image_sizes))));
-        }
-
-        return $image_sizes[$attribute];
-    }
-
-    public function getImageSize($attribute, $size)
-    {
-        $image_sizes = $this->getImageSizes($attribute);
-
-        if (!isset($image_sizes[$size])) {
-            throw new \InvalidArgumentException(sprintf('Invalid size [%s] for attribute [%s] requested, [%s] available', $size, $attribute, implode(', ', array_keys($image_sizes))));
-        }
-
-        return (object)$image_sizes[$size];
     }
 }

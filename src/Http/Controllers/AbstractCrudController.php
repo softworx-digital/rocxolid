@@ -10,24 +10,16 @@ use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
+// rocXolid utils
+use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableComponent;
-use Softworx\RocXolid\Components\Contracts\Modellable as ModellableComponent;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
-// rocXolid controller traits
-use Softworx\RocXolid\Http\Controllers\Traits\Crudable as CrudableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\Dashboardable as DashboardableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\Repositoryable as RepositoryableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\RepositoryOrderable as RepositoryOrderableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\RepositoryFilterable as RepositoryFilterableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\RepositoryAutocompleteable as RepositoryAutocompleteableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\ItemsReorderderable as ItemsReorderderableTrait;
-use Softworx\RocXolid\Http\Controllers\Traits\Actions;
 // rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
@@ -39,22 +31,25 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  * @package Softworx\RocXolid
  * @version 1.0.0
  * @todo: add contracts to repository features traits
+ * @todo: cleanup
  */
 abstract class AbstractCrudController extends AbstractController implements Crudable, Dashboardable, Repositoryable, Modellable
 {
-    use CrudableTrait;
-    use DashboardableTrait;
-    use ModellableTrait;
-    use RepositoryableTrait;
-    use RepositoryOrderableTrait;
-    use RepositoryFilterableTrait;
-    use RepositoryAutocompleteableTrait; // @todo: consider different approach
-    use ItemsReorderderableTrait; // @todo: add only where needed
-    use Actions\SwitchesEnability;
-    use Actions\ReloadsForm;
-    use Actions\ReloadsFormGroup;
-    use Actions\ValidatesFormGroup;
-    use Actions\ClonesModels;
+    use ModellableTrait; // @todo: consider different approach
+    use Traits\Crudable;
+    use Traits\Dashboardable;
+    use Traits\Repositoryable;
+    use Traits\RepositoryOrderable;
+    use Traits\RepositoryFilterable;
+    use Traits\RepositoryAutocompleteable; // @todo: consider different approach
+    use Traits\ItemsReorderderable; // @todo: add only where needed
+    use Traits\Actions\SwitchesEnability;
+    use Traits\Actions\ReloadsForm;
+    use Traits\Actions\ReloadsFormGroup;
+    use Traits\Actions\ValidatesFormGroup;
+    use Traits\Actions\ClonesModels;
+
+    protected $response;
 
     /**
      * <repository-param> => <repository-class>
@@ -80,6 +75,28 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         'edit' => 'update',
         'update' => 'update',
     ];
+
+    /**
+     * Constructor.
+     *
+     * @param \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse $response
+     */
+    public function __construct(AjaxResponse $response)
+    {
+        $this->response = $response;
+
+        $this->authorizeResource(static::getModelClass(), static::getModelClass()::getAuthorizationParameter());
+    }
+
+    /**
+     * Retrieve the response that is going to be send.
+     *
+     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     */
+    public function getResponse(): AjaxResponse
+    {
+        return $this->response;
+    }
 
     /**
      * Dynamically create route for given controller action.

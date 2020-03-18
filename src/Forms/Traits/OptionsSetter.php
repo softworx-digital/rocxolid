@@ -44,7 +44,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setMethod($method): Form
+    protected function setMethod(string $method): Form
     {
         if (!in_array(strtolower($method), self::$methods)) {
             throw new \InvalidArgumentException(sprintf('Invalid method [%s]. Valid methods: [%s]', $method, print_r(self::$methods, true)));
@@ -59,7 +59,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setRoute($route_name): Form
+    protected function setRoute(string $route_name): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -70,7 +70,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setRouteAction($route_action): Form
+    protected function setRouteAction(string $route_action): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -81,7 +81,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setClass($class): Form
+    protected function setClass(string $class): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -92,7 +92,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setSection($section): Form
+    protected function setSection(string $section): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -103,7 +103,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setTemplate($template): Form
+    protected function setTemplate(string $template): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -114,7 +114,18 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setScripts($scripts): Form
+    protected function setModalFooterTemplate(string $template): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'modal-footer-template' => $template
+            ]
+        ]);
+
+        return $this;
+    }
+
+    protected function setScripts(array $scripts): Form
     {
         $this->mergeOptions([
             'component' => [
@@ -125,7 +136,7 @@ trait OptionsSetter
         return $this;
     }
 
-    protected function setShowBackButton($param): Form
+    protected function setShowBackButton(bool $param): Form
     {
         $this->mergeOptions([
             'component' => [

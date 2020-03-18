@@ -4,6 +4,10 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid repositories
+use Softworx\RocXolid\Repositories\AbstractCrudRepository;
+// rocXolid forms
+use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid form components
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid model contracts
@@ -59,7 +63,7 @@ trait UpdatesModels
     }
 
     /**
-     * Update the edited model.
+     * Process the update resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
@@ -78,9 +82,48 @@ trait UpdatesModels
             ->submit();
 
         if ($form->isValid()) {
-            return $this->success($request, $repository, $form, 'update');
+            return $this->onUpdate($request, $repository, $form);
         } else {
-            return $this->errorResponse($request, $repository, $form, 'update');
+            return $this->onUpdateError($request, $repository, $form);
         }
+    }
+
+    /**
+     * Action to take when the 'update' form was validated.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onUpdate(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    {
+        $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'update');
+
+        return $this->onModelUpdated($request, $repository, $form, $model);
+    }
+
+    /**
+     * Action to take after the model has been updated and saved.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     */
+    protected function onModelUpdated(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form, Crudable $model)//: Response
+    {
+        return $this->successResponse($request, $repository, $form, $model, 'update');
+    }
+
+    /**
+     * Action to take when the 'update' form was submitted with invalid data.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onUpdateError(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    {
+        return $this->errorResponse($request, $repository, $form, 'update');
     }
 }

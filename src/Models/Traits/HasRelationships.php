@@ -84,7 +84,9 @@ trait HasRelationships
     public function resolvePolymorphism(array $data, string $action = null): Crudable
     {
         foreach ($data as $attribute => $value) {
+            // eg. model_type
             if (substr($attribute, -5) === '_type') {
+                // eg. model_id
                 $id_attribute = sprintf('%s_id', substr($attribute, 0, -5));
 
                 if (array_key_exists($id_attribute, $data)) {

@@ -2,7 +2,8 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-use App;
+// rocXolid utils
+use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Repositories\Contracts\RepositoryBuilder as RepositoryBuilderContract;
@@ -94,6 +95,38 @@ trait Repositoryable
     }
 
     /**
+     * Get repository param based on action.
+     *
+     * @param CrudRequest $request
+     * @param [type] $default
+     * @return void
+     */
+    protected function getRepositoryParam(CrudRequest $request, $default = RepositoryableContract::REPOSITORY_PARAM)
+    {
+        $method = $request->route()->getActionMethod();
+        /*
+        if ($request->filled('_section'))
+        {
+            $method = sprintf('%s.%s', $method, $request->_section);
+
+            if (isset($this->repository_mapping[$method]))
+            {
+                return $this->repository_mapping[$method];
+            }
+        }
+        */
+        if (isset($this->repository_mapping[$method])) {
+            return $this->repository_mapping[$method];
+        } elseif (!is_null($default)) {
+            return $default;
+        } elseif (empty($this->repository_mapping)) {
+            return RepositoryableContract::REPOSITORY_PARAM;
+        }
+
+        throw new \InvalidArgumentException(sprintf('No controller [%s] repository mapping for method [%s]', get_class($this), $method));
+    }
+
+    /**
      * Get repository class to work with according to param.
      *
      * @param string $param
@@ -119,7 +152,7 @@ trait Repositoryable
     protected function getRepositoryBuilder(): RepositoryBuilderContract
     {
         if (!property_exists($this, 'repository_builder') || is_null($this->repository_builder)) {
-            $repository_builder = App::make(RepositoryBuilder::class);
+            $repository_builder = app(RepositoryBuilder::class);
 
             if (property_exists($this, 'repository_builder')) {
                 $this->repository_builder = $repository_builder;

@@ -2,9 +2,9 @@
 
 namespace Softworx\RocXolid\Traits;
 
-use Log;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
 /**

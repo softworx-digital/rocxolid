@@ -5,33 +5,45 @@ namespace Softworx\RocXolid\Forms;
 use DB;
 use Config;
 use Illuminate\Support\Collection;
+// relations
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-// contracts
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
 use Softworx\RocXolid\Contracts\Repositoryable;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
-// traits
+// rocXolid traits
 use Softworx\RocXolid\Traits\Controllable as ControllableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
-// fields
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
+// rocXolid field types
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
-// utility
+use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
+use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
+// rocXolid http requests
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- *
+ * @todo: subject to refactoring
+ * @todo: add automated support for relation fields (relation, model_attribute, model_type, model_id)
  */
 abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable, Repositoryable
 {
     use ControllableTrait;
     use ModellableTrait;
     use RepositoryableTrait;
+    /*
+    use Traits\Crud\DefaultOptions;
+    use Traits\Crud\DefaultButtonToolbars;
+    use Traits\Crud\DefaultButtonGroups;
+    use Traits\Crud\DefaultButtons;
+    use Traits\Crud\DefaultButtonGroups;
+    use Traits\Crud\DefaultFieldGroups;
+    */
 
     protected $options = [
         'method' => 'POST',
@@ -64,34 +76,17 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             'options' => [
                 'group' => ButtonGroup::DEFAULT_NAME,
                 'label' => [
-                    'title' => 'submit_back',
+                    'title' => 'submit-back',
                 ],
                 'actions' => [
-                    'submit-edit' => 'submit_edit',
-                    'submit-new' => 'submit_new',
+                    'submit-edit' => 'submit-edit',
+                    'submit-new' => 'submit-new',
                 ],
                 'attributes' => [
                     'class' => 'btn btn-success'
                 ],
             ],
-        ],/*
-        'submit-ajax' => [
-            'type' => ButtonSubmitActions::class,
-            'options' => [
-                'group' => ButtonGroup::DEFAULT_NAME,
-                'ajax' => true,
-                'label' => [
-                    'title' => 'submit_ajax_back',
-                ],
-                'actions' => [
-                    'submit-edit' => 'submit_ajax_edit',
-                    'submit-new' => 'submit_ajax_new',
-                ],
-                'attributes' => [
-                    'class' => 'btn btn-success',
-                ],
-            ],
-        ],*/
+        ],
     ];
 
     public function buildFields($validate = true): Form

@@ -36,4 +36,16 @@ class UploadFile extends AbstractFormField
     {
         return $this->setComponentOptions('upload-url', $url);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFieldName(int $index = 0): string
+    {
+        if ($this->isArray()) {
+            return sprintf('%s[%s][%s]', self::ARRAY_DATA_PARAM, $index, $this->name);
+        } else {
+            return sprintf('%s[%s]', self::SINGLE_DATA_PARAM, $this->name);
+        }
+    }
 }

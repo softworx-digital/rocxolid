@@ -27,17 +27,6 @@ class CrudRouterService
 
         $param = Str::slug($this->name, '_');
 
-        // CRUD routes for core features
-        Route::match(['put', 'patch'], $this->name . sprintf('/image-upload/{%s?}', $param), [
-            'as' => 'crud.' . $this->name . '.image-upload',
-            'uses' => $this->controller . '@imageUpload',
-        ]);
-
-        Route::match(['put', 'patch'], $this->name . sprintf('/file-upload/{%s?}', $param), [
-            'as' => 'crud.' . $this->name . '.file-upload',
-            'uses' => $this->controller . '@fileUpload',
-        ]);
-
         Route::post($this->name . '/search', [
             'as' => 'crud.' . $this->name . '.search',
             'uses' => $this->controller . '@search',

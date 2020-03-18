@@ -2,26 +2,19 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-use Symfony\Component\HttpFoundation\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// rocXolid repository contracts
-use Softworx\RocXolid\Repositories\Contracts\Repository;
-// rocXolid controllers contracts
-use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
 // rocXolid forms
 use Softworx\RocXolid\Forms\AbstractCrudForm as AbstractCrudForm;
-// rocXolid components
-use Softworx\RocXolid\Components\AbstractActiveComponent;
-use Softworx\RocXolid\Components\Forms\FormField;
-use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 
 /**
- * @todo: split into separate traits each having (ideally) one method for given action
- * @todo: type hints
+ * Trait to make the controller able to handle all the CRUD operations and give appropriate responses.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
 trait Crudable
 {
@@ -30,17 +23,11 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
+    use Crud\Response\ProvidesSuccessResponse;
+    use Crud\Response\ProvidesErrorResponse;
+    use Crud\Response\ProvidesDestroyResponse;
 
     // protected static $model_class; // should be defined in specific class
-
-    protected $response;
-
-    public function __construct(AjaxResponse $response)
-    {
-        $this->response = $response;
-
-        $this->authorizeResource(static::getModelClass(), static::getModelClass()::getAuthorizationParameter());
-    }
 
     public static function getModelClass(): string
     {
@@ -48,12 +35,13 @@ trait Crudable
     }
 
     // @todo: maybe some different approach
-    public function isModelActionAvailable(CrudableModel $model, $action)
+    public function isModelActionAvailable(CrudableModel $model, string $action): bool
     {
         return true;
     }
 
-    public function makeForm(string $param, ?CrudableModel $model, ?string $form_class = null)
+    // @todo: this doesn't belong here, or?
+    public function makeForm(string $param, ?CrudableModel $model, ?string $form_class = null): AbstractCrudForm
     {
         $repository = $this->getRepository($param);
         $model = $model ?? $repository->getModel();
@@ -69,130 +57,7 @@ trait Crudable
         return $form;
     }
 
-    protected function success(CrudRequest $request, Repository $repository, AbstractCrudForm $form, $action)
-    {
-        $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), $action);
-
-        return $this->successResponse($request, $repository, $form, $model, $action);
-    }
-
-    // @todo: refactor to ease overrideability
-    protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, CrudableModel $model, string $action)
-    {
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
-        $assignments = [];
-
-        // @todo: use constants rather than strings
-        // @todo: divide into <action> => <method> and wrap into property or class
-        if ($request->ajax()) {
-            switch ($request->input('_submit-action')) {
-                case 'submit-new':
-                    $this->response->redirect($this->getRoute('create'));
-                break;
-                case 'submit-edit':
-                    switch ($action) {
-                        case 'create':
-                            $this->response->redirect($this->getRoute('edit', $this->getModel()));
-                        break;
-                        case 'update':
-                            $this->response->replace($form_component->getDomId(), $form_component->fetch('update'));
-                        break;
-                    }
-                break;
-                case 'submit-show':
-                    $this->response->redirect($this->getRoute('show', $this->getModel()));
-                break;
-                default:
-                    $this->response->redirect($this->getRoute('index'));
-            }
-
-            return $this->response
-                ->notifySuccess($form_component->translate('text.updated'))
-                //->append($form_component->getDomId('output'), Message::build($this, $this)->fetch('crud.success', $assignments))
-                ->get();
-        } else {
-            /*
-                $route = $this->getModel()->exists
-                        ? $this->getRoute($action, $this->getModel())
-                        : $this->getRoute($action);
-            */
-            switch ($request->input('_submit-action')) {
-                case 'submit-new':
-                    $route = $this->getRoute('create');
-                break;
-                case 'submit-edit':
-                    $route = $this->getRoute('edit', $this->getModel());
-                break;
-                case 'submit-show':
-                    $route = $this->getRoute('show', $this->getModel());
-                break;
-                default:
-                    $route = $this->getRoute('index');
-            }
-
-            return redirect($route)
-                ->with($form->getSessionParam('errors'), $form->getErrors())
-                ->with($form->getSessionParam('input'), $request->input());
-        }
-    }
-
-    protected function errorResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, $action)
-    {
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
-        $assignments = [
-            'errors' => $form->getErrors()
-        ];
-
-        if ($request->ajax()) {
-            // @todo: refactor - some validation, etc...
-            if ($request->has('_form_field_group')) {
-                $form_field_group_component = $form_component->getFormFieldGroupsComponents()->get($request->input('_form_field_group'));
-
-                return $this->response
-                    ->notifyError($form_component->translate('text.form-error'))
-                    ->replace(
-                        $form_field_group_component->getDomId($form_field_group_component->getFormFieldGroup()->getName()),
-                        $form_field_group_component->fetch($form_field_group_component->getOption('template', $form_field_group_component->getDefaultTemplateName()), ['show' => true])
-                    )
-                    ->get();
-            } else {
-                return $this->response
-                    ->notifyError($form_component->translate('text.form-error'))
-                    ->replace($form_component->getDomId('fieldset'), $form_component->fetch('include.fieldset'))
-                    ->get();
-            }
-        } else {
-            // @todo: "hotfixed", you can do better
-            if ($action == 'update') {
-                $action = 'edit';
-            }
-
-            $route = $this->getModel()->exists
-                   ? $this->getRoute($action, $this->getModel())
-                   : $this->getRoute($action);
-
-            return redirect($route)
-                ->with($form->getSessionParam('errors'), $form->getErrors())
-                ->with($form->getSessionParam('input'), $request->input());
-        }
-    }
-
-    protected function destroyResponse(CrudRequest $request, CrudableModel $model)
-    {
-        if ($request->ajax()) {
-            return $this->response->redirect($this->getRoute('index'))->get();
-        } else {
-            return redirect($this->getRoute('index'));
-        }
-    }
-
-    protected function getFormParam(CrudRequest $request, $method = null)
+    protected function getFormParam(CrudRequest $request, ?string $method = null): string
     {
         $method = $method ?? $request->route()->getActionMethod();
 
@@ -209,30 +74,5 @@ trait Crudable
         }
 
         return $this->form_mapping[$method];
-    }
-
-    protected function getRepositoryParam(CrudRequest $request, $default = Repositoryable::REPOSITORY_PARAM)
-    {
-        $method = $request->route()->getActionMethod();
-        /*
-        if ($request->filled('_section'))
-        {
-            $method = sprintf('%s.%s', $method, $request->_section);
-
-            if (isset($this->repository_mapping[$method]))
-            {
-                return $this->repository_mapping[$method];
-            }
-        }
-        */
-        if (isset($this->repository_mapping[$method])) {
-            return $this->repository_mapping[$method];
-        } elseif (!is_null($default)) {
-            return $default;
-        } elseif (empty($this->repository_mapping)) {
-            return Repositoryable::REPOSITORY_PARAM;
-        }
-
-        throw new \InvalidArgumentException(sprintf('No controller [%s] repository mapping for method [%s]', get_class($this), $method));
     }
 }

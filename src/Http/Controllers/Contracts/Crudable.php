@@ -11,6 +11,7 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
 //@todo - check & update if needed
+// @todo add responses (after model argument addition to destroyResponse)
 interface Crudable
 {
     public function index(CrudRequest $request);//: View;

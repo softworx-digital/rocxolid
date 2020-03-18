@@ -29,9 +29,8 @@ class UploadImage extends UploadFile
         'image-preview-size' => 'small',
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control',
-            'accept' => 'image/*',
-            // 'data-maxsize' => '5242880', // 5 MB
+            'accept' => 'image',
+            // 'maxsize' => '5242880', // 5 MB
         ],
     ];
 

@@ -6,6 +6,7 @@ use Softworx\RocXolid\Forms\AbstractCrudForm as RocXolidAbstractCrudForm;
 // fields
 use Softworx\RocXolid\Forms\Fields\Type\UploadImage;
 
+// @todo: make not needed
 class ImageUploadForm extends RocXolidAbstractCrudForm
 {
     protected $options = [

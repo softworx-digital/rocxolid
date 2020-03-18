@@ -4,6 +4,8 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid repositories
+use Softworx\RocXolid\Repositories\AbstractCrudRepository;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
@@ -46,7 +48,7 @@ trait DestroysModels
     }
 
     /**
-     * Destroy the specified resource.
+     * Process the destroy resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
@@ -58,8 +60,32 @@ trait DestroysModels
 
         $repository = $this->getRepository($this->getRepositoryParam($request));
 
+        return $this->onDestroy($request, $repository);
+    }
+
+    /**
+     * Action to take when the 'destroy' form was submitted.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onDestroy(CrudRequest $request, AbstractCrudRepository $repository)//: Response
+    {
         $model = $repository->deleteModel($this->getModel());
 
+        return $this->onModelDestroyed($request, $repository, $model);
+    }
+
+    /**
+     * Action to take after the model is destroyed.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     */
+    protected function onModelDestroyed(CrudRequest $request, AbstractCrudRepository $repository, Crudable $model)//: Response
+    {
         return $this->destroyResponse($request, $model);
     }
 }

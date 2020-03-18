@@ -2,7 +2,6 @@
 
 namespace Softworx\RocXolid\Repositories;
 
-use App;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Scope;
@@ -45,7 +44,9 @@ use Softworx\RocXolid\Forms\Traits\Formable;
 use Softworx\RocXolid\Repositories\Columns\Type\ButtonAnchor;
 
 /**
- *
+ * @todo: subject to refactoring, (at least) decompose to:
+ *  - repository that handles model data operations
+ *  - table that is responsible for showing data
  */
 abstract class AbstractCrudRepository implements Repository, Requestable
 {
@@ -61,11 +62,6 @@ abstract class AbstractCrudRepository implements Repository, Requestable
     use MethodOptionable;
     use EventDispatchable;
     use Formable;
-
-    /**
-     * @var CrudRequest
-     */
-    protected $request;
 
     /**
      * @var CrudableModel
@@ -89,6 +85,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
      */
     protected $without_scopes = [];
 
+    // @todo: what is this?
     protected $repo_options = [];
 
     protected $filters = [];
@@ -209,7 +206,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
 
     public function makeModel(): CrudableModel
     {
-        return App::make($this->getController()->getModelClass());
+        return app($this->getController()->getModelClass());
     }
 
     public function getQuery(): EloquentBuilder
@@ -343,7 +340,13 @@ abstract class AbstractCrudRepository implements Repository, Requestable
             ->fill($data, $action)
             ->fillCustom($data, $action)
             ->resolvePolymorphism($data, $action)
-            ->beforeSave($data, $action)
+            ->beforeSave($data, $action);
+
+        // @todo: "hotfixed"
+        $model = $this
+            ->beforeModelSave($model, $action);
+
+        $model
             ->save();
 
         $model
@@ -353,7 +356,12 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $model;
     }
 
-    // @todo: what's this
+    protected function beforeModelSave(CrudableModel $model, string $action): CrudableModel
+    {
+        return $model;
+    }
+
+    // @todo: what's this?
     public function delete(array $id) // @todo: missing return type
     {
         return $this->getModel()->canBeDeleted() && $this->getModel()->destroy($id);
