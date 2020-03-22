@@ -334,13 +334,19 @@ abstract class AbstractCrudRepository implements Repository, Requestable
             ->update($data);
     }
 
-    public function updateModel(array $data, CrudableModel $model, $action): CrudableModel
+    // @todo: "hotfixed", ugly, whole class
+    public function fillModel(array $data, CrudableModel $model, $action): CrudableModel
     {
-        $model
+        return $model
             ->fill($data, $action)
             ->fillCustom($data, $action)
             ->resolvePolymorphism($data, $action)
             ->beforeSave($data, $action);
+    }
+
+    public function updateModel(array $data, CrudableModel $model, $action): CrudableModel
+    {
+        $model = $this->fillModel($data, $model, $action);
 
         // @todo: "hotfixed"
         $model = $this

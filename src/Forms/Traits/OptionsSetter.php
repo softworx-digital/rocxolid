@@ -22,6 +22,11 @@ trait OptionsSetter
         'delete', // deletes the specified resource
     ];
 
+    public function adjustFormOptions(): Form
+    {
+        return $this;
+    }
+
     public function processFormOptions(): Form
     {
         if (!empty($this->options)) {
@@ -130,6 +135,17 @@ trait OptionsSetter
         $this->mergeOptions([
             'component' => [
                 'scripts' => $scripts
+            ]
+        ]);
+
+        return $this;
+    }
+
+    protected function setDataOnActionComplete(string $route): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'data-on-action-complete' => $route
             ]
         ]);
 

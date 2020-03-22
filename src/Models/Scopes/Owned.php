@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Access\Authorizable;
+// rocXolid model relations
+use Softworx\RocXolid\Models\Relations\BelongsToThrough;
 
 /**
  * Scope to filter owned resources.
@@ -58,6 +60,9 @@ class Owned implements Scope
             // BelongsTo
             } elseif ($relation instanceof BelongsTo) {
                 $this->handleOwnerBelongsToScope($relation, $builder, $model, $user);
+            // BelongsToThrough
+            } elseif ($relation instanceof BelongsToThrough) {
+                $this->handleOwnerBelongsToThroughScope($relation, $builder, $model, $user);
             // MorphOneOrMany
             // } elseif ($relation instanceof MorphOneOrMany) {
                 // $this->handleOwnerMorphOneOrManyScope($relation, $builder, $model, $user);
@@ -67,10 +72,9 @@ class Owned implements Scope
             // unsupported relation type
             } else {
                 throw new \RuntimeException(sprintf(
-                    'Unsupported relation type [%s] for [%s->%s()]',
+                    'Unsupported relation type [%s] for [%s::getOwnershipRelation()]',
                     get_class($relation),
-                    get_class($model),
-                    $relation->getRelationName(),
+                    get_class($model)
                 ));
             }
         }
@@ -115,7 +119,7 @@ class Owned implements Scope
      */
     private function handleOwnerMorphToManyScope(MorphToMany $relation, Builder $builder, Model $model, Authorizable $user)
     {
-        return $builder
+        $builder
             ->join($relation->getTable(), $relation->getQualifiedForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName())
             ->where($relation->getMorphType(), $relation->getMorphClass())
             ->where($relation->getQualifiedRelatedPivotKeyName(), $user->getKey());
@@ -132,6 +136,22 @@ class Owned implements Scope
     private function handleOwnerBelongsToScope(BelongsTo $relation, Builder $builder, Model $model, Authorizable $user)
     {
         $builder->where($relation->getQualifiedForeignKeyName(), $user->getKey());
+    }
+
+    /**
+     * Add scope for BelongsToThrough ownership relation.
+     *
+     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $relation
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Contracts\Auth\Access\Authorizable $user
+     */
+    private function handleOwnerBelongsToThroughScope(BelongsToThrough $relation, Builder $builder, Model $model, Authorizable $user)
+    {
+        $relation
+            ->performParentJoins($builder)
+            ->where($relation->getQualifiedForeignKeyName(), $user->getKey());
+
     }
 
     private function handleOwnerMorphOneOrManyScope(MorphOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)

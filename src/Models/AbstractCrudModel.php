@@ -9,6 +9,8 @@ use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits\Crudable as CrudableTrait;
 use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearchableTrait;
+// rocXolid relations
+use Softworx\RocXolid\Models\Relations\Traits\BelongsToThrough;
 // rocXolid user management traits
 use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: this doesn't belong here, another approach without dependency on UserManagement?
 
@@ -22,6 +24,7 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: 
 abstract class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
 {
     use CrudableTrait;
+    use BelongsToThrough;
     use HasUserAttributes;
     use AutocompleteSearchableTrait;
 

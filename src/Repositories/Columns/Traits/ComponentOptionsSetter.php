@@ -36,6 +36,11 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('wrapper', $wrapper);
     }
 
+    protected function setWidth(int $width): Column
+    {
+        return $this->setComponentOptions('width', $width);
+    }
+
     protected function setPlaceholder($placeholder): Column
     {
         return $this->setComponentOptions('attributes', [ 'placeholder' => $placeholder['title'] ]);

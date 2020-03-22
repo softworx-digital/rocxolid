@@ -37,7 +37,7 @@ trait HasOwner
      */
     public function isOwnership(Authorizable $user): bool
     {
-        $owner = $this->getOwnershipRelation($user)->get();
+        $owner = $this->getOwnershipRelation()->get();
 
         if ($owner instanceof Collection) {
             return $owner->contains($user);

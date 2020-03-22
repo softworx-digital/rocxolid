@@ -69,6 +69,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         ],
     ];
 
+    // @todo: filter buttons according to permissions
     protected $buttons = [
         // submit - default group
         'submit' => [

@@ -120,7 +120,7 @@ class Validator extends IlluminateValidator
      */
     public function validateAge(string $attribute, $value, array $parameters): bool
     {
-        return Carbon::now()->diff(Carbon::make($value))->y >= ($parameters[0] ?? 0);
+        return Carbon::make($value)->isPast() && Carbon::now()->diff(Carbon::make($value))->y >= ($parameters[0] ?? 0);
     }
 
     /**

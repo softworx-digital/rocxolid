@@ -137,6 +137,7 @@ class FormBuilder implements FormBuilderContract
     protected function setFormOptions(Form &$form, array $custom_options = []): FormBuilderContract
     {
         $form
+            ->adjustFormOptions()
             ->processFormOptions()
             ->setCustomOptions($custom_options);
 
