@@ -181,7 +181,7 @@ abstract class AbstractCrudRepository implements Repository, Requestable
         return $this;
     }
 
-    public function withScops(Scope $scope): Repository
+    public function withScope(Scope $scope): Repository
     {
         $this->with_scopes[] = $scope;
 
