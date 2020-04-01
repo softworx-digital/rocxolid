@@ -25,7 +25,7 @@ trait HasRelationships
     public function getReflectedRelationshipMethods()
     {
         $reflect = new \ReflectionClass($this);
-        $methods = collect($reflect->getMethods())->filter(function($method) {
+        $methods = collect($reflect->getMethods())->filter(function ($method) {
             return is_subclass_of((string)$method->getReturnType(), \Illuminate\Database\Eloquent\Relations\Relation::class);
         });
 
@@ -151,7 +151,7 @@ trait HasRelationships
     // @todo: subject to refactoring, don't like the current approach
     public function fillRelationships(array $data, string $action = null): Crudable
     {
-        $this->getRelationshipMethods()->each(function($relation) use ($data, $action) {
+        $this->getRelationshipMethods()->each(function ($relation) use ($data, $action) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));
 

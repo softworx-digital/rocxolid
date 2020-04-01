@@ -90,7 +90,7 @@ class BelongsToThrough extends Relation
 
         $predecessor = $this->related;
 
-        $this->through_parents->each(function($model) use ($query, &$predecessor) {
+        $this->through_parents->each(function ($model) use ($query, &$predecessor) {
             $first = $predecessor->getQualifiedKeyName();
             $joined = $model->qualifyColumn($this->getForeignKeyName($predecessor));
 
@@ -114,7 +114,7 @@ class BelongsToThrough extends Relation
     {
         $predecessor = $this->parent;
 
-        $this->through_parents->each(function($model) use ($query, &$predecessor) {
+        $this->through_parents->each(function ($model) use ($query, &$predecessor) {
             $first = $model->getQualifiedKeyName();
             $joined = $predecessor->qualifyColumn($this->getForeignKeyName($model));
 

@@ -57,6 +57,11 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
         return $this->form_field;
     }
 
+    public function isHidden()
+    {
+        return $this->isOptionValue('attributes.data-dependency-controller-initial', 'disabled');
+    }
+
     public function getDefaultTemplateName(): string
     {
         return $this->getFormField()->isArray()

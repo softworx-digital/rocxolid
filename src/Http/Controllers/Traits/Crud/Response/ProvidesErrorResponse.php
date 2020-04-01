@@ -59,9 +59,11 @@ trait ProvidesErrorResponse
                 $action = 'edit';
             }
 
+            $route_params = $request->filled('_section') ? [ '_section' => $request->get('_section') ] : [];
+
             $route = $this->getModel()->exists
-                   ? $this->getRoute($action, $this->getModel())
-                   : $this->getRoute($action);
+                ? $this->getRoute($action, $this->getModel(), $route_params)
+                : $this->getRoute($action, $route_params);
 
             return redirect($route)
                 ->with($form->getSessionParam('errors'), $form->getErrors())

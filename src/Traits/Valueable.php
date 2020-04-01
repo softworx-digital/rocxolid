@@ -59,7 +59,13 @@ trait Valueable
      */
     public function setValue($value, int $index = 0): ValueableContract
     {
-        $this->getValues()->put($index, $this->adjustValueBeforeSet($value));
+        if ($this->isArray() && ($value instanceof Collection)) {
+            $value->each(function ($v, $i) {
+                $this->setValue($v, $i);
+            });
+        } else {
+            $this->getValues()->put($index, $this->adjustValueBeforeSet($value));
+        }
 
         return $this;
     }
@@ -75,7 +81,7 @@ trait Valueable
     /**
      * {@inheritdoc}
      */
-    public function getIndexValue($index, $default = null)
+    public function getIndexValue(int $index, $default = null)
     {
         if ($this->getValues()->has($index)) {
             return $this->adjustValueBeforeGet($this->getValues()->get($index));
@@ -95,7 +101,7 @@ trait Valueable
      */
     public function setValues($values): ValueableContract
     {
-        $this->values = new Collection($values);
+        $this->values = collect($values);
 
         return $this;
     }
@@ -106,7 +112,7 @@ trait Valueable
     public function getValues(): Collection
     {
         if (!isset($this->values)) {
-            $this->values = new Collection();
+            $this->values = collect();
         }
 
         return $this->values;
@@ -140,5 +146,15 @@ trait Valueable
     protected function adjustValueBeforeGet($value)
     {
         return $value;
+    }
+
+    /**
+     * Check if value is expected to be in collection.
+     *
+     * @return bool
+     */
+    protected function isValueExpected(): bool
+    {
+        return true;
     }
 }

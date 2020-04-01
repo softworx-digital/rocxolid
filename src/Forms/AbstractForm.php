@@ -32,7 +32,7 @@ use Softworx\RocXolid\Forms\Traits\FormFieldable as FormFieldableTrait;
 use Softworx\RocXolid\Forms\Traits\Buttonable as ButtonableTrait;
 
 /**
- *
+ * @todo: subject to refactoring
  */
 abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionable, EventDispatchable, Requestable, Translatable, Validable, Paramable
 {
@@ -401,7 +401,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         $input = $input ?: $this->getRequest()->input();
 
         //$this->getRequest()->session()->flashInput($this->removeFilesFromInput($input));
-        $this->getRequest()->session()->flashInput($input); // treba ?
+        $this->getRequest()->session()->flashInput($input); // treba ? - treba pri neajaxovych, je tam redirect - treba redirect?
 
         return $this;
     }
@@ -426,6 +426,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         return $input;
     }
 
+    // @todo: "hotfixed"
     public function getInputFieldValue($field, $validate = false)
     {
         $param = sprintf('%s.%s', FormField::SINGLE_DATA_PARAM, $field);
@@ -434,7 +435,21 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
             throw new \InvalidArgumentException(sprintf('Undefined [%s] param in request', $param));
         }
 
-        return $this->getRequest()->input($param, null);
+        $value = $this->getRequest()->input($param, null);
+
+        if (!is_null($value)) {
+            return $value;
+        }
+
+        $input = collect($this->getInput());
+
+        if (!$input->has(FormField::SINGLE_DATA_PARAM)) {
+            return null;
+        } elseif (($data = collect($input->get(FormField::SINGLE_DATA_PARAM))) && !$data->has($field)) {
+            return null;
+        }
+
+        return $data->get($field);
     }
 
     public function setFieldsRequestInput(array $input = null): Form
@@ -452,15 +467,52 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                 });
         }
 
+        /*
         if ($input->has(FormField::ARRAY_DATA_PARAM)) {
             collect($input->get(FormField::ARRAY_DATA_PARAM))
-                ->each(function ($groupdata, $index) {
+                ->each(function ($groupdata, $name) {
                     collect($groupdata)
-                        ->each(function ($value, $name) use ($index) {
+                        ->each(function ($value, $index) use ($name) {
                             if ($this->hasFormField($name)) {
                                 $this->getFormField($name)
                                     ->setValue($value, $index)
                                     ->updateParent();
+                            }
+                        });
+                });
+        }
+        */
+
+        // @todo: "hotfixed"
+        // the pivot handling doesn't belong here since it's CRUDable part
+        if ($input->has(FormField::ARRAY_DATA_PARAM)) {
+            collect($input->get(FormField::ARRAY_DATA_PARAM))
+                ->each(function ($groupdata, $name) {
+                    collect($groupdata)
+                        ->each(function ($value, $index) use ($name) {
+                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                            // $name holds the value 'pivot'
+                            if (is_numeric($index)) {
+                                if ($this->hasFormField($name)) {
+                                    $this->getFormField($name)
+                                        ->setValue($value, $index)
+                                        ->updateParent();
+                                }
+                            } else {
+                                $pivot_for = $index;
+
+                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                collect($value)
+                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                        collect($pivot_fields)
+                                            ->each(function($pivot_field_value, $name) use ($pivot_field_index, $pivot_for) {
+                                                if ($this->hasFormField($name)) {
+                                                    $this->getFormField($name)
+                                                        ->setValue($pivot_field_value, $pivot_field_index)
+                                                        ->updateParent();
+                                                }
+                                            });
+                                    });
                             }
                         });
                 });
@@ -488,14 +540,33 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                 });
         }
 
+        // @todo: "hotfixed"
+        // the pivot handling doesn't belong here since it's CRUDable part
         if ($errors->has(FormField::ARRAY_DATA_PARAM)) {
             collect($errors->get(FormField::ARRAY_DATA_PARAM))
-                ->each(function ($grouperrors, $index) {
+                ->each(function ($grouperrors, $name) {
                     collect($grouperrors)
-                        ->each(function ($messages, $name) use ($index) {
-                            $this->getFormField($name)
-                                ->setErrorMessage($messages, $index)
-                                ->updateComponent($index);
+                        ->each(function ($messages, $index) use ($name) {
+                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                            // $name holds the value 'pivot'
+                            if (is_numeric($index)) {
+                                $this->getFormField($name)
+                                    ->setErrorMessages($messages, $index)
+                                    ->updateComponent($index);
+                            } else {
+                                $pivot_for = $index;
+
+                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                collect($messages)
+                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                        collect($pivot_fields)
+                                            ->each(function($pivot_field_messages, $name) use ($pivot_field_index, $pivot_for) {
+                                                $this->getFormField($name)
+                                                    ->setErrorMessages($pivot_field_messages, $pivot_field_index)
+                                                    ->updateComponent($pivot_field_index);
+                                            });
+                                    });
+                            }
                         });
                 });
         }

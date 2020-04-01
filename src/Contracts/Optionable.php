@@ -72,9 +72,19 @@ interface Optionable
     public function getOptionsKeys(): array;
 
     /**
-     * Check if the option is set.
+     * Verify if the option is set.
      *
+     * @param string $option Option name - key to verufy.
      * @return bool
      */
     public function hasOption(string $option): bool;
+
+    /**
+     * Check if the option matches given value.
+     *
+     * @param string $option Option name - key to check.
+     * @param mixed $value
+     * @return bool
+     */
+    public function isOptionValue(string $option, $value): bool;
 }

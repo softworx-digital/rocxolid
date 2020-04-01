@@ -127,4 +127,12 @@ trait Optionable
 
         return Arr::has($options, $option);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOptionValue(string $option, $value): bool
+    {
+        return $this->hasOption($option) && ($this->getOption($option) === $value);
+    }
 }

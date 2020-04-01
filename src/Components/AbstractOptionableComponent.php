@@ -16,7 +16,9 @@ abstract class AbstractOptionableComponent extends AbstractComponent implements 
         $options = array_merge_recursive($this->getOption($option, []), $merge);
 
         foreach ($options as $attribute => $value) {
-            $html .= sprintf('%s="%s" ', $attribute, is_array($value) ? implode(' ', $value) : $value);
+            if (!is_null($value)) {
+                $html .= sprintf('%s="%s" ', $attribute, is_array($value) ? implode(' ', $value) : $value);
+            }
         }
 
         return $html;

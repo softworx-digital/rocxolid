@@ -115,6 +115,7 @@ trait HasAttributes
         }
 
         $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
+        $nf->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 8);
 
         if (!$grouping) {
@@ -144,5 +145,20 @@ trait HasAttributes
     protected function getEnumAttributeViewValue(string $attribute)
     {
         return !is_null($this->$attribute) ? $this->getModelViewerComponent()->translate(sprintf('choice.%s.%s', $attribute, $this->$attribute)) : null;
+    }
+
+    // @todo: "hotfixed" to enable array fields to be filled correctly
+    public function decimalize($values)
+    {
+        $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
+        $nf->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+        $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 8);
+
+        if (is_scalar($values)) {
+            return $nf->format($values);
+        }
+        return collect($values)->map(function ($value) use ($nf) {
+            return $nf->format($value);
+        });
     }
 }

@@ -197,7 +197,7 @@ class ViewService implements ViewServiceContract
      */
     protected function getViewPackages(Renderable $component, Collection $hierarchy): Collection
     {
-        $hierarchy_view_packages = $hierarchy->pluck('class')->map(function($class_name) {
+        $hierarchy_view_packages = $hierarchy->pluck('class')->map(function ($class_name) {
             return app($class_name)->getViewPackage();
         })->toArray();
 
@@ -218,7 +218,7 @@ class ViewService implements ViewServiceContract
     protected function getViewDirectories(Renderable $component, Collection $hierarchy): Collection
     {
         /*
-        $hierarchy_view_dirs = $hierarchy->pluck('class')->map(function($class_name) {
+        $hierarchy_view_dirs = $hierarchy->pluck('class')->map(function ($class_name) {
             return app($class_name)->getViewDirectory();
         })->toArray();
         */
@@ -243,7 +243,7 @@ class ViewService implements ViewServiceContract
         $path = Str::after($reflection->getName(), 'Components\\');
         $path = collect(explode('\\', $path));
 
-        return $path->map(function($dir) {
+        return $path->map(function ($dir) {
             return Str::kebab($dir);
         })->implode('.');
     }

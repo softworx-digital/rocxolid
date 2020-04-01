@@ -36,6 +36,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
     use ControllableTrait;
     use ModellableTrait;
     use RepositoryableTrait;
+    // @todo: cannot be used as intended because of trait overrideability limitations, find some other approach
     /*
     use Traits\Crud\DefaultOptions;
     use Traits\Crud\DefaultButtonToolbars;
@@ -138,12 +139,41 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                             ->getFormField($attribute)
                             ->setPivotData($relation->get()->pluck('pivot'))
                             ->updateParent();
+
+                        collect($relation->getPivotColumns())->each(function ($pivot_attribute) use ($relation) {
+                            if ($this->hasFormField($pivot_attribute)) {
+                                $field = $this->getFormField($pivot_attribute);
+
+                                if (!$field->isPivotFor($relation)) {
+                                    throw new \UnderflowException(sprintf(
+                                        'Field [%s] has no or invalid "pivot-for" option assigned, relation name [%s] expected',
+                                        $field->getName(),
+                                        $relation->getRelationName()
+                                    ));
+                                }
+
+                                $field
+                                    ->setValue($this->getModel()->decimalize($relation->get()->pluck(sprintf(
+                                        '%s.%s',
+                                        $relation->getPivotAccessor(),
+                                        $pivot_attribute
+                                    ))))
+                                    ->updateParent();
+                            }
+                        });
                     }
                 }
             }
         });
 
         return $this;
+    }
+
+    public function getPivotFormFields(BelongsToMany $relation): Collection
+    {
+        return $this->getFormFields()->filter(function ($field) use ($relation) {
+            return $field->isPivotFor($relation);
+        });
     }
 
     // @todo: really FormableContract?
@@ -231,7 +261,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             return $fields;
         }
 
-        return collect($fields)->filter(function($definition, $field_name) use ($user) {
+        return collect($fields)->filter(function ($definition, $field_name) use ($user) {
             // for now, leave scalar fields untouched
             if (!method_exists($this->getModel(), $field_name)) {
                 return true;
@@ -282,7 +312,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             return $buttons;
         }
 
-        return collect($buttons)->filter(function($definition, $button_name) use ($user) {
+        return collect($buttons)->filter(function ($definition, $button_name) use ($user) {
 // @todo
             return true;
         })->toArray();

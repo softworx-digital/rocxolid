@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 // relations
@@ -14,11 +15,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Softworx\RocXolid\Models\Contracts\Cloneable;
 use Softworx\RocXolid\Models\Contracts\Container;
 use Softworx\RocXolid\Models\Contracts\Containee;
-// quick n dirty
+// @todo: quick n dirty
 use Softworx\RocXolid\CMS\Models\HtmlWrapper;
 
 /**
- *
+ * @todo: subject to refactoring
  */
 trait CanClone
 {
@@ -39,8 +40,9 @@ trait CanClone
 
         $clone = $this->replicate();
         $clone->fill($fill);
+        $clone->fillClonedBeforeSave($clone_log, $fill, $with_relations);
         $clone->save();
-        $clone->fillClonedAfter($clone_log, $fill, $with_relations);
+        $clone->fillClonedAfterSave($clone_log, $fill, $with_relations);
         //$clone->push(); // handled further
 
         if (!$clone_log->has($class)) {
@@ -60,7 +62,7 @@ trait CanClone
                     //$clone->$relation()->sync($values);
 
                     foreach ($values as $value) {
-                        $extra_attributes = array_except($value->pivot->getAttributes(), $value->pivot->getForeignKey());
+                        $extra_attributes = Arr::except($value->pivot->getAttributes(), $value->pivot->getForeignKey());
                         $clone->$relation()->attach($value, $extra_attributes);
                     }
                 } elseif ($this->$relation() instanceof BelongsTo) {
@@ -68,10 +70,16 @@ trait CanClone
                 } elseif ($this->$relation() instanceof HasMany) {
                     $clone->$relation()->saveMany($values);
                 } elseif ($this->$relation() instanceof BelongsToMany) {
-                    $clone->$relation()->sync($values);
+                    // $clone->$relation()->sync($values);
+                    foreach ($values as $value) {
+                        $extra_attributes = Arr::except($value->pivot->getAttributes(), $value->pivot->getForeignKey());
+                        $clone->$relation()->attach($value, $extra_attributes);
+                    }
                 }
             }
         }
+
+        $this->afterCloning($clone);
 
         if ($this instanceof Container) {
             $this->cloneContainees($clone, $clone_log, $fill, $with_relations);
@@ -125,7 +133,17 @@ trait CanClone
         return $this;
     }
 
-    protected function fillClonedAfter(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
+    protected function afterCloning(Cloneable $clone): Cloneable
+    {
+        return $this;
+    }
+
+    protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
+    {
+        return $this;
+    }
+
+    protected function fillClonedAfterSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
     {
         return $this;
     }

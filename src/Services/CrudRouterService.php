@@ -145,7 +145,7 @@ class CrudRouterService
                 $this->extra_routes[] = 'with' . ucwords($injectable);
             }
         } else {
-            $reflection = new \ReflectionFunction($injectables);
+            $reflection = new \Reflectionfunction ($injectables);
 
             if ($reflection->isClosure()) {
                 $this->extra_routes[] = $injectables;

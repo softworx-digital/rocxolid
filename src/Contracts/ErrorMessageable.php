@@ -14,21 +14,13 @@ use Illuminate\Support\Collection;
 interface ErrorMessageable
 {
     /**
-     * Set the error message.
-     *
-     * @param string $message Error message to set.
-     * @param int $index Index of error message to set.
-     * @return \SoftSoftworx\RocXolid\Contracts\ErrorMessageable
-     */
-    public function setErrorMessage(string $message, int $index = 0): ErrorMessageable;
-
-    /**
      * Set error messages. Previously set messages will be overwritten.
      *
      * @param array $message Error messages to set.
+     * @param int|null $index Index of ErrorMessageable to set error messages to.
      * @return \SoftSoftworx\RocXolid\Contracts\ErrorMessageable
      */
-    public function setErrorMessages(array $messages): ErrorMessageable;
+    public function setErrorMessages(array $messages, ?int $index = null): ErrorMessageable;
 
     /**
      * Get the first error message.

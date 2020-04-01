@@ -15,26 +15,15 @@ use Softworx\RocXolid\Contracts\ErrorMessageable as ErrorMessageableContract;
 trait ErrorMessageable
 {
     /**
-     * @var \Illuminate\Support\Collection $error_messages Assigned error messages collection.
-     */
-    private $error_messages;
-
-    /**
      * {@inheritdoc}
      */
-    public function setErrorMessage(string $message, int $index = 0): ErrorMessageableContract
+    public function setErrorMessages(array $messages, ?int $index = null): ErrorMessageableContract
     {
-        $this->getErrorMessages()->put($index, $message);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setErrorMessages(array $messages): ErrorMessageableContract
-    {
-        $this->error_messages = new Collection($messages);
+        if (is_null($index)) {
+            $this->error_messages = collect($messages);
+        } else {
+            $this->getErrorMessages()->put($index, collect($messages));
+        }
 
         return $this;
     }
@@ -53,7 +42,7 @@ trait ErrorMessageable
     public function getIndexErrorMessage(int $index): string
     {
         if ($this->getErrorMessages()->has($index)) {
-            return $this->getErrorMessages()->get($index);
+            return $this->getErrorMessages()->get($index)->first();
         } elseif ($this->getErrorMessages()->isNotEmpty()) {
             throw new \OutOfRangeException(sprintf('Invalid index [%s] requested, available: %s', $index, implode(', ', $this->getErrorMessages()->keys()->all())));
         } else {
@@ -67,7 +56,7 @@ trait ErrorMessageable
     public function getErrorMessages(): Collection
     {
         if (!isset($this->error_messages)) {
-            $this->error_messages = new Collection();
+            $this->error_messages = collect();
         }
 
         return $this->error_messages;

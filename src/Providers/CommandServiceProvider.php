@@ -54,7 +54,7 @@ class CommandServiceProvider extends IlluminateServiceProvider
     private function registerCommand(string $binding, \Illuminate\Console\Command $handler): IlluminateServiceProvider
     {
         /*
-        $this->app->singleton($binding, function($app) use ($handler)
+        $this->app->singleton($binding, function ($app) use ($handler)
         {
             return $app[$handler];
         });

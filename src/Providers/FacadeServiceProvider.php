@@ -22,7 +22,7 @@ class FacadeServiceProvider extends IlluminateServiceProvider
      */
     public function register()
     {
-        $this->app->bind('package.accessor', function() {
+        $this->app->bind('package.accessor', function () {
             return $this->app->make(PackageService::class);
         });
 

@@ -43,7 +43,7 @@ class PackageService
      */
     public function get(string $package_key): ?string
     {
-        return $this->rocxolidPackages()->filter(function($package) use ($package_key) {
+        return $this->rocxolidPackages()->filter(function ($package) use ($package_key) {
             return $package::getPackageKey() === $package_key;
         })->first();
     }
@@ -68,7 +68,7 @@ class PackageService
      */
     public function rocxolidPackages(): Collection
     {
-        return collect($this->package_manifest->providers())->filter(function($class) {
+        return collect($this->package_manifest->providers())->filter(function ($class) {
             $reflection = new \ReflectionClass($class);
 
             return $reflection->implementsInterface(RepresentsPackage::class);
@@ -84,7 +84,7 @@ class PackageService
      */
     public function getPackageClasses(string $namespace, \Closure $filter = null): Collection
     {
-        return collect($this->getClassMap())->filter(function($path, $class) use ($namespace, $filter) {
+        return collect($this->getClassMap())->filter(function ($path, $class) use ($namespace, $filter) {
             if (!Str::startsWith($class, $namespace)) {
                 return false;
             }

@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Forms\Fields;
 
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable;
 use Softworx\RocXolid\Contracts\PivotValueable;
@@ -226,6 +227,11 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this->getOption('component.array', false);
     }
 
+    public function isPivot()
+    {
+        return filled($this->pivot_relation_name);
+    }
+
     // @todo: kinda hacky, don't like this approach
     public function updateParent()
     {
@@ -241,7 +247,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     }
 
     // @todo: "hotfixed", you can do better
-    public function updateComponent($index = 0)
+    public function updateComponent(int $index = 0)
     {
         if ($this->hasErrorMessages($index)) {
             $key = $this->isArray()
@@ -270,8 +276,12 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      */
     public function getFieldName(int $index = 0): string
     {
+        if ($this->isPivot()) {
+            return $this->getPivotFieldName($index);
+        }
+
         if ($this->isArray()) {
-            return sprintf('%s[%s][%s]', self::ARRAY_DATA_PARAM, $index, $this->name);
+            return sprintf('%s[%s][%s]', self::ARRAY_DATA_PARAM, $this->name, $index);
         } else {
             return sprintf('%s[%s]', self::SINGLE_DATA_PARAM, $this->name);
         }
@@ -284,14 +294,12 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      * @param int $index Field index.
      * @return string
      */
-    public function getPivotFieldName(string $attribute, $index = 0): string
+    public function getPivotFieldName(int $index = 0): string
     {
-        dd(__METHOD__, '-- TODO --');
-
         if ($this->isArray()) {
-            return sprintf('%s[%s][%s][pivot][%s]', self::ARRAY_DATA_PARAM, $index, $this->name, $attribute);
+            return sprintf('%s[pivot][%s][%s][%s]', self::ARRAY_DATA_PARAM, $this->pivot_relation_name, $index, $this->name);
         } else {
-            return sprintf('%s[pivot][%s][%s]', self::SINGLE_DATA_PARAM, $this->name, $attribute);
+            return sprintf('%s[pivot][%s][%s]', self::SINGLE_DATA_PARAM, $this->pivot_relation_name, $this->name);
         }
     }
 
@@ -300,7 +308,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      *
      * @return string
      */
-    public function getFieldValue($index = 0)
+    public function getFieldValue(int $index = 0)
     {
         if ($this->isArray()) {
             return $this->getIndexValue($index);
@@ -321,6 +329,38 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
 
     public function getFinalValue()
     {
+        // @todo: temporary hotfix for BelongsToMany fields
+        if ($this->isArray()
+            && method_exists($this->getForm()->getController()->getModel(), $this->name)
+            && ($this->getForm()->getController()->getModel()->{$this->name}() instanceof BelongsToMany)) {
+
+            $values = $this->getValues();
+
+            // @todo: awkward
+            $relation = $this->getForm()->getController()->getModel()->{$this->name}();
+            $related = $relation->getRelated();
+            $pivot_fields = $this->getForm()->getPivotFormFields($relation);
+
+            $this->setPivotData(collect());
+
+            $values->each(function ($related_key, $index) use ($relation, $pivot_fields) {
+                $pivot_data = collect();
+
+                $pivot_fields->each(function ($pivot_field) use ($pivot_data, $index) {
+                    $pivot_data->put($pivot_field->getName(), $pivot_field->getIndexValue($index));
+                });
+
+                // $pivot_data = collect($data[$relation->getPivotAccessor()] ?? [])->get($related_key);
+
+                $this->addNewPivot($relation, [
+                    $relation->getForeignPivotKeyName() => $this->getForm()->getController()->getModel()->getKey(),
+                    $relation->getRelatedPivotKeyName() => $related_key,
+                ] + $pivot_data->toArray());
+            });
+
+            return $this->getPivotData()->toArray();
+        }
+
         return $this->getValue();
     }
 
@@ -331,8 +371,16 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      */
     public function getRuleKey()
     {
+        if ($this->isPivot()) {
+            if ($this->isArray()) {
+                return sprintf('%s.pivot.%s.*.%s', self::ARRAY_DATA_PARAM, $this->pivot_relation_name, $this->name);
+            } else {
+                return sprintf('%s.pivot.%s.%s', self::SINGLE_DATA_PARAM, $this->pivot_relation_name, $this->name);
+            }
+        }
+
         if ($this->isArray()) {
-            return sprintf('%s.*.%s', self::ARRAY_DATA_PARAM, $this->name);
+            return sprintf('%s.%s.*', self::ARRAY_DATA_PARAM, $this->name);
         } else {
             return sprintf('%s.%s', self::SINGLE_DATA_PARAM, $this->name);
         }

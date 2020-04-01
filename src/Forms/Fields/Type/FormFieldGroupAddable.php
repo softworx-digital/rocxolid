@@ -31,38 +31,38 @@ class FormFieldGroupAddable extends AbstractFormField
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-field-group form-inline col-xs-10'
+            'class' => 'form-field-group form-inline col-xs-11'
         ],
         // buttons
         'button-add' => [
             'label' => [
                 'icon' => 'fa fa-plus',
-                'title' => 'add',
+                // 'title' => 'add',
             ],
             'attributes' => [
-                'class' => 'btn btn-primary pull-right',
+                'class' => 'btn btn-primary margin-top-24',
                 'data-add-form-field-group' => '.form-field-group-addable',
                 'data-add-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
             'wrapper' => [
                 'attributes' => [
-                    'class' => 'col-xs-2'
+                    'class' => 'col-xs-1 text-center'
                 ]
             ]
         ],
         'button-remove' => [
             'label' => [
                 'icon' => 'fa fa-minus',
-                'title' => 'remove',
+                // 'title' => 'remove',
             ],
             'attributes' => [
-                'class' => 'btn btn-danger pull-right',
+                'class' => 'btn btn-danger margin-top-24',
                 'data-remove-form-field-group' => '.form-field-group-addable',
                 'data-remove-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
             'wrapper' => [
                 'attributes' => [
-                    'class' => 'col-xs-2'
+                    'class' => 'col-xs-1 text-center'
                 ]
             ]
         ]

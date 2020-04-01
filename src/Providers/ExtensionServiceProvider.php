@@ -37,9 +37,9 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
         /*
         * Get the diff between two collections of array records.
         */
-        Collection::macro('diffRecords', function($items) {
-            return new static($this->filter(function($item) use ($items){
-                return collect($items)->filter(function($a) use ($item) {
+        Collection::macro('diffRecords', function ($items) {
+            return new static($this->filter(function ($item) use ($items){
+                return collect($items)->filter(function ($a) use ($item) {
                     return $a === $item;
                 })->isEmpty();
             }));

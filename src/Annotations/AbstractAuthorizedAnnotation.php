@@ -36,7 +36,7 @@ abstract class AbstractAuthorizedAnnotation
 ~x
 REGEX;
 
-        return preg_replace_callback($regex, function($matches) {
+        return preg_replace_callback($regex, function ($matches) {
             return '"' . preg_replace('~\\\\.(*SKIP)(*F)|"~', '\\"', $matches[1]) . '"';
         }, $json);
     }

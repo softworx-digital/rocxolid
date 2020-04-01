@@ -80,7 +80,7 @@ class PermissionScannerService
             ->merge($this->getPermissionableControllers('App\\'))
             ->merge($this->getPermissionableControllers('Softworx\\RocXolid\\'));
 
-        $controllers->each(function($controller) use ($permissions) {
+        $controllers->each(function ($controller) use ($permissions) {
             $reflection = new \ReflectionClass($controller);
 
             // $permissions->put($controller, collect());
@@ -104,7 +104,7 @@ class PermissionScannerService
                     dd(__METHOD__, $method, $e->getMessage());
                 }
                 return !is_null($method->annotation);
-            })->each(function($method) use ($permissions, $controller, $package) {
+            })->each(function ($method) use ($permissions, $controller, $package) {
                 $permissions->push([
                     'name' => $this->getPermissionName($controller::getModelClass(), $method->annotation->getPolicyAbility()),
                     'guard' => 'rocXolid',
@@ -133,7 +133,7 @@ class PermissionScannerService
             ->merge($this->getPermissionableModels('App\\'))
             ->merge($this->getPermissionableModels('Softworx\\RocXolid\\'));
 
-        $models->each(function($model) use ($permissions) {
+        $models->each(function ($model) use ($permissions) {
             $reflection = new \ReflectionClass($model);
 
             if (Str::startsWith($reflection->getNamespaceName(), 'App\\')) {
@@ -156,8 +156,8 @@ class PermissionScannerService
                     // @todo: nicer handling
                     dd(__METHOD__, $method, $e->getMessage());
                 }
-            })->each(function($method) use ($permissions, $model, $package) {
-                collect($method->annotation->getPolicyAbilities())->each(function($policy_ability) use ($method, $permissions, $model, $package) {
+            })->each(function ($method) use ($permissions, $model, $package) {
+                collect($method->annotation->getPolicyAbilities())->each(function ($policy_ability) use ($method, $permissions, $model, $package) {
                     $permissions->push([
                         'name' => $this->getPermissionName($model, $policy_ability, $method->getShortName()),
                         'guard' => 'rocXolid',
@@ -180,7 +180,7 @@ class PermissionScannerService
 
     private function getPermissionableControllers(string $namespace): Collection
     {
-        return $this->package_service->getPackageClasses($namespace, function($class) {
+        return $this->package_service->getPackageClasses($namespace, function ($class) {
             $reflection = new \ReflectionClass($class);
 
             return $reflection->implementsInterface(CrudableController::class) && !$reflection->isAbstract();
@@ -189,7 +189,7 @@ class PermissionScannerService
 
     private function getPermissionableModels(string $namespace): Collection
     {
-        return $this->package_service->getPackageClasses($namespace, function($class) {
+        return $this->package_service->getPackageClasses($namespace, function ($class) {
             $reflection = new \ReflectionClass($class);
 
             return $reflection->implementsInterface(Crudable::class) && !$reflection->isAbstract() && !$reflection->isInterface();

@@ -24,6 +24,11 @@ trait PivotValueable
     private $pivot_data;
 
     /**
+     * @var string $pivot_relation_name Pivot relation name.
+     */
+    private $pivot_relation_name;
+
+    /**
      * {@inheritdoc}
      */
     public function addPivot(Pivot $pivot): PivotValueableContract
@@ -52,7 +57,7 @@ trait PivotValueable
     {
         $this->pivot_data = collect();
 
-        $pivot_data->each(function($pivot) {
+        $pivot_data->each(function ($pivot) {
             $this->addPivot($pivot);
         });
 
@@ -110,5 +115,23 @@ trait PivotValueable
     public function isModelPivotAttributeValue(Model $model, string $attribute, $value): bool
     {
         return $this->getModelPivotData($model) && ($this->getModelPivotData($model)->$attribute === $value);
+    }
+
+    /**
+     * Set relation name for pivot field.
+     *
+     * @param string $pivot_relation_name
+     * @return \Softworx\RocXolid\Traits\PivotValueableContract
+     */
+    protected function setPivotFor(string $pivot_relation_name): PivotValueableContract
+    {
+        $this->pivot_relation_name = $pivot_relation_name;
+
+        return $this;
+    }
+
+    public function isPivotFor(BelongsToMany $relation): string
+    {
+        return $this->pivot_relation_name === $relation->getRelationName();
     }
 }

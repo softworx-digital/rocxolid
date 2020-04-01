@@ -194,10 +194,12 @@ trait Crudable
             ] : []);
         } else {
             throw new \RuntimeException(sprintf(
-                'Unsupported relation type [%s] for [%s->%s()]',
+                'Unsupported relation type [%s] for [%s::%s()] in [%s::%s()]',
                 get_class($relation),
                 get_class($this),
                 $relation->getRelationName(),
+                get_class($this),
+                'getRouteRelationParam',
             ));
         }
     }

@@ -10,12 +10,14 @@ class FormFieldGroup extends AbstractFormField
 
     protected $default_options = [
         // field wrapper
-        'wrapper' => false,
+        'wrapper' => [
+            'class' => 'row',
+        ],
         // field label
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-field-group form-inline'
+            'class' => 'form-field-group'
         ],
     ];
 }
