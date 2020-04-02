@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
-// @todo: complete
+// @todo: finish
 interface TableFilterBuilder
 {
     public function addDefinitionFilters(Repository $table, $definition): RepositoryFilterBuilder;

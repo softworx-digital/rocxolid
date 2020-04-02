@@ -140,12 +140,10 @@ class ServiceProvider extends AbstractServiceProvider
             Http\Responses\JsonAjaxResponse::class
         );
 
-        /*
-        $this->app->singleton(
+        $this->app->bind(
             Repositories\Contracts\Repository::class,
-            Http\Responses\JsonAjaxResponse::class
+            Repositories\CrudRepository::class
         );
-        */
 
         // @todo: use some kind of form service to build and get forms, the same for tables (and columns)
         /*

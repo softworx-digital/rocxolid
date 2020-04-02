@@ -10,7 +10,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Forms\AbstractCrudForm as AbstractCrudForm;
 
 /**
- * Trait to make the controller able to handle all the CRUD operations and give appropriate responses.
+ * Trait to make the controller able to handle all the CRUD operations and give appropriate response.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -27,52 +27,41 @@ trait Crudable
     use Crud\Response\ProvidesErrorResponse;
     use Crud\Response\ProvidesDestroyResponse;
 
-    // protected static $model_class; // should be defined in specific class
+    // protected static $model_type; // should be defined in specific controller class
 
-    public static function getModelClass(): string
+    /**
+     * Provide the model type the controller works with.
+     * Each controller is assigned only one model type.
+     *
+     * @return string
+     */
+    public static function getModelType(): string
     {
-        return static::$model_class;
-    }
-
-    // @todo: maybe some different approach
-    public function isModelActionAvailable(CrudableModel $model, string $action): bool
-    {
-        return true;
-    }
-
-    // @todo: this doesn't belong here, or?
-    public function makeForm(string $param, ?CrudableModel $model, ?string $form_class = null): AbstractCrudForm
-    {
-        $repository = $this->getRepository($param);
-        $model = $model ?? $repository->getModel();
-
-        $this->setModel($model);
-
-        if (is_null($form_class)) {
-            $form = $repository->getForm($param);
-        } else {
-            $form = $repository->createForm($form_class, $param);
+        if (isset(static::$model_type)) {
+            return static::$model_type;
         }
 
-        return $form;
+        return self::guessModelType();
     }
 
-    protected function getFormParam(CrudRequest $request, ?string $method = null): string
+    /**
+     * Naively guess the model type based on controller's namespace.
+     * Replace the 'Http\Controller' subnamespace with 'Model' in the controller's namespace name.
+     *
+     * @return string
+     */
+    private static function guessModelType(): string
     {
-        $method = $method ?? $request->route()->getActionMethod();
+        $model_type = str_replace('Http\Controllers', 'Models', (new \ReflectionClass(static::class))->getNamespaceName());
 
-        if ($request->filled('_section')) {
-            $method = sprintf('%s.%s', $method, $request->_section);
-
-            if (isset($this->form_mapping[$method])) {
-                return $this->form_mapping[$method];
-            }
+        if (!class_exists($model_type)) {
+            throw new \RuntimeException(sprintf('Controller [%s] guessed unexisting model type [%s] to work with.', static::class, $model_type));
         }
 
-        if (!isset($this->form_mapping[$method])) {
-            throw new \InvalidArgumentException(sprintf('No controller [%s] form mapping for method [%s]', get_class($this), $method));
+        if (!(new \ReflectionClass($model_type))->implementsInterface(CrudableModel::class)) {
+            throw new \RuntimeException(sprintf('Controller\'s [%s] guessed model type [%s] is not CRUDable.', static::class, $model_type));
         }
 
-        return $this->form_mapping[$method];
+        return $model_type;
     }
 }

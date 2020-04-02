@@ -2,10 +2,19 @@
 
 namespace Softworx\RocXolid\Repositories\Traits;
 
-use Schema;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Column;
 use Softworx\RocXolid\Repositories\Contracts\Orderable as OrderableContract;
 
+/**
+ * Trait to enable model data ordering.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait Orderable
 {
     protected static $default_order = [
@@ -13,7 +22,7 @@ trait Orderable
         'direction' => 'asc',
     ];
 
-    public function setOrderBy(string $column_name, string $direction)
+    public function setOrderBy(string $column_name, string $direction): OrderableContract
     {
         if (Schema::hasColumn($this->getModel()->getTable(), $column_name)
             && in_array($direction, ['asc', 'desc'])) {
@@ -26,14 +35,14 @@ trait Orderable
         return $this;
     }
 
-    public function isOrderColumn(Column $column)
+    public function isOrderColumn(Column $column): bool
     {
-        return $column->getName() == $this->getOrderByColumn();
+        return $column->getName() === $this->getOrderByColumn();
     }
 
-    public function isOrderDirection(string $direction)
+    public function isOrderDirection(string $direction): bool
     {
-        return $direction == $this->getOrderByDirection();
+        return $direction === $this->getOrderByDirection();
     }
 
     protected function isSetCustomOrder(): bool
@@ -42,19 +51,19 @@ trait Orderable
             && $this->getRequest()->session()->has($this->getSessionParam(static::ORDER_BY_SESSION_PARAM));
     }
 
-    protected function applyOrder(): OrderableContract
+    protected function applyOrder(EloquentBuilder &$query): OrderableContract
     {
         $this->query = $this->getQuery()->orderBy(sprintf('%s.%s', $this->getModel()->getTable(), $this->getOrderByColumn()), $this->getOrderByDirection());
 
         return $this;
     }
 
-    protected function getOrderByColumn()
+    protected function getOrderByColumn(): string
     {
         return $this->isSetCustomOrder() ? $this->getRequest()->session()->get($this->getSessionParam(static::ORDER_BY_SESSION_PARAM))->get('column') : static::$default_order['column'];
     }
 
-    protected function getOrderByDirection()
+    protected function getOrderByDirection(): string
     {
         return $this->isSetCustomOrder() ? $this->getRequest()->session()->get($this->getSessionParam(static::ORDER_BY_SESSION_PARAM))->get('direction') : static::$default_order['direction'];
     }

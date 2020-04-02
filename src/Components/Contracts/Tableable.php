@@ -3,13 +3,15 @@
 namespace Softworx\RocXolid\Components\Contracts;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Repositories\Contracts\Repository;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Table;
 
-interface Repositoryable
+// @todo: finish
+interface Tableable
 {
-    public function setRepository(Repository $repository): Repositoryable;
+    public function setTable(Table $repository): Tableable;
 
-    public function getRepository(): Repository;
+    public function getTableable(): Table;
 
     public function getTableColumnsComponents(): Collection;
 

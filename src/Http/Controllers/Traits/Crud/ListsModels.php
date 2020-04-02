@@ -4,8 +4,6 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
-use Softworx\RocXolid\Repositories\Contracts\Repository;
-
 /**
  * Trait to list resource.
  *
@@ -23,9 +21,7 @@ trait ListsModels
      */
     public function index(CrudRequest $request)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-dd($repository);
-        $repository_component = $this->getRepositoryComponent($repository);
+        $table_component = $this->getTableComponent($this->getRepository());
 
         if ($request->ajax()) {
             return $this->response

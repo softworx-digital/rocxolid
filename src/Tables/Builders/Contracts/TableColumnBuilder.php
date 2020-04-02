@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
-// @todo: complete
+// @todo: finish
 interface TableColumnBuilder
 {
     public function addDefinitionColumns(Repository $table, $definition): RepositoryColumnBuilder;

@@ -2,7 +2,6 @@
 
 namespace Softworx\RocXolid\Traits;
 
-use App;
 use Softworx\RocXolid\Services\TranslationService;
 use Softworx\RocXolid\Contracts\Translatable as TranslatableContract;
 
@@ -152,7 +151,7 @@ trait Translatable
         return isset($this->language_name);
     }
 
-    // todo
+    // @todo
     protected function guessTranslationPackage()
     {
         $reflection = new \ReflectionClass($this);
@@ -160,7 +159,7 @@ trait Translatable
         return null;
     }
 
-    // todo
+    // @todo
     protected function guessTranslationParam()
     {
         $reflection = new \ReflectionClass($this);
@@ -177,7 +176,7 @@ trait Translatable
     protected function getTranslationService(): TranslationService
     {
         if (!property_exists($this, 'translation_service') || is_null($this->translation_service)) {
-            $translation_service = App::make(TranslationService::class);
+            $translation_service = app(TranslationService::class);
 
             if (property_exists($this, 'translation_service')) {
                 $this->translation_service = $translation_service;

@@ -3,14 +3,23 @@
 namespace Softworx\RocXolid\Repositories\Traits;
 
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Filter;
 use Softworx\RocXolid\Repositories\Contracts\Filterable as FilterableContract;
 
+/**
+ * Trait to enable model data filtering.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait Filterable
 {
     private $_filters = null;
 
-    protected function applyFilters(): FilterableContract
+    protected function applyFilters(EloquentBuilder &$query): FilterableContract
     {
         foreach ($this->getFilters() as $filter) {
             if ($this->useFilter($filter)) {

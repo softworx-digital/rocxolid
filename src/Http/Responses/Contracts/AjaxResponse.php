@@ -3,6 +3,8 @@
 namespace Softworx\RocXolid\Http\Responses\Contracts;
 
 use Illuminate\Support\Collection;
+// rocXolid response contracts
+use Softworx\RocXolid\Http\Responses\Contracts\Response;
 
 /**
  * Represents AJAX response to be handled by the front-end.
@@ -11,7 +13,7 @@ use Illuminate\Support\Collection;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface AjaxResponse
+interface AjaxResponse extends Response
 {
     /**
      * Instruct the response to process an error on consumer side.
@@ -168,8 +170,6 @@ interface AjaxResponse
      */
     public function get(): array;
 
-    /**
-     * @todo Form binding...
-     */
+    // @todo: Form binding...?
     //public function bindForm($selector);
 }

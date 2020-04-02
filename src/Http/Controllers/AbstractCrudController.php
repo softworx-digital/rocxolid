@@ -2,9 +2,9 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 // rocXolid contracts
+use Softworx\RocXolid\Contracts\Responseable;
+use Softworx\RocXolid\Contracts\Repositoryable;
 use Softworx\RocXolid\Contracts\Modellable;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
@@ -15,10 +15,12 @@ use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Repositoryable;
+use Softworx\RocXolid\Http\Controllers\Contracts\Tableable;
 // rocXolid component contracts
-use Softworx\RocXolid\Components\Contracts\Repositoryable as RepositoryableComponent;
+use Softworx\RocXolid\Components\Contracts\Tableable as TableableComponent;
 // rocXolid traits
+use Softworx\RocXolid\Traits\Responseable as ResponseableTrait;
+use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 // rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
@@ -26,44 +28,33 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
 
 /**
  * Base rocXolid controller for CRUD (and associated) operations.
+ * This controller needs specific implementation for each CRUDable model.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: add contracts to repository features traits
- * @todo: cleanup
  */
-abstract class AbstractCrudController extends AbstractController implements Crudable, Dashboardable, Repositoryable, Modellable
+abstract class AbstractCrudController extends AbstractController implements Crudable, Repositoryable, Modellable, Dashboardable, Tableable
 {
+    use ResponseableTrait;
     use ModellableTrait; // @todo: consider different approach
+    use RepositoryableTrait;
     use Traits\Crudable;
     use Traits\Dashboardable;
-    use Traits\Repositoryable;
+    use Traits\Tableable;
     use Traits\RepositoryOrderable;
     use Traits\RepositoryFilterable;
     use Traits\RepositoryAutocompleteable; // @todo: consider different approach
     use Traits\ItemsReorderderable; // @todo: add only where needed
     use Traits\Actions\SwitchesEnability;
+    use Traits\Actions\ClonesModels;
     use Traits\Actions\ReloadsForm;
     use Traits\Actions\ReloadsFormGroup;
     use Traits\Actions\ValidatesFormGroup;
-    use Traits\Actions\ClonesModels;
 
     /**
-     * Model repository reference.
+     * Mapping of form type params to controller actions.
      *
-     * @var \Softworx\RocXolid\Repositories\Contracts\Repository
-     */
-    protected $repository;
-
-    /**
-     * Response container reference.
-     *
-     * @var \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
-     */
-    protected $response;
-
-    /**
      * <controller-action> => <form-param>
      * or
      * <controller-action>.<section> => <form-param>
@@ -78,62 +69,44 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     ];
 
     /**
+     * Mapping of table type params to controller actions.
+     *
+     * <controller-action> => <table-param>
+     * or
+     * <controller-action>.<section> => <table-param>
+     *
+     * @var array
+     */
+    protected $table_mapping = [
+        'index' => 'default',
+    ];
+
+    /**
      * Constructor.
      *
-     * @param \Softworx\RocXolid\Repositories\Contracts\Repository
      * @param \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse $response
+     * @param \Softworx\RocXolid\Repositories\Contracts\Repository
      */
-    public function __construct(Repository $repository, AjaxResponse $response)
+    public function __construct(AjaxResponse $response, Repository $repository)
     {
-        $this->repository = $repository;
-        $this->response = $response;
+        $this->authorizeResource(static::getModelType(), static::getModelType()::getAuthorizationParameter());
 
-        $this->authorizeResource(static::getModelClass(), static::getModelClass()::getAuthorizationParameter());
+        $this
+            ->setResponse($response)
+            ->setRepository($repository->init(static::getModelType()))
+            ->init();
     }
 
     /**
-     * Retrieve the response that is going to be send.
+     * Retrieve model data table component to show.
      *
-     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
+     * @return \Softworx\RocXolid\Components\Contracts\Tableable
      */
-    public function getResponse(): AjaxResponse
-    {
-        return $this->response;
-    }
-
-    /**
-     * Dynamically create route for given controller action.
-     * Set model as a first parameter to the route if given.
-     *
-     * @param string $route_action
-     * @return string
-     */
-    public function getRoute(string $route_action, ...$params): string
-    {
-        $action = sprintf('\%s@%s', get_class($this), $route_action);
-        $action_params = [];
-
-        array_walk($params, function ($param) use (&$action_params) {
-            if (is_array($param)) {
-                $action_params += $param;
-            } else {
-                $action_params[] = $param;
-            }
-        });
-
-        return action($action, $action_params);
-    }
-
-    /**
-     * Retrieve repository component to show.
-     *
-     * @param \Softworx\RocXolid\Repositories\Contracts\Repository $repository
-     * @return \Softworx\RocXolid\Components\Contracts\Repositoryable
-     */
-    public function getRepositoryComponent(Repository $repository): RepositoryableComponent
+    public function getTableComponent(Table $table): TableableComponent
     {
         return CrudTableComponent::build($this, $this)
-            ->setRepository($repository);
+            ->setTable($table);
     }
 
     /**
@@ -147,18 +120,5 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         return CrudModelViewerComponent::build($this, $this)
             ->setModel($model)
             ->setController($this);
-    }
-
-    /**
-     * Naively guess the translation param for components based on controllers namespace.
-     *
-     * @return string
-     */
-    protected function guessTranslationParam(): ?string
-    {
-        $reflection = new \ReflectionClass($this);
-        $param = last(explode('\\', $reflection->getNamespaceName()));
-
-        return Str::kebab($param);
     }
 }
