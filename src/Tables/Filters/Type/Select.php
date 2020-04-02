@@ -1,12 +1,12 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Filters\Type;
+namespace Softworx\RocXolid\Tables\Filters\Type;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Repositories\Contracts\Filterable;
-use Softworx\RocXolid\Repositories\Contracts\Filter;
+use Softworx\RocXolid\Tables\Contracts\Filterable;
+use Softworx\RocXolid\Tables\Contracts\Filter;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-use Softworx\RocXolid\Repositories\Filters\AbstractFilter;
+use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class Select extends AbstractFilter
 {

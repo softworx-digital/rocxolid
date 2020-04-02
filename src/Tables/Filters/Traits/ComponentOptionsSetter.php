@@ -1,8 +1,8 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Filters\Traits;
+namespace Softworx\RocXolid\Tables\Filters\Traits;
 
-use Softworx\RocXolid\Repositories\Contracts\Filter;
+use Softworx\RocXolid\Tables\Contracts\Filter;
 
 trait ComponentOptionsSetter
 {

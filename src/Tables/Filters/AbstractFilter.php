@@ -1,18 +1,18 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Filters;
+namespace Softworx\RocXolid\Tables\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 // contracts
 use Softworx\RocXolid\Contracts\Optionable;
 use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Repositories\Contracts\Repository;
-use Softworx\RocXolid\Repositories\Contracts\Filter;
-use Softworx\RocXolid\Repositories\Contracts\Filterable;
+use Softworx\RocXolid\Tables\Contracts\Repository;
+use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Contracts\Filterable;
 // traits
 use Softworx\RocXolid\Traits\MethodOptionable as MethodOptionableTrait;
 use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
-use Softworx\RocXolid\Repositories\Filters\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
+use Softworx\RocXolid\Tables\Filters\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
 // components
 use Softworx\RocXolid\Components\Tables\TableFilter;
 

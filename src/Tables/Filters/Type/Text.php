@@ -1,11 +1,11 @@
 <?php
 
-namespace Softworx\RocXolid\Repositories\Filters\Type;
+namespace Softworx\RocXolid\Tables\Filters\Type;
 
 // contracts
-use Softworx\RocXolid\Repositories\Contracts\Filterable;
+use Softworx\RocXolid\Tables\Contracts\Filterable;
 //
-use Softworx\RocXolid\Repositories\Filters\AbstractFilter;
+use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class Text extends AbstractFilter
 {
