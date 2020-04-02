@@ -12,7 +12,7 @@ use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 // @todo - dodefinovat dalsie navratove typy + dalsie metody (SYNC) podla implementacnej classy - doplnit dalsie contracty (paginaciu,...)
-interface Repository extends Orderable, Filterable, Columnable, Buttonable, Controllable, Paramable, Optionable, EventDispatchable, Formable
+interface Repository extends Orderable, Filterable, Controllable, Paramable, Optionable, EventDispatchable, Formable
 {
     /**
      * Set the form builder.

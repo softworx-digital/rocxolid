@@ -49,25 +49,26 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Actions\ValidatesFormGroup;
     use Traits\Actions\ClonesModels;
 
-    protected $response;
+    /**
+     * Model repository reference.
+     *
+     * @var \Softworx\RocXolid\Repositories\Contracts\Repository
+     */
+    protected $repository;
 
     /**
-     * <repository-param> => <repository-class>
+     * Response container reference.
      *
+     * @var \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
      */
-    protected static $repository_param_class = [];
-    /**
-     * <controller-action> => <repository-param>
-     * or
-     * <controller-action>.<section> => <repository-param>
-     *
-     */
-    protected $repository_mapping = [];
+    protected $response;
+
     /**
      * <controller-action> => <form-param>
      * or
      * <controller-action>.<section> => <form-param>
      *
+     * @var array
      */
     protected $form_mapping = [
         'create' => 'create',
@@ -79,10 +80,12 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     /**
      * Constructor.
      *
+     * @param \Softworx\RocXolid\Repositories\Contracts\Repository
      * @param \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse $response
      */
-    public function __construct(AjaxResponse $response)
+    public function __construct(Repository $repository, AjaxResponse $response)
     {
+        $this->repository = $repository;
         $this->response = $response;
 
         $this->authorizeResource(static::getModelClass(), static::getModelClass()::getAuthorizationParameter());

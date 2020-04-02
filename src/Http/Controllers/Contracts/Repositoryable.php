@@ -15,7 +15,7 @@ interface Repositoryable
 {
     const REPOSITORY_PARAM = 'general';
 
-    public function createRepository(string $class, string $param = self::REPOSITORY_PARAM): Repository;
+    public function createRepository(string $type, string $param = self::REPOSITORY_PARAM): Repository;
 
     public function setRepository(Repository $repository, string $param = self::REPOSITORY_PARAM): Repositoryable;
 
