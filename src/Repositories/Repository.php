@@ -7,10 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 // rocXolid contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository as RepositoryContract;
-// rocXolid repository traits
-use Softworx\RocXolid\Repositories\Traits\Orderable;
-use Softworx\RocXolid\Repositories\Traits\Filterable;
-use Softworx\RocXolid\Repositories\Traits\Paginationable;
 
 /**
  * Repository is responsible for retrieving model data upon ordering and filters.
@@ -21,10 +17,10 @@ use Softworx\RocXolid\Repositories\Traits\Paginationable;
  */
 class Repository implements RepositoryContract
 {
-    use Scopeable;
-    use Orderable;
-    use Filterable;
-    use Paginationable;
+    use Traits\Scopeable;
+    use Traits\Orderable;
+    use Traits\Filterable;
+    use Traits\Paginationable;
 
     /**
      * Model reference to work with.
@@ -38,6 +34,10 @@ class Repository implements RepositoryContract
      */
     public function init(string $model_type): RepositoryContract
     {
+        if (!$this->validateModelType($model_type)) {
+            throw new \InvalidArgumentExcption(sprintf('Class [%s] is not valid to use with [%s]', $model_type, static::class));
+        }
+
         $this->query_model = app($model_type);
 
         return $this;
@@ -133,5 +133,16 @@ class Repository implements RepositoryContract
     protected function applyIntenalFilters(Builder &$query): RepositoryContract
     {
         return $this;
+    }
+
+    /**
+     * Validate if provided model class is suitable for repository.
+     *
+     * @param string $model_type
+     * @return boolean
+     */
+    protected function validateModelType(string $model_type): bool
+    {
+        return (new \ReflectionClass($model_type))->isSubclassOf(Model::class);
     }
 }

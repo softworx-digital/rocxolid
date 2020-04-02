@@ -2,10 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
-// rocXolid contracts
-use Softworx\RocXolid\Contracts\Responseable;
-use Softworx\RocXolid\Contracts\Repositoryable;
-use Softworx\RocXolid\Contracts\Modellable;
+
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid repository contracts
@@ -14,14 +11,12 @@ use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Tableable;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Tableable as TableableComponent;
 // rocXolid traits
-use Softworx\RocXolid\Traits\Responseable as ResponseableTrait;
-use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
-use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
+use Softworx\RocXolid\Traits\Responseable;
+use Softworx\RocXolid\Traits\Repositoryable;
+use Softworx\RocXolid\Traits\Modellable;
 // rocXolid components
 use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
@@ -34,11 +29,11 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractCrudController extends AbstractController implements Crudable, Repositoryable, Modellable, Dashboardable, Tableable
+abstract class AbstractCrudController extends AbstractController implements Crudable
 {
-    use ResponseableTrait;
-    use ModellableTrait; // @todo: consider different approach
-    use RepositoryableTrait;
+    use Responseable;
+    use Modellable; // @todo: consider different approach
+    use Repositoryable;
     use Traits\Crudable;
     use Traits\Dashboardable;
     use Traits\Tableable;

@@ -2,12 +2,8 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-// rocXolid utils
-use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// rocXolid forms
-use Softworx\RocXolid\Forms\AbstractCrudForm as AbstractCrudForm;
 
 /**
  * Trait to make the controller able to handle all the CRUD operations and give appropriate response.

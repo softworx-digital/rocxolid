@@ -21,16 +21,16 @@ trait ListsModels
      */
     public function index(CrudRequest $request)//: View
     {
-        $table_component = $this->getTableComponent($this->getRepository());
+        $table_component = $this->getTableComponent($this->getTable());
 
         if ($request->ajax()) {
             return $this->response
-                ->replace($repository_component->getDomId(), $repository_component->fetch())
+                ->replace($table_component->getDomId(), $table_component->fetch())
                 ->get();
         } else {
             return $this
                 ->getDashboard()
-                ->setRepositoryComponent($repository_component)
+                ->setTableComponent($table_component)
                 ->render('index');
         }
     }

@@ -23,14 +23,8 @@ class CrudRepository extends Repository implements Crudable
     /**
      * {@inheritDoc}
      */
-    public function init(string $model_type): Crudable
+    protected function validateModelType(string $model_type): bool
     {
-        $this->query_model = app($model_type);
-
-        if (!($this->query_model instanceof CrudableModel)) {
-            throw new \InvalidArgumentExcption();
-        }
-
-        return $this;
+        return (new \ReflectionClass($model_type))->isSubclassOf(CrudableModel::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Responses\Contracts;
 
+// use Illuminate\View\View;
 // use Illuminate\Http\Response;
 
 /**
@@ -18,5 +19,6 @@ interface Response
      *
      * @return string
      */
-    public function get(): string;
+    // @todo: "hotfixed" for AjaxResponse compatibility
+    // public function get(): string;
 }
