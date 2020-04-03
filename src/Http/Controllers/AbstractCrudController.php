@@ -18,7 +18,6 @@ use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Tableable as TableableComponent;
 // rocXolid traits
-use Softworx\RocXolid\Traits\Responseable;
 use Softworx\RocXolid\Traits\Repositoryable;
 use Softworx\RocXolid\Traits\Modellable;
 // rocXolid components
@@ -35,7 +34,6 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  */
 abstract class AbstractCrudController extends AbstractController implements Crudable
 {
-    use Responseable;
     use Modellable; // @todo: consider different approach
     use Repositoryable;
     use Traits\Crudable;

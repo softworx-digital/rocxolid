@@ -36,9 +36,10 @@ class TableService implements TableServiceContract
     protected $table_builder;
 
     /**
-     * Get table builder.
+     * Constructor.
      *
-     * @return \Softworx\RocXolid\Tables\Contracts\TableBuilder
+     * @param \Softworx\RocXolid\Tables\Contracts\TableBuilder
+     * @return \Softworx\RocXolid\Tables\Services\TableService
      */
     public function __construct(TableBuilder $table_builder)
     {

@@ -106,11 +106,11 @@ class PermissionScannerService
                 return !is_null($method->annotation);
             })->each(function ($method) use ($permissions, $controller, $package) {
                 $permissions->push([
-                    'name' => $this->getPermissionName($controller::getModelClass(), $method->annotation->getPolicyAbility()),
+                    'name' => $this->getPermissionName($controller::getModelType(), $method->annotation->getPolicyAbility()),
                     'guard' => 'rocXolid',
                     'package' => $package,
                     'controller_class' => $controller,
-                    'model_class' => $controller::getModelClass(),
+                    'model_class' => $controller::getModelType(),
                     'attribute' => null,
                     'policy_ability_group' => $method->annotation->getPolicyAbilityGroup(),
                     'policy_ability' => $method->annotation->getPolicyAbility(),

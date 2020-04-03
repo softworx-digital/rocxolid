@@ -7,10 +7,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Routing\Controller as IlluminateController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 // rocXolid contracts
+use Softworx\RocXolid\Contracts\Responseable;
 use Softworx\RocXolid\Contracts\ServiceConsumer;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
 use Softworx\RocXolid\Contracts\TranslationParamProvider;
 // rocXolid traits
+use Softworx\RocXolid\Traits\Responseable as ResponseableTrait;
 use Softworx\RocXolid\Traits\TranslationPackageProvider as TranslationPackageProviderTrait;
 use Softworx\RocXolid\Traits\TranslationParamProvider as TranslationParamProviderTrait;
 // rocXolid controller traits
@@ -23,8 +25,9 @@ use Softworx\RocXolid\Http\Controllers\Traits\Utils;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractController extends IlluminateController implements ServiceConsumer, TranslationPackageProvider, TranslationParamProvider
+abstract class AbstractController extends IlluminateController implements Responseable, ServiceConsumer, TranslationPackageProvider, TranslationParamProvider
 {
+    use ResponseableTrait;
     use AuthorizesRequests;
     use TranslationPackageProviderTrait;
     use TranslationParamProviderTrait;

@@ -73,6 +73,9 @@ trait Tableable
         return isset($this->tables[$param]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTableMappingType(string $param): string
     {
         return $this->getMappingType('table', $param);

@@ -27,7 +27,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Crudable extends Responseable, Repositoryable, Modellable, Dashboardable, Tableable, Formable
+interface Crudable extends Repositoryable, Modellable, Dashboardable, Tableable, Formable
 {
     public function index(CrudRequest $request);//: View;
 
