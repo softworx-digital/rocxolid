@@ -6,6 +6,14 @@ use Softworx\RocXolid\Tables\Contracts\Table;
 use Softworx\RocXolid\Tables\Contracts\Button;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder as TableButtonBuilderContract;
 
+/**
+ * Builds data table row buttons for with array based definition.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo: identify builders' common methods and unify them in abstract class
+ */
 class TableButtonBuilder implements TableButtonBuilderContract
 {
     private static $required_button_settings = [
@@ -13,7 +21,10 @@ class TableButtonBuilder implements TableButtonBuilderContract
         'options',
     ];
 
-    public function addDefinitionButtons(Table $table, $definition): TableButtonBuilderContract
+    /**
+     * {@inheritDoc}
+     */
+    public function addDefinitionButtons(Table $table, array $definition): TableButtonBuilderContract
     {
         $buttons = [];
 
@@ -21,19 +32,22 @@ class TableButtonBuilder implements TableButtonBuilderContract
             ->validateButtonsDefinition($definition)
             ->processButtonsDefinition($table, $definition, $buttons);
 
-        $table->setButtons($buttons);
+        $table->setButtons(collect($buttons));
 
         return $this;
     }
 
-    public function makeButton(Table $table, $type, $name, array $options = []): Button
+    /**
+     * {@inheritDoc}
+     */
+    public function makeButton(Table $table, string $type, string $name, array $options = []): Button
     {
-        $field = new $type($name, $type, $table, $options);
+        $field = new $type($table, $name, $type, $options);
 
         return $field;
     }
 
-    protected function processDefinition(Table $table, $definition, &$items, $name_prefix = null): TableButtonBuilderContract
+    protected function processDefinition(Table $table, array $definition, array &$items, ?string $name_prefix = null): TableButtonBuilderContract
     {
         foreach ($definition as $name => $settings) {
             $type = null;
@@ -55,7 +69,7 @@ class TableButtonBuilder implements TableButtonBuilderContract
         return $this;
     }
 
-    protected function validateButtonsDefinition($definition): TableButtonBuilderContract
+    protected function validateButtonsDefinition(array $definition): TableButtonBuilderContract
     {
         if (!isset($definition['buttons'])) {
             throw new \InvalidArgumentException(sprintf('Buttons not defined in definition [%s]', print_r($definition, true)));
@@ -66,14 +80,14 @@ class TableButtonBuilder implements TableButtonBuilderContract
         return $this;
     }
 
-    protected function processButtonsDefinition(Table $table, $definition, &$buttons, $name_prefix = null): TableButtonBuilderContract
+    protected function processButtonsDefinition(Table $table, array $definition, array &$buttons, ?string $name_prefix = null): TableButtonBuilderContract
     {
         $this->processDefinition($table, $definition['buttons'], $buttons, $name_prefix);
 
         return $this;
     }
 
-    protected function processSettings(&$settings, &$type, &$options): TableButtonBuilderContract
+    protected function processSettings(array &$settings, ?string &$type, ?array &$options): TableButtonBuilderContract
     {
         foreach (self::$required_button_settings as $required) {
             if (!isset($settings[$required])) {
@@ -86,7 +100,7 @@ class TableButtonBuilder implements TableButtonBuilderContract
         return $this;
     }
 
-    protected function processName(&$name, $name_prefix): TableButtonBuilderContract
+    protected function processName(string &$name, ?string $name_prefix): TableButtonBuilderContract
     {
         $name = is_null($name_prefix) ? $name : sprintf('%s-%s', $name_prefix, $name);
 
@@ -97,7 +111,7 @@ class TableButtonBuilder implements TableButtonBuilderContract
         return $this;
     }
 
-    protected function processType(&$type): TableButtonBuilderContract
+    protected function processType(string &$type): TableButtonBuilderContract
     {
         if (!class_exists($type)) {
             throw new \InvalidArgumentException(sprintf('Invalid button type [%s] given', $type));
@@ -106,7 +120,7 @@ class TableButtonBuilder implements TableButtonBuilderContract
         return $this;
     }
 
-    protected function processOptions(Table $table, $name, $type, &$options): TableButtonBuilderContract
+    protected function processOptions(Table $table, string $name, string $type, array &$options): TableButtonBuilderContract
     {
         /*
         foreach ($options as $option => $value)

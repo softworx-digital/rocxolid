@@ -3,60 +3,49 @@
 namespace Softworx\RocXolid\Tables\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
-// contracts
-use Softworx\RocXolid\Contracts\Optionable;
-use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Tables\Contracts\Repository;
+// rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Filter;
-use Softworx\RocXolid\Tables\Contracts\Filterable;
-// traits
-use Softworx\RocXolid\Traits\MethodOptionable as MethodOptionableTrait;
-use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
-use Softworx\RocXolid\Tables\Filters\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
-// components
+// rocXolid table elements
+use Softworx\RocXolid\Tables\AbstractTableElement;
+// rocXolid table filter traits
+use Softworx\RocXolid\Tables\Filters\Traits\ComponentOptionsSetter;
+// rocXolid table components
 use Softworx\RocXolid\Components\Tables\TableFilter;
 
 /**
+ * Table filter field abstraction.
  *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
-abstract class AbstractFilter implements Filter, Optionable, Translatable
+abstract class AbstractFilter extends AbstractTableElement implements Filter
 {
-    use TranslatableTrait;
-    use MethodOptionableTrait;
-    use ComponentOptionsSetterTrait;
+    use ComponentOptionsSetter;
 
+    /**
+     * Component class definition.
+     *
+     * @var string
+     */
     protected static $component_class = TableFilter::class;
+
     /**
-     * Name of the filter.
-     *
-     * @var string
-     */
-    protected $name;
-    /**
-     * Type of the filter.
-     *
-     * @var string
-     */
-    protected $type;
-    /**
-     * Value of the filter.
+     * Filter field value.
      *
      * @var mixed
      */
     protected $value;
+
     /**
-     * @var Repository
-     */
-    protected $repository;
-    /**
-     * 'template' => 'rocXolid::repository.filter.text',
+     * 'template' => 'rocXolid::table.filter.text',
      * 'type-template' => 'text',
      * 'attributes' => [
-     *     'class' => 'repository-control'
+     *     'class' => 'table-control'
      * ],
      * 'wrapper' => [
      *     'attributes' => [
-     *         'class' => 'repository-group'
+     *         'class' => 'table-group'
      *     ]
      * ],
      * 'label' => [
@@ -83,71 +72,32 @@ abstract class AbstractFilter implements Filter, Optionable, Translatable
     protected $default_options = [];
 
     /**
-     * @param string $name
-     * @param string $type
-     * @param Repository $repository
-     * @param Filterable $parent
-     * @param array $options
+     * Get field name used in the filter form.
+     *
+     * @return string
      */
-    public function __construct($name, $type, Repository $repository, array $options = [])
+    public function getFieldName(): string
     {
-        $options = array_replace_recursive($this->default_options, $options);
-
-        $this
-            ->setRepository($repository)
-            ->setName($name)
-            ->setType($type)
-            ->setOptions($options);
-    }
-
-    protected function setRepository(Repository $repository): Filter
-    {
-        $this->repository = $repository;
-
-        return $this;
+        return sprintf('%s[%s]', self::DATA_PARAM, $this->getName());
     }
 
     /**
-     * Set system name of the filter.
+     * Get fully qualified column name the filter binds to.
      *
-     * @param string $name
-     * @return $this
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return string
      */
-    protected function setName($name): Filter
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getFieldName(): string
-    {
-        return sprintf('%s[%s]', self::DATA_PARAM, $this->name);
-    }
-
-    protected function setType($type): Filter
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    //public function getColumnName(Builder $query): string
-    public function getColumnName($query): string
+    public function getColumnName(Builder $query): string
     {
         return sprintf('%s.%s', $query->getModel()->getTable(), $this->getName());
     }
 
+    /**
+     * Set filter value.
+     *
+     * @param mixed $value
+     * @return \Softworx\RocXolid\Tables\Contracts\Filter
+     */
     public function setValue($value): Filter
     {
         $this->value = $value;
@@ -155,26 +105,13 @@ abstract class AbstractFilter implements Filter, Optionable, Translatable
         return $this;
     }
 
+    /**
+     * Retrieve filter value.
+     *
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @return Repository
-     */
-    public function getRepository(): Repository
-    {
-        return $this->repository;
-    }
-
-    public function translate(string $key, array $params = [], bool $use_raw_key = false): string
-    {
-        /*
-        $component_class = static::$component_class;
-
-        return (new $component_class())->setTableFilter($this)->translate($key);
-        */
-        return __METHOD__ . '@todo';
     }
 }

@@ -2,15 +2,20 @@
 
 namespace Softworx\RocXolid\Tables\Contracts;
 
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Paramable;
 use Softworx\RocXolid\Contracts\Optionable;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Columnable;
+use Softworx\RocXolid\Tables\Contracts\Buttonable;
 use Softworx\RocXolid\Tables\Contracts\Orderable;
 use Softworx\RocXolid\Tables\Contracts\Filterable;
-use Softworx\RocXolid\Tables\Contracts\TableBuilder;
-use Softworx\RocXolid\Tables\Contracts\TableColumnBuilder;
-use Softworx\RocXolid\Tables\Contracts\TableButtonBuilder;
-use Softworx\RocXolid\Tables\Contracts\TableFilterBuilder;
+// rocXolid table builder contracts
+use Softworx\RocXolid\Tables\Builders\Contracts\TableBuilder;
+use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder;
+use Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder;
+use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
 
 /**
  * Provides data table assigned to a controller.
@@ -19,7 +24,7 @@ use Softworx\RocXolid\Tables\Contracts\TableFilterBuilder;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Table extends Controllable, Orderable, Filterable, Paramable, Optionable
+interface Table extends Controllable, Paramable, Optionable, Columnable, Buttonable, Orderable, Filterable
 {
     /**
      * Set the table builder.

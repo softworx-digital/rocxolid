@@ -33,11 +33,11 @@ trait SwitchesEnability
         ])->save();
 
         $repository = $this->getRepository($this->getRepositoryParam($request));
-        $repository_component = $this->getRepositoryComponent($repository);
+        $table_component = $this->getTableComponent($repository);
 
         if ($request->ajax()) {
             return $this->response
-                ->replace($repository_component->getDomId('row', $model->getKey()), $repository_component->fetch('include.results-row', [ 'model' => $model ]))
+                ->replace($table_component->getDomId('row', $model->getKey()), $table_component->fetch('include.results-row', [ 'model' => $model ]))
                 ->get();
         } else {
             return redirect($this->getRoute('index'));

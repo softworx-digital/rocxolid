@@ -4,6 +4,7 @@ namespace Softworx\RocXolid\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 
+// @todo: cleanup
 class FormRequest extends IlluminateFormRequest
 {
     /**

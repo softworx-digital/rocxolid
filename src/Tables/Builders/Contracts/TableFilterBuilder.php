@@ -2,10 +2,36 @@
 
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
-// @todo: finish
+use Softworx\RocXolid\Tables\Contracts\Table;
+use Softworx\RocXolid\Tables\Contracts\Filter;
+
+/**
+ * Builds data table filter fields.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo: make more abstract
+ */
 interface TableFilterBuilder
 {
-    public function addDefinitionFilters(Repository $table, $definition): RepositoryFilterBuilder;
+    /**
+     * Add filters to table defined by an array configuration.
+     *
+     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
+     * @param array $definition
+     * @return \Softworx\RocXolid\Tables\Builders\Contracts
+     */
+    public function addDefinitionFilters(Table $table, array $definition): TableFilterBuilder;
 
-    public function makeFilter(Repository $table, $type, $name, array $options = []): Filter;
+    /**
+     * Builds filter element with given type, name and options.
+     *
+     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
+     * @param string $type
+     * @param string $name
+     * @param array $options
+     * @return \Softworx\RocXolid\Tables\Contracts\Filter
+     */
+    public function makeFilter(Table $table, string $type, string $name, array $options = []): Filter;
 }

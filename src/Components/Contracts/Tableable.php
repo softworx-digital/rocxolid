@@ -11,7 +11,7 @@ interface Tableable
 {
     public function setTable(Table $repository): Tableable;
 
-    public function getTableable(): Table;
+    public function getTable(): Table;
 
     public function getTableColumnsComponents(): Collection;
 

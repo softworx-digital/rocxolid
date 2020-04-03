@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Requests;
 
+// @todo: cleanup
 class CrudRequest extends FormRequest
 {
     /**

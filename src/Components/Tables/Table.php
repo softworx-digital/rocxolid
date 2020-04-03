@@ -3,14 +3,18 @@
 namespace Softworx\RocXolid\Components\Tables;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Repositories\Contracts\Repository;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Table as TableContract;
+// rocXolid component contracts
+use Softworx\RocXolid\Components\Contracts\Tableable;
+// rocXolid components
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
-use Softworx\RocXolid\Components\Contracts\Repositoryable as ComponentRepositoryable;
+// rocXolid table components
 use Softworx\RocXolid\Components\Tables\TableFilter;
 use Softworx\RocXolid\Components\Tables\TableColumn;
 use Softworx\RocXolid\Components\Tables\TableButton;
 
-class Table extends AbstractOptionableComponent implements ComponentRepositoryable
+class Table extends AbstractOptionableComponent implements Tableable
 {
     protected static $filter_component_class = TableFilter::class;
 
@@ -19,7 +23,7 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
 
     protected static $button_component_class = TableButton::class;
 
-    protected $repository;
+    protected $table;
 
     protected $filter_components = null;
 
@@ -27,11 +31,11 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
 
     protected $button_components = null;
 
-    public function setRepository(Repository $repository): ComponentRepositoryable
+    public function setTable(TableContract $table): Tableable
     {
-        $this->repository = $repository;
+        $this->table = $table;
 
-        $this->setOptions($this->getRepository()->getOption('component'));
+        $this->setOptions($this->getTable()->getOption('component'));
 
         $this
             ->loadTableFiltersComponents()
@@ -46,9 +50,9 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         return $this;
     }
 
-    public function getRepository(): Repository
+    public function getTable(): TableContract
     {
-        return $this->repository;
+        return $this->table;
     }
 
     public function getTableFiltersComponents(): Collection
@@ -83,11 +87,11 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         return $this->getViewService()->getViewPath($this, 'include.pagination-ajax');
     }
 
-    protected function loadTableFiltersComponents(): ComponentRepositoryable
+    protected function loadTableFiltersComponents(): Tableable
     {
         $this->filter_components = new Collection();
 
-        foreach ($this->getRepository()->getFilters() as $filter) {
+        foreach ($this->getTable()->getFilters() as $filter) {
             $this->filter_components->put(
                 $filter->getName(),
                 $this->buildSubComponent(static::$filter_component_class)->setTableFilter($filter)
@@ -97,16 +101,16 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         return $this;
     }
 
-    protected function organizeTableFiltersComponents(): ComponentRepositoryable
+    protected function organizeTableFiltersComponents(): Tableable
     {
         return $this;
     }
 
-    protected function loadTableColumnsComponents(): ComponentRepositoryable
+    protected function loadTableColumnsComponents(): Tableable
     {
         $this->column_components = new Collection();
 
-        foreach ($this->getRepository()->getColumns() as $column) {
+        foreach ($this->getTable()->getColumns() as $column) {
             $this->column_components->put(
                 $column->getName(),
                 // $this->buildSubComponent(static::$column_component_class)->setTableColumn($column)
@@ -117,16 +121,16 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         return $this;
     }
 
-    protected function organizeTableColumnsComponents(): ComponentRepositoryable
+    protected function organizeTableColumnsComponents(): Tableable
     {
         return $this;
     }
 
-    protected function loadTableButtonsComponents(): ComponentRepositoryable
+    protected function loadTableButtonsComponents(): Tableable
     {
         $this->button_components = new Collection();
 
-        foreach ($this->getRepository()->getButtons() as $button) {
+        foreach ($this->getTable()->getButtons() as $button) {
             $this->button_components->put(
                 $button->getName(),
                 $this->buildSubComponent(static::$button_component_class)->setButton($button)
@@ -136,7 +140,7 @@ class Table extends AbstractOptionableComponent implements ComponentRepositoryab
         return $this;
     }
 
-    protected function organizeTableButtonsComponents(): ComponentRepositoryable
+    protected function organizeTableButtonsComponents(): Tableable
     {
         return $this;
     }

@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Components\Tables;
 
 use Softworx\RocXolid\Contracts\Renderable;
-use Softworx\RocXolid\Repositories\Contracts\Column;
+use Softworx\RocXolid\Tables\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
 
@@ -56,7 +56,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
     public function getOrderRoute()
     {
-        $repository = $this->getTableColumn()->getRepository();
+        $repository = $this->getTableColumn()->getTable();
 
         if ($repository->isOrderColumn($this->getTableColumn())) {
             $direction = $repository->isOrderDirection('asc') ? 'desc' : 'asc';
@@ -76,7 +76,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
     {
         $table = $elements[0];
         $model = $elements[1];
-        $controller = $table->getRepository()->getController();
+        $controller = $table->getTable()->getController();
 
         if ($this->hasOption('action')) {
             if ($this->getOption('ajax', false)) {

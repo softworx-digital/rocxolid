@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Forms\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits;
 
 use App;
 use Softworx\RocXolid\Components\Contracts\Formable as FormableComponent;

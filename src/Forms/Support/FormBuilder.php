@@ -2,18 +2,15 @@
 
 namespace Softworx\RocXolid\Forms\Support;
 
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
+// rocXolid requests
+use Softworx\RocXolid\Http\Requests\FormRequest;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Forms\Contracts\FormBuilder as FormBuilderContract;
 
 class FormBuilder implements FormBuilderContract
 {
-    /**
-     * @var Container
-     */
-    protected $app;
     /**
      * @var FormFieldBuilder
      */
@@ -22,25 +19,17 @@ class FormBuilder implements FormBuilderContract
      * @var FormFieldFactory
      */
     protected $form_field_factory;
-    /**
-     * @var EventDispatcher
-     */
-    protected $event_dispatcher;
 
     /**
      * Constructor.
      *
-     * @param Container  $app
      * @param FormFieldBuilder $form_field_builder
      * @param FormFieldFactory $form_field_factory
-     * @param EventDispatcher $event_dispatcher
      */
-    public function __construct(Container $app, FormFieldBuilder $form_field_builder, FormFieldFactory $form_field_factory, EventDispatcher $event_dispatcher)
+    public function __construct(FormFieldBuilder $form_field_builder, FormFieldFactory $form_field_factory)
     {
-        $this->app = $app;
         $this->form_field_builder = $form_field_builder;
         $this->form_field_factory = $form_field_factory;
-        $this->event_dispatcher = $event_dispatcher;
     }
 
     /**
@@ -68,7 +57,7 @@ class FormBuilder implements FormBuilderContract
      */
     public function fetchForm($form_class): Form
     {
-        $form = $this->app->make($this->validateFormClass($form_class));
+        $form = app($this->validateFormClass($form_class));
 
         return $form;
     }
@@ -110,7 +99,7 @@ class FormBuilder implements FormBuilderContract
     /**
      * Set depedencies on existing form instance.
      *
-     * @param Form $form
+     * @param \Softworx\RocXolid\Forms\Contracts\Form $form
      * @return FormBuilderContract
      */
     protected function setFormDependencies(Form &$form, Formable $form_holder): FormBuilderContract
@@ -121,8 +110,8 @@ class FormBuilder implements FormBuilderContract
             ->setFormFieldFactory($this->form_field_factory)
             ->setEventDispatcher($this->event_dispatcher)
             ->setHolderProperties($form_holder)
-            ->setRequest($this->app->make('RocXolidFormRequest'))
-            ->setValidatorFactory($this->app->make('validator'));
+            ->setRequest(app(FormRequest::class))
+            ->setValidatorFactory(app('validator'));
 
         return $this;
     }
@@ -130,7 +119,7 @@ class FormBuilder implements FormBuilderContract
     /**
      * Set options on existing form instance.
      *
-     * @param Form $form
+     * @param \Softworx\RocXolid\Forms\Contracts\Form $form
      * @param array $custom_options
      * @return FormBuilderContract
      */
@@ -147,7 +136,7 @@ class FormBuilder implements FormBuilderContract
     /**
      * Set data on existing form instance.
      *
-     * @param Form $form
+     * @param \Softworx\RocXolid\Forms\Contracts\Form $form
      * @param array $data
      * @return FormBuilderContract
      */

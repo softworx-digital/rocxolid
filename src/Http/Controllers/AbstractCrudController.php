@@ -2,15 +2,19 @@
 
 namespace Softworx\RocXolid\Http\Controllers;
 
-
-// rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// rocXolid repository contracts
-use Softworx\RocXolid\Repositories\Contracts\Repository;
+// rocXolid services
+use Softworx\RocXolid\Forms\Services\Contracts\FormService;
+use Softworx\RocXolid\Tables\Services\Contracts\TableService;
 // rocXolid utils
 use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
+// rocXolid repository contracts
+use Softworx\RocXolid\Repositories\Contracts\Repository;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Table;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Tableable as TableableComponent;
 // rocXolid traits
@@ -73,7 +77,17 @@ abstract class AbstractCrudController extends AbstractController implements Crud
      * @var array
      */
     protected $table_mapping = [
-        'index' => 'default',
+        'index' => 'index',
+    ];
+
+    /**
+     * Default services used by controller.
+     *
+     * @var array
+     */
+    protected $default_services = [
+        FormService::class,
+        TableService::class,
     ];
 
     /**
@@ -89,6 +103,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         $this
             ->setResponse($response)
             ->setRepository($repository->init(static::getModelType()))
+            ->bindServices()
             ->init();
     }
 

@@ -21,7 +21,7 @@ trait ListsModels
      */
     public function index(CrudRequest $request)//: View
     {
-        $table_component = $this->getTableComponent($this->getTable());
+        $table_component = $this->getTableComponent($this->getTable($request));
 
         if ($request->ajax()) {
             return $this->response

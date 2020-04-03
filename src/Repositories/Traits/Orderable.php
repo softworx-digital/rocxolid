@@ -3,9 +3,9 @@
 namespace Softworx\RocXolid\Repositories\Traits;
 
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 // rocXolid repository contracts
-use Softworx\RocXolid\Repositories\Contracts\Column;
 use Softworx\RocXolid\Repositories\Contracts\Orderable as OrderableContract;
 
 /**
@@ -17,54 +17,144 @@ use Softworx\RocXolid\Repositories\Contracts\Orderable as OrderableContract;
  */
 trait Orderable
 {
-    protected static $default_order = [
-        'column' => 'id',
-        'direction' => 'asc',
-    ];
+    /**
+     * Model to get table for ordering.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    private $order_by_model;
 
-    public function setOrderBy(string $column_name, string $direction): OrderableContract
+    /**
+     * Order column for repository data.
+     *
+     * @var string
+     */
+    private $order_by_column;
+
+    /**
+     * Order direction for repository data.
+     *
+     * @var string
+     */
+    private $order_by_direction;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setOrderBy(string $column_name, string $direction, ?Model $model = null): OrderableContract
     {
-        if (Schema::hasColumn($this->getModel()->getTable(), $column_name)
-            && in_array($direction, ['asc', 'desc'])) {
-            $this->getRequest()->session()->put($this->getSessionParam(static::ORDER_BY_SESSION_PARAM), collect([
-                'column' => $column_name,
-                'direction' => $direction,
-            ]));
+        $model = $model ?? $this->query_model;
+
+        if (Schema::hasColumn($model->getTable(), $column_name) && in_array($direction, ['asc', 'desc'])) {
+            $this->setOrderByModel($model);
+            $this->setOrderByColumn($column_name);
+            $this->setOrderByDirection($direction);
         }
 
         return $this;
     }
 
-    public function isOrderColumn(Column $column): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderByModel(): Model
     {
-        return $column->getName() === $this->getOrderByColumn();
+        return $this->order_by_model ?? $this->query_model;
     }
 
-    public function isOrderDirection(string $direction): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderByColumn(): string
     {
-        return $direction === $this->getOrderByDirection();
+        return $this->order_by_column ?? $this->getDefaultOrderByColumn();
     }
 
-    protected function isSetCustomOrder(): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function getFullyQualifiedOrderByColumn(): string
     {
-        return $this->getRequest()->session()->exists($this->getSessionParam(static::ORDER_BY_SESSION_PARAM))
-            && $this->getRequest()->session()->has($this->getSessionParam(static::ORDER_BY_SESSION_PARAM));
+        return sprintf('%s.%s', $this->getOrderByModel()->getTable(), $this->getOrderByColumn());
     }
 
-    protected function applyOrder(EloquentBuilder &$query): OrderableContract
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrderByDirection(): string
     {
-        $this->query = $this->getQuery()->orderBy(sprintf('%s.%s', $this->getModel()->getTable(), $this->getOrderByColumn()), $this->getOrderByDirection());
+        return $this->order_by_direction ?? $this->getDefaultOrderByDirection();
+    }
+
+    /**
+     * Apply column ordering to the query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @return \Softworx\RocXolid\Repositories\Contracts\Orderable
+     */
+    protected function applyOrder(Builder &$query): OrderableContract
+    {
+        $query = $query->orderBy($this->getFullyQualifiedOrderByColumn(), $this->getOrderByDirection());
 
         return $this;
     }
 
-    protected function getOrderByColumn(): string
+    /**
+     * Set model to get table for ordering.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $order_by_model
+     * @return \Softworx\RocXolid\Repositories\Contracts\Orderable
+     */
+    protected function setOrderByModel(Model $order_by_model): OrderableContract
     {
-        return $this->isSetCustomOrder() ? $this->getRequest()->session()->get($this->getSessionParam(static::ORDER_BY_SESSION_PARAM))->get('column') : static::$default_order['column'];
+        $this->order_by_model = $order_by_model;
+
+        return $this;
     }
 
-    protected function getOrderByDirection(): string
+    /**
+     * Set order column for repository data.
+     *
+     * @param string $order_by_column
+     * @return \Softworx\RocXolid\Repositories\Contracts\Orderable
+     */
+    protected function setOrderByColumn(string $order_by_column): OrderableContract
     {
-        return $this->isSetCustomOrder() ? $this->getRequest()->session()->get($this->getSessionParam(static::ORDER_BY_SESSION_PARAM))->get('direction') : static::$default_order['direction'];
+        $this->order_by_column = $order_by_column;
+
+        return $this;
+    }
+
+    /**
+     * Set order direction for repository data.
+     *
+     * @param string $order_by_direction
+     * @return \Softworx\RocXolid\Repositories\Contracts\Orderable
+     */
+    protected function setOrderByDirection(string $order_by_direction): OrderableContract
+    {
+        $this->order_by_direction = $order_by_direction;
+
+        return $this;
+    }
+
+    /**
+     * Get default order column for repository data.
+     *
+     * @return string
+     */
+    protected function getDefaultOrderByColumn(): string
+    {
+        return $this->getOrderByModel()->getKeyName();
+    }
+
+    /**
+     * Get default order direction for repository data.
+     *
+     * @return string
+     */
+    protected function getDefaultOrderByDirection(): string
+    {
+        return 'asc';
     }
 }

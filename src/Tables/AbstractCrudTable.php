@@ -15,23 +15,29 @@ use Softworx\RocXolid\Traits\Controllable;
 use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
-// rocXolid repository traits
+// rocXolid table traits
 use Softworx\RocXolid\Tables\Traits\Buildable;
+use Softworx\RocXolid\Tables\Traits\Columnable;
+use Softworx\RocXolid\Tables\Traits\Buttonable;
 use Softworx\RocXolid\Tables\Traits\Orderable;
 use Softworx\RocXolid\Tables\Traits\Filterable;
 use Softworx\RocXolid\Tables\Traits\Paginationable;
-// rocXolid column types
-use Softworx\RocXolid\Tables\Columns\Type\ButtonAnchor;
+// rocXolid table button types
+use Softworx\RocXolid\Tables\Buttons\Type\ButtonAnchor;
 
 /**
- * @todo: subject to refactoring, (at least) decompose to:
- *  - repository that handles model data operations
- *  - table that is responsible for showing data
+ * Model instances data table.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
  */
 abstract class AbstractCrudTable implements Table, Requestable
 {
     use RequestableTrait;
     use Buildable;
+    use Columnable;
+    use Buttonable;
     use Orderable;
     use Filterable;
     use Paginationable;
@@ -132,7 +138,7 @@ abstract class AbstractCrudTable implements Table, Requestable
         ],
     ];
 
-    public function init(): Repository
+    public function init(): Table
     {
         return $this;
     }
@@ -156,19 +162,18 @@ abstract class AbstractCrudTable implements Table, Requestable
         return $this->getController()->getRoute($route_action, $model, $params);
     }
 
-    public function processRepositoryOptions(): Repository
+    public function processTableOptions(): Table
     {
-        $this->setOptions($this->repo_options);
         $this->mergeOptions([
             'component' => [
-                'id' => ViewHelper::domId($this, 'repository')
+                'id' => ViewHelper::domId($this, 'table')
             ]
         ]);
 
         return $this;
     }
 
-    public function setCustomOptions($custom_options): Repository
+    public function setCustomOptions($custom_options): Table
     {
         $this->mergeOptions($custom_options);
 
@@ -212,7 +217,7 @@ abstract class AbstractCrudTable implements Table, Requestable
     }
 
     // @todo: component building options - better put this in a trait
-    protected function setRoute($route_name): Repository
+    protected function setRoute($route_name): Table
     {
         $this->mergeOptions([
             'component' => [
@@ -224,7 +229,7 @@ abstract class AbstractCrudTable implements Table, Requestable
         return $this;
     }
 
-    protected function setClass($class): Repository
+    protected function setClass($class): Table
     {
         $this->mergeOptions([
             'component' => [
@@ -235,7 +240,7 @@ abstract class AbstractCrudTable implements Table, Requestable
         return $this;
     }
 
-    protected function setTemplate($template): Repository
+    protected function setTemplate($template): Table
     {
         $this->mergeOptions([
             'component' => [

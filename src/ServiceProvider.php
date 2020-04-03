@@ -125,39 +125,104 @@ class ServiceProvider extends AbstractServiceProvider
      */
     private function bindContracts(): AbstractServiceProvider
     {
-        $this->app->singleton(
-            Services\Contracts\ViewService::class,
-            Services\ViewService::class
-        );
-        // @todo: doesn't work
+        // @todo: doesn't work for unknown reason
         $this->app->singleton(
             Illuminate\Contracts\Debug\ExceptionHandler::class,
             Exceptions\Handler::class
         );
 
         $this->app->singleton(
-            Http\Responses\Contracts\AjaxResponse::class,
-            Http\Responses\JsonAjaxResponse::class
+            Services\Contracts\ViewService::class,
+            Services\ViewService::class
         );
-
-        $this->app->bind(
-            Repositories\Contracts\Repository::class,
-            Repositories\CrudRepository::class
-        );
-
-        // @todo: use some kind of form service to build and get forms, the same for tables (and columns)
-        /*
-        $this->app->singleton(Services\Contracts\FormService::class, function ($app)
-        {
-            return new Services\FormService();
-        });
-        */
 
         $this->app->when(Services\ViewService::class)
             ->needs(IlluminateCacheRepository::class)
             ->give(function () {
                 return Cache::store('array');
             });
+
+        $this->app->singleton(
+            Http\Responses\Contracts\AjaxResponse::class,
+            Http\Responses\JsonAjaxResponse::class
+        );
+
+        return $this
+            ->bindRepositoriesContracts()
+            ->bindFormsContracts()
+            ->bindTablesContracts();
+    }
+
+    /**
+     * Bind contracts related to repositories.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindRepositoriesContracts(): AbstractServiceProvider
+    {
+        $this->app->singleton(
+            Repositories\Contracts\Repository::class,
+            Repositories\CrudRepository::class
+        );
+
+        return $this;
+    }
+
+    /**
+     * Bind contracts related to forms.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindFormsContracts(): AbstractServiceProvider
+    {
+        $this->app->singleton(
+            Forms\Services\Contracts\FormService::class,
+            Forms\Services\FormService::class
+        );
+
+        return $this;
+    }
+
+    /**
+     * Bind contracts related to tables.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindTablesContracts(): AbstractServiceProvider
+    {
+        $this->app->singleton(
+            Tables\Services\Contracts\TableService::class,
+            Tables\Services\TableService::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableBuilder::class,
+            Tables\Builders\TableBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableFilterBuilder::class,
+            Tables\Builders\TableFilterBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableColumnBuilder::class,
+            Tables\Builders\TableColumnBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableButtonBuilder::class,
+            Tables\Builders\TableButtonBuilder::class
+        );
 
         return $this;
     }
@@ -175,8 +240,6 @@ class ServiceProvider extends AbstractServiceProvider
         // rocXolid
         $loader->alias('ViewHelper', Helpers\View::class);
         $loader->alias('Package', Facades\Package::class);
-        $loader->alias('RocXolidFormRequest', Http\Requests\FormRequest::class); // @todo: necessary?
-        $loader->alias('RocXolidRepositoryRequest', Http\Requests\RepositoryRequest::class); // @todo: necessary?
         // third-party
         $loader->alias('Form', \Collective\Html\FormFacade::class);
         $loader->alias('Html', \Collective\Html\HtmlFacade::class);

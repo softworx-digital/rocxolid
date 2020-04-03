@@ -7,8 +7,9 @@ use Softworx\RocXolid\Components\Contracts\Formable as FormableComponent;
 
 interface Formable
 {
-    const FORM_PARAM = 'general';
+    const FORM_PARAM = 'default';
 
+    /*
     public function createForm($class): Form;
 
     public function setForm(Form $form, $param = self::FORM_PARAM): Formable;
@@ -24,4 +25,5 @@ interface Formable
     public function setFormComponent(FormableComponent $form_component, $param = self::FORM_PARAM): Formable;
 
     public function getFormComponent($param = self::FORM_PARAM): FormableComponent;
+    */
 }

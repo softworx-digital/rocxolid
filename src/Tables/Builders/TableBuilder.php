@@ -2,14 +2,15 @@
 
 namespace Softworx\RocXolid\Tables\Builders;
 
+// rocXolid requests
+use Softworx\RocXolid\Http\Requests\TableRequest;
 // rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\TableBuilder as TableBuilderContract;
 use Softworx\RocXolid\Tables\Contracts\Table;
+use Softworx\RocXolid\Tables\Contracts\Tableable;
+use Softworx\RocXolid\Tables\Builders\Contracts\TableBuilder as TableBuilderContract;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
-// rocXolid controller contracts
-use Softworx\RocXolid\Http\Controllers\Contracts\Tableable;
 
 /**
  * Table builder and dependencies connector.
@@ -41,7 +42,6 @@ class TableBuilder implements TableBuilderContract
      * @param \Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder $table_filter_builder
      * @param \Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder $table_column_builder
      * @param \Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder $table_button_builder
-     * @param \Illuminate\Contracts\Events\Dispatcher $event_dispatcher
      */
     public function __construct(
         TableFilterBuilder $table_filter_builder,
@@ -54,19 +54,14 @@ class TableBuilder implements TableBuilderContract
     }
 
     /**
-     * Get instance of the table which can be modified.
-     *
-     * @param \Softworx\RocXolid\Http\Controllers\Contracts\Tableable $controller
-     * @param string $type
-     * @param array $custom_options
-     * @return \Softworx\RocXolid\Tables\Contracts\Table
+     * {@inheritDoc}
      */
-    public function buildTable(Tableable $controller, string $type, array $custom_options = []): Table
+    public function buildTable(Tableable $container, string $type, array $custom_options = []): Table
     {
         $table = app($this->checkTableClass($type));
 
         $this
-            ->setTableDependencies($table, $controller)
+            ->setTableDependencies($table, $container)
             ->setTableOptions($table, $custom_options);
 
         $table
@@ -91,7 +86,7 @@ class TableBuilder implements TableBuilderContract
             throw new \InvalidArgumentException(sprintf('Table class [%s] does not exist.', $type));
         }
 
-        if (!is_a($type, $interface, true)) {
+        if (!(new \ReflectionClass($type))->implementsInterface($interface)) {
             throw new \InvalidArgumentException(sprintf('Class must be or extend [%s]; [%s] is not.', $interface, $type));
         }
 
@@ -102,7 +97,7 @@ class TableBuilder implements TableBuilderContract
      * Set depedencies on existing table instance.
      *
      * @param \Softworx\RocXolid\Tables\Contracts\Table $table
-     * @param \Softworx\RocXolid\Http\Controllers\Contracts\Tableable $controller
+     * @param \Softworx\RocXolid\Tables\Contracts\Tableable $controller
      * @return \Softworx\RocXolid\Tables\Contracts\TableBuilder
      */
     protected function setTableDependencies(Table &$table, Tableable $controller): TableBuilderContract
@@ -112,8 +107,8 @@ class TableBuilder implements TableBuilderContract
             ->setTableFilterBuilder($this->table_filter_builder)
             ->setTableColumnBuilder($this->table_column_builder)
             ->setTableButtonBuilder($this->table_button_builder)
-            ->setController($controller)
-            ->setRequest(app('RocXolidTableRequest'));
+            ->setRequest(app(TableRequest::class))
+            ->setController($controller); // @todo: container would be nicer...?
 
         return $this;
     }

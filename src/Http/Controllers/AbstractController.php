@@ -3,9 +3,11 @@
 namespace Softworx\RocXolid\Http\Controllers;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Illuminate\Routing\Controller as IlluminateController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 // rocXolid contracts
+use Softworx\RocXolid\Contracts\ServiceConsumer;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
 use Softworx\RocXolid\Contracts\TranslationParamProvider;
 // rocXolid traits
@@ -21,13 +23,34 @@ use Softworx\RocXolid\Http\Controllers\Traits\Utils;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractController extends IlluminateController implements TranslationPackageProvider, TranslationParamProvider
+abstract class AbstractController extends IlluminateController implements ServiceConsumer, TranslationPackageProvider, TranslationParamProvider
 {
     use AuthorizesRequests;
     use TranslationPackageProviderTrait;
     use TranslationParamProviderTrait;
     use Utils\CreatesRoutes;
     use Utils\Translates;
+
+    /**
+     * Default services used by controller.
+     *
+     * @var array
+     */
+    protected $default_services = [];
+
+    /**
+     * Extra services class definition to be specified in specific controller class.
+     *
+     * @var array
+     */
+    protected $extra_services = [];
+
+    /**
+     * Service accessor methods binding container.
+     *
+     * @var array
+     */
+    private $service_accessors = [];
 
     /**
      * Place to do some controller specific initialization.
@@ -37,6 +60,40 @@ abstract class AbstractController extends IlluminateController implements Transl
     protected function init(): AbstractController
     {
         return $this;
+    }
+
+    /**
+     * Bind services to controller and dynamically create methods to access them.
+     *
+     * @return \Softworx\RocXolid\Http\Controllers\AbstractController
+     */
+    protected function bindServices(): AbstractController
+    {
+        $this->getServices()->each(function($service_type) {
+            $service = app($service_type);
+
+            $method = lcfirst((new \ReflectionClass($service))->getShortName());
+
+            if (property_exists($this, $method) || isset($this->service_accessors[$method])) {
+                throw new \RuntimeException(sprintf('Controller [%s] already has property or service accessor [%s] assigned', get_class($this), $method));
+            }
+
+            $this->service_accessors[$method] = function() use ($service) {
+                return $service->setConsumer($this);
+            };
+        });
+
+        return $this;
+    }
+
+    /**
+     * Retrieve services to be bound.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getServices(): Collection
+    {
+        return collect($this->default_services)->merge($this->extra_services);
     }
 
     /**
@@ -73,5 +130,17 @@ abstract class AbstractController extends IlluminateController implements Transl
         $param = last(explode('\\', (new \ReflectionClass($this))->getNamespaceName()));
 
         return Str::kebab($param);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __call($method, $args)
+    {
+        if (isset($this->service_accessors[$method]) && is_callable($this->service_accessors[$method])) {
+            return call_user_func_array($this->service_accessors[$method], $args);
+        }
+
+        return parent::__call($method, $args);
     }
 }

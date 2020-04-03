@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Components\Contracts;
 
-use Softworx\RocXolid\Repositories\Contracts\Filter;
+use Softworx\RocXolid\Tables\Contracts\Filter;
 
 interface TableFilterable
 {

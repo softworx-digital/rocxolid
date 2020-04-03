@@ -13,16 +13,16 @@ trait RepositoryOrderable
     {
         $repository = $this->getRepository($this->getRepositoryParam($request, $param));
         $repository->setOrderBy($order_by_column, $order_by_direction);
-        $repository_component = $this->getRepositoryComponent($repository);
+        $table_component = $this->getTableComponent($repository);
 
         if ($request->ajax()) {
             return $this->response
-                ->replace($repository_component->getDomId('results'), $repository_component->fetch('include.results'))
+                ->replace($table_component->getDomId('results'), $table_component->fetch('include.results'))
                 ->get();
         } else {
             return $this
                 ->getDashboard()
-                ->setRepositoryComponent($repository_component)
+                ->setTableComponent($table_component)
                 ->render('index');
         }
     }

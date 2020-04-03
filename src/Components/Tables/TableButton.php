@@ -4,11 +4,11 @@ namespace Softworx\RocXolid\Components\Tables;
 
 use Softworx\RocXolid\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
-use Softworx\RocXolid\Repositories\Contracts\Column as TableButtonContract;
+use Softworx\RocXolid\Tables\Contracts\Button as TableButtonContract;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Components\General\Button;
 
-// @todo - zatial sa dava buttonanchor implementujuci Column (tuto aliasnuty ako TableButtonContract) - toto doladit / rozdelit
+// @todo: docblocks
 class TableButton extends Button implements ComponentTableButtonable
 {
     protected $button;
@@ -35,7 +35,7 @@ class TableButton extends Button implements ComponentTableButtonable
     {
         $table = $elements[0];
         $model = $elements[1];
-        $controller = $table->getRepository()->getController();
+        $controller = $table->getTable()->getController();
 
         if ($this->hasOption('action')) {
             if ($this->getOption('ajax', false)) {

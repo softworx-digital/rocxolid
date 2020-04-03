@@ -23,7 +23,7 @@ trait Scopeable
      *
      * @var array
      */
-    protected $with_scopes = [
+    private $with_scopes = [
         OwnedScope::class,
     ];
 
@@ -32,7 +32,7 @@ trait Scopeable
      *
      * @var array
      */
-    protected $without_scopes = [];
+    private $without_scopes = [];
 
     /**
      * {@inheritDoc}
@@ -62,7 +62,7 @@ trait Scopeable
      */
     protected function applyScopes(EloquentBuilder &$query): Repository
     {
-        collect($this->with_scopes)->each(function ($scope) {
+        collect($this->with_scopes)->each(function ($scope) use (&$query) {
             $query = $query->withGlobalScope($scope, app($scope));
         });
 

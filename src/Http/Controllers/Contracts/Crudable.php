@@ -11,7 +11,10 @@ use Softworx\RocXolid\Contracts\Repositoryable;
 use Softworx\RocXolid\Contracts\Modellable;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
-use Softworx\RocXolid\Http\Controllers\Contracts\Tableable;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Tableable;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\Formable;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
@@ -24,7 +27,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Crudable extends Responseable, Repositoryable, Modellable, Dashboardable, Tableable
+interface Crudable extends Responseable, Repositoryable, Modellable, Dashboardable, Tableable, Formable
 {
     public function index(CrudRequest $request);//: View;
 
