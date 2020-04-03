@@ -26,12 +26,20 @@ class Method extends AbstractColumn
 
     protected function setMethod($method): Column
     {
-        if (!method_exists($this->getRepository()->getModel(), $method)) {
-            throw new \InvalidArgumentException(sprintf('Class [%s] does not have method [%s]', get_class($this->getRepository()->getModel()), $method));
+        if (!method_exists($this->getTable()->getController()->getModelType(), $method)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Class [%s] does not have method [%s]',
+                get_class($this->getTable()->getController()->getModelType()),
+                $method
+            ));
         }
 
-        if (!(new \ReflectionMethod($this->getRepository()->getModel(), $method))->isPublic()) {
-            throw new \InvalidArgumentException(sprintf('Method [%s::%s] is not public', get_class($this->getRepository()->getModel()), $method));
+        if (!(new \ReflectionMethod($this->getTable()->getController()->getModelType(), $method))->isPublic()) {
+            throw new \InvalidArgumentException(sprintf(
+                'Method [%s::%s] is not public',
+                get_class($this->getTable()->getController()->getModelType()),
+                $method
+            ));
         }
 
         return $this->setComponentOptions('method', $method);
