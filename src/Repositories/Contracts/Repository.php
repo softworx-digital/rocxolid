@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Softworx\RocXolid\Repositories\Contracts\Scopeable;
 use Softworx\RocXolid\Repositories\Contracts\Orderable;
 use Softworx\RocXolid\Repositories\Contracts\Filterable;
+use Softworx\RocXolid\Repositories\Contracts\Paginationable;
 
 /**
  * Repository is responsible for retrieving model data upon ordering and filters.
@@ -18,7 +19,7 @@ use Softworx\RocXolid\Repositories\Contracts\Filterable;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Repository extends Scopeable, Orderable, Filterable
+interface Repository extends Scopeable, Orderable, Filterable, Paginationable
 {
     /**
      * Initialize the repository by providing model type to work with.
@@ -27,6 +28,13 @@ interface Repository extends Scopeable, Orderable, Filterable
      * @return \Softworx\RocXolid\Repositories\Contracts\Repository
      */
     public function init(string $model_type): Repository;
+
+    /**
+     * Retrieve the model assigned to the repository.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): Model;
 
     /**
      * Retrieve data set based on scopes, order, filter and paging.

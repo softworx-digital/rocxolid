@@ -11,6 +11,7 @@ use Softworx\RocXolid\Tables\Contracts\Columnable;
 use Softworx\RocXolid\Tables\Contracts\Buttonable;
 use Softworx\RocXolid\Tables\Contracts\Orderable;
 use Softworx\RocXolid\Tables\Contracts\Filterable;
+use Softworx\RocXolid\Tables\Contracts\Paginationable;
 // rocXolid table builder contracts
 use Softworx\RocXolid\Tables\Builders\Contracts\TableBuilder;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder;
@@ -24,7 +25,7 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Table extends Controllable, Paramable, Optionable, Columnable, Buttonable, Orderable, Filterable
+interface Table extends Controllable, Paramable, Optionable, Columnable, Buttonable, Orderable, Filterable, Paginationable
 {
     /**
      * Set the table builder.

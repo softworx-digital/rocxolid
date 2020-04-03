@@ -5,78 +5,52 @@ namespace Softworx\RocXolid\Tables\Traits;
 use Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-// @todo: refactor together with repo
 trait Paginationable
 {
     // @todo: configurable
     //private $_page_limit = 20;
-    private $_page_limit = 30;
+    private $page_limit = 30;
 
-    private $_current_page = 1;
-
-    private $_paginator = null;
-
-    // @todo: model has perPage property
-    public function getPageLimit()
+    public function getPerPage()
     {
-        return $this->_page_limit;
+        return $this->page_limit;
     }
 
     public function getCurrentPage()
     {
-        return $this->_current_page;
-    }
+        $param = $this->getPaginatorSessionParam();
 
-    public function getPaginator()
-    {
-        if (is_null($this->_paginator)) {
-            $this->paginate($this->getPageLimit());
+        if ($this->getRequest()->has(static::PAGE_REQUEST_PARAM)) {
+            $this->getRequest()->session()->put($param, $this->getRequest()->get(static::PAGE_REQUEST_PARAM));
         }
 
-        return $this->adjustPaginator($this->_paginator);
+        return $this->getRequest()->session()->get($param, 1);
     }
 
     /**
-     * @param int $perPage
+     * Retrieve results page.
+     *
+     * @param int $page
+     * @param int $per_page
      * @param array $columns
-     * @return LengthAwarePaginator
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
     public function paginate($per_page = 1, array $columns = ['*']): LengthAwarePaginator
     {
-        $this
-            ->getQuery();
-        $this
-            ->applyScopes()
-            ->applyOrder()
-            ->applyFilters()
-            ->applyIntenalFilters();
-
-        $param = md5(get_class($this)) . '_page';
-
-        $session = Request::session();
-
-        if (Request::has('page')) {
-            $session->put($param, Request::input('page'));
-
-            $page = Request::input('page');
-        } elseif ($session->has($param)) {
-            $page = $session->get($param);
-        } else {
-            $page = 1;
-        }
-
-        $this->_paginator = $this->query->paginate($per_page, $columns, 'page', $page)->withPath($this->getPaginatorPath());
-
-        return $this->_paginator;
+        return $this
+            ->getController()
+                ->getRepository()
+                    ->paginate($this->getCurrentPage(), $per_page, $columns)
+                    ->withPath($this->getPaginatorPath());
     }
 
-    public function getPaginatorPath()
+    protected function getPaginatorPath()
     {
-        return $this->getController()->getRoute('index');
+        return $this->getRoute('index');
     }
 
-    public function adjustPaginator(LengthAwarePaginator $paginator)
+    protected function getPaginatorSessionParam()
     {
-        return $paginator;
+        return sprintf('%s-%s-page', md5(get_class($this)), $this->getParam());
     }
 }

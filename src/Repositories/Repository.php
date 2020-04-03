@@ -46,6 +46,14 @@ class Repository implements RepositoryContract
     /**
      * {@inheritDoc}
      */
+    public function getModel(): Model
+    {
+        return $this->query_model;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function all(array $columns = ['*']): Collection
     {
         return $this
@@ -115,7 +123,7 @@ class Repository implements RepositoryContract
      */
     protected function getCollectionQuery(): Builder
     {
-        $query = $this->initQuery();
+        $query = $this->getQuery();
 
         $this
             ->applyOrder($query)
