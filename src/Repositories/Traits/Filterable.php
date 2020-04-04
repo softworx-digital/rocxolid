@@ -58,7 +58,6 @@ trait Filterable
 
         // applying new filter
         if ($this->getRequest()->has(Filter::DATA_PARAM)) {
-
             $this->getRequest()->session()->forget(md5(get_class($this)) . '_page'); // reset paging
             $this->getRequest()->session()->put($this->getSessionParam('filter'), $this->getRequest()->input(Filter::DATA_PARAM));
         }

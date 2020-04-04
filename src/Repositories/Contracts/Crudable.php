@@ -31,7 +31,6 @@ interface Crudable extends Repository
      */
     public function readModel($key): CrudableModel;
 
-
     // @todo: update - still needs a bit of refactoring
 
     /**
