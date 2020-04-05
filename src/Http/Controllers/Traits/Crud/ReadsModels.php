@@ -24,10 +24,8 @@ trait ReadsModels
      */
     public function show(CrudRequest $request, Crudable $model)//: View
     {
-        $this->setModel($model);
-
         $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel())
+            ->getModelViewerComponent($model)
             ->adjustShow($request, $this);
 
         if ($request->ajax()) {

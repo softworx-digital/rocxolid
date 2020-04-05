@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Forms\Support;
+namespace Softworx\RocXolid\Forms\Builders;
 
 use Illuminate\Support\Str;
 // doctrine
@@ -46,7 +46,7 @@ use Softworx\RocXolid\Contracts\EventDispatchable;
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Contracts\FormFieldable;
-use Softworx\RocXolid\Forms\Contracts\FormFieldFactory as FormFieldFactoryContract;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory as FormFieldFactoryContract;
 
 /**
  *

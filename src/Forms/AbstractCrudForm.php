@@ -12,14 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
-use Softworx\RocXolid\Contracts\Repositoryable;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Controllable as ControllableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
-use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
 // rocXolid field types
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
@@ -31,11 +29,11 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
  * @todo: subject to refactoring
  * @todo: add automated support for relation fields (relation, model_attribute, model_type, model_id)
  */
-abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable, Repositoryable
+abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable
 {
     use ControllableTrait;
     use ModellableTrait;
-    use RepositoryableTrait;
+
     // @todo: cannot be used as intended because of trait overrideability limitations, find some other approach
     /*
     use Traits\Crud\DefaultOptions;
@@ -51,8 +49,6 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         //'route-action' => '<action>',
         'class' => 'form-horizontal form-label-left',
     ];
-
-    protected $repository = null;
 
     protected $fieldgroups = false;
 
@@ -176,30 +172,12 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         });
     }
 
-    // @todo: really FormableContract?
-    public function setHolderProperties(FormableContract $repository): Form
-    {
-        $this->repository = $repository;
-
-        $this
-            ->setController($this->repository->getController());
-
-        if ($this->repository->getController()->hasModel()) {
-            $this
-                ->setModel($this->repository->getController()->getModel());
-        } else {
-            throw new \RuntimeException(sprintf('No model set to [%s]', get_class($this->repository->getController())));
-        }
-
-        return $this;
-    }
-
     public function makeRouteAction($route_action): string
     {
         if ($this->getModel()->exists) {
-            return $this->repository->getController()->getRoute($route_action, $this->getModel());
+            return $this->getController()->getRoute($route_action, $this->getModel());
         } else {
-            return $this->repository->getController()->getRoute($route_action);
+            return $this->getController()->getRoute($route_action);
         }
     }
 

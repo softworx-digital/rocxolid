@@ -11,18 +11,9 @@ use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 // rocXolid repository contracts
 use Softworx\RocXolid\Repositories\Contracts\Repository;
-// rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\Table;
-// rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// rocXolid component contracts
-use Softworx\RocXolid\Components\Contracts\Tableable as TableableComponent;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Repositoryable;
 use Softworx\RocXolid\Traits\Modellable;
-// rocXolid components
-use Softworx\RocXolid\Components\Tables\CrudTable as CrudTableComponent;
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
 
 /**
  * Base rocXolid controller for CRUD (and associated) operations.
@@ -39,8 +30,12 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Crudable;
     use Traits\Dashboardable;
     use Traits\Tableable;
+    use Traits\Formable;
+    use Traits\Components\TableComponentable;
+    use Traits\Components\FormComponentable;
+    use Traits\Components\ModelViewerComponentable;
     // use Traits\RepositoryAutocompleteable; // @todo: consider different approach
-    use Traits\ItemsReorderderable; // @todo: add only where needed
+    use Traits\Actions\ItemsReorderderable; // @todo: add only where needed
     use Traits\Actions\SwitchesEnability;
     use Traits\Actions\ClonesModels;
     use Traits\Actions\Table\OrdersTable;
@@ -103,30 +98,5 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             ->setRepository($repository->init(static::getModelType()))
             ->bindServices()
             ->init();
-    }
-
-    /**
-     * Retrieve model data table component to show.
-     *
-     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
-     * @return \Softworx\RocXolid\Components\Contracts\Tableable
-     */
-    public function getTableComponent(Table $table): TableableComponent
-    {
-        return CrudTableComponent::build($this, $this)
-            ->setTable($table);
-    }
-
-    /**
-     * Retrieve model viewer component to show.
-     *
-     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
-     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
-     */
-    public function getModelViewerComponent(CrudableModel $model): CrudModelViewerComponent
-    {
-        return CrudModelViewerComponent::build($this, $this)
-            ->setModel($model)
-            ->setController($this);
     }
 }

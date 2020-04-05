@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Forms\Support;
+namespace Softworx\RocXolid\Forms\Builders;
 
 // contracts
 use Softworx\RocXolid\Contracts\EventDispatchable;
@@ -8,7 +8,7 @@ use Softworx\RocXolid\Contracts\EventDispatchable;
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Contracts\FormFieldable;
-use Softworx\RocXolid\Forms\Contracts\FormFieldBuilder as FormFieldBuilderContract;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder as FormFieldBuilderContract;
 // button & field groups
 use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
 use Softworx\RocXolid\Forms\Fields\Type\ButtonToolbar;
@@ -25,7 +25,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         'options',
     ];
 
-    public function addDefinitionFields(Form $form, $definition, $form_fields_order_definition): FormFieldBuilderContract
+    public function addDefinitionFields(Form $form, array $definition, ?array $form_fields_order_definition): FormFieldBuilderContract
     {
         $form_field_groups = [];
         $form_fields = [];
@@ -42,7 +42,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    public function addDefinitionButtons(Form $form, $definition, $form_buttons_order_definition): FormFieldBuilderContract
+    public function addDefinitionButtons(Form $form, array $definition, ?array $form_buttons_order_definition): FormFieldBuilderContract
     {
         $button_toolbars = [];
         $button_groups = [];
@@ -60,7 +60,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processDefinition(Form $form, FormFieldable $parent, $definition, &$items, $name_prefix = null): FormFieldBuilderContract
+    protected function processDefinition(Form $form, FormFieldable $parent, array $definition, array &$items, string $name_prefix = null): FormFieldBuilderContract
     {
         foreach ($definition as $name => $settings) {
             $type = null;
@@ -82,7 +82,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function validateFormFieldsDefinition($definition): FormFieldBuilderContract
+    protected function validateFormFieldsDefinition(array $definition): FormFieldBuilderContract
     {
         if (!isset($definition['form_field_groups'])) {
             throw new \InvalidArgumentException(sprintf('Form field groups not defined in definition [%s]', print_r($definition, true)));
@@ -102,7 +102,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processFormFieldsDefinition(Form $form, FormFieldable $parent, $definition, &$form_field_groups, &$form_fields, $name_prefix = null): FormFieldBuilderContract
+    protected function processFormFieldsDefinition(Form $form, FormFieldable $parent, array $definition, array &$form_field_groups, array &$form_fields, string $name_prefix = null): FormFieldBuilderContract
     {
         if ($definition['form_field_groups'] === true) {
             $definition['form_field_groups'] = [
@@ -121,7 +121,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function validateButtonsDefinition($definition): FormFieldBuilderContract
+    protected function validateButtonsDefinition(array $definition): FormFieldBuilderContract
     {
         if (!isset($definition['button_toolbars'])) {
             throw new \InvalidArgumentException(sprintf('Button toolbars not defined in definition [%s]', print_r($definition, true)));
@@ -144,7 +144,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processButtonsDefinition(Form $form, FormFieldable $parent, $definition, &$button_toolbars, &$button_groups, &$buttons, $name_prefix = null): FormFieldBuilderContract
+    protected function processButtonsDefinition(Form $form, FormFieldable $parent, array $definition, array &$button_toolbars, array &$button_groups, array &$buttons, string $name_prefix = null): FormFieldBuilderContract
     {
         if ($definition['button_toolbars'] === true) {
             $definition['button_toolbars'] = [
@@ -175,7 +175,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processFieldSettings($name, $name_prefix, &$settings, &$type, &$options): FormFieldBuilderContract
+    protected function processFieldSettings(string $name, ?string $name_prefix, array &$settings, ?string &$type, ?array &$options): FormFieldBuilderContract
     {
         foreach (self::$required_field_settings as $required) {
             if (!isset($settings[$required])) {
@@ -188,7 +188,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processFieldName(&$name, $name_prefix): FormFieldBuilderContract
+    protected function processFieldName(string &$name, ?string $name_prefix): FormFieldBuilderContract
     {
         $name = is_null($name_prefix) ? $name : sprintf('%s-%s', $name_prefix, $name);
 
@@ -199,7 +199,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processFieldType(&$type): FormFieldBuilderContract
+    protected function processFieldType(string &$type): FormFieldBuilderContract
     {
         if (!class_exists($type)) {
             throw new \InvalidArgumentException(sprintf('Invalid field type [%s] given', $type));
@@ -208,7 +208,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    protected function processFieldOptions(Form $form, $name, $type, &$options): FormFieldBuilderContract
+    protected function processFieldOptions(Form $form, string $name, string $type, array &$options): FormFieldBuilderContract
     {
         /*
         foreach ($options as $option => $value)

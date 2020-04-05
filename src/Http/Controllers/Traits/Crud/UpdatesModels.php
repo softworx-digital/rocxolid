@@ -31,22 +31,10 @@ trait UpdatesModels
      */
     public function edit(CrudRequest $request, Crudable $model)//: View
     {
-        $this->setModel($model);
-
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            ->adjustUpdate($request);
-
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
-        $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel())
-            ->setFormComponent($form_component)
-            ->adjustUpdate($request, $this);
+        $model_viewer_component = $this->getModelViewerComponent(
+            $this->getRepository()->getModel(),
+            $this->getFormComponent($this->getForm($request))
+        );
 
         if ($request->ajax()) {
             return $this->response
@@ -71,20 +59,14 @@ trait UpdatesModels
      */
     public function update(CrudRequest $request, Crudable $model)//: Response
     {
-        $this->setModel($model);
-
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            //->adjustUpdate($request)
-            ->adjustUpdateBeforeSubmit($request)
+        $form = $this
+            ->getForm($request)
             ->submit();
 
         if ($form->isValid()) {
-            return $this->onUpdate($request, $repository, $form);
+            return $this->onUpdate($request, $model, $form);
         } else {
-            return $this->onUpdateError($request, $repository, $form);
+            return $this->onUpdateError($request, $model, $form);
         }
     }
 
@@ -92,38 +74,37 @@ trait UpdatesModels
      * Action to take when the 'update' form was validated.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onUpdate(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onUpdate(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
-        $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'update');
+        $model = $this->getRepository()->updateModel($model, $form->getFormFieldsValues()->toArray(), 'update');
 
-        return $this->onModelUpdated($request, $repository, $form, $model);
+        return $this->onModelUpdated($request, $model, $form);
     }
 
     /**
      * Action to take after the model has been updated and saved.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
-     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onModelUpdated(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form, Crudable $model)//: Response
+    protected function onModelUpdated(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
-        return $this->successResponse($request, $repository, $form, $model, 'update');
+        return $this->successResponse($request, $model, $form, 'update');
     }
 
     /**
      * Action to take when the 'update' form was submitted with invalid data.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onUpdateError(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onUpdateError(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
-        return $this->errorResponse($request, $repository, $form, 'update');
+        return $this->errorResponse($request, $model, $form, 'update');
     }
 }

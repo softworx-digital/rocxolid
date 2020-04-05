@@ -2,55 +2,39 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-use App;
-use Softworx\RocXolid\Components\Contracts\Formable as FormableComponent;
-use Softworx\RocXolid\Forms\Contracts\Form;
+use Illuminate\Support\Collection;
+// rocXolid utils
+use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
-use Softworx\RocXolid\Forms\Support\FormBuilder;
+use Softworx\RocXolid\Forms\Contracts\Form;
+// rocXolid controller traits
+use Softworx\RocXolid\Http\Controllers\Traits\ElementMappable;
 
-// @todo - asi do FormService pichnut
-// @todo - check usage and reason
+/**
+ * Trait to connect the controller with a data form.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait Formable
 {
-    protected $forms;
+    use ElementMappable;
 
-    protected $form_components = [];
+    /**
+     * Forms container.
+     *
+     * @var array
+     */
+    protected $forms = [];
 
-    //protected $form_bulider; // is preferenced if set
-
-    public function createForm($class, $param = FormableContract::FORM_PARAM): Form
+    /**
+     * {@inheritDoc}
+     */
+    public function setForm(Form $form, string $param = FormableContract::FORM_PARAM): FormableContract
     {
-        $form = $this->getFormBuilder()->makeForm($class, $this, [], [], false);
-        $form
-            ->setParam($param)
-            ->buildFields();
-
-        return $form;
-    }
-
-    public function getForm($param = FormableContract::FORM_PARAM): Form
-    {
-        if (!$this->hasFormAssigned($param)) {
-            $class = $this->getFormClass($param);
-
-            if (!class_exists($class)) {
-                throw new \InvalidArgumentException(sprintf('Form class [%s] does not exist.', $class));
-            }
-
-            $this->setForm($this->createForm($class, $param), $param);
-        }
-
-        return $this->forms[$param];
-    }
-
-    public function getForms(): array
-    {
-        return $this->forms;
-    }
-
-    public function setForm(Form $form, $param = FormableContract::FORM_PARAM): FormableContract
-    {
-        if (isset($this->forms[$param])) {
+        if ($this->hasFormAssigned($param)) {
             throw new \InvalidArgumentException(sprintf('Form with given parameter [%s] is already set to [%s]', $param, get_class($this)));
         }
 
@@ -59,75 +43,43 @@ trait Formable
         return $this;
     }
 
-    public function getFormComponent($param = FormableContract::FORM_PARAM): FormableComponent
+    /**
+     * {@inheritDoc}
+     */
+    public function getForms(): Collection
     {
-        if (!isset($this->form_components[$param])) {
-            $form = $this->getForm($param);
+        return collect($this->forms);
+    }
 
-            $this->form_components[$param] = (new FormComponent())
-                ->setForm($this->getForm($param));
+    /**
+     * {@inheritDoc}
+     */
+    public function getForm(CrudRequest $request): Form
+    {
+        $param = $this->getMappingParam($request, 'form', FormableContract::FORM_PARAM);
+
+        if (!$this->hasFormAssigned($param)) {
+            $model = $this->getRepository()->getModel();
+
+            $this->setForm($this->formService()->createForm($model, $param), $param);
         }
 
-        return $this->form_components[$param];
+        return $this->forms[$param];
     }
 
-    public function setFormComponent(FormableComponent $form_component, $param = FormableContract::FORM_PARAM): FormableContract
-    {
-        $this->form_components[$param] = $form_component;
-
-        return $this;
-    }
-
-    public function hasFormAssigned($param = FormableContract::FORM_PARAM): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function hasFormAssigned(string $param = FormableContract::FORM_PARAM): bool
     {
         return isset($this->forms[$param]);
     }
 
-    public function hasFormClass($param = FormableContract::FORM_PARAM): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function getFormMappingType(string $param): string
     {
-        return class_exists($this->getFormClass($param));
-    }
-
-    public function getFormClass($param = FormableContract::FORM_PARAM): string
-    {
-        if (isset(static::$form_class) && isset(static::$form_class[$param])) {
-            return static::$form_class[$param];
-        } else {
-            // @todo: Str case helper
-            $form_class = str_replace('-', '', ucwords($param, '-')); // dash-separated to DashSeparated
-            $reflection = new \ReflectionClass($this->getFormElementClass());
-
-            $class = sprintf('%s\Forms\%s\%s', $reflection->getNamespaceName(), $reflection->getShortName(), $form_class);
-
-            return $class;
-        }
-    }
-
-    protected function getFormBuilder(): FormBuilder
-    {
-        if (!property_exists($this, 'form_builder') || is_null($this->form_builder)) {
-            $with = [];
-
-            foreach (['form_field_builder', 'form_field_factory', 'event_dispatcher'] as $component) {
-                if (property_exists($this, $component)) {
-                    $with[$component] = is_string($this->$component) ? App::make($this->$component) : $this->$component;
-                }
-            }
-
-            $form_builder = App::make(FormBuilder::class, $with);
-
-            if (property_exists($this, 'form_builder')) {
-                $this->form_builder = $form_builder;
-            }
-        } elseif (property_exists($this, 'form_builder')) {
-            $form_builder = $this->form_builder;
-        }
-
-        return $form_builder;
-    }
-
-    protected function getFormElementClass()
-    {
-        return $this;
+        return $this->getMappingType('form', $param);
     }
 }

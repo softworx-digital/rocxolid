@@ -2,28 +2,64 @@
 
 namespace Softworx\RocXolid\Forms\Contracts;
 
+use Illuminate\Support\Collection;
+// rocXolid utils
+use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
-use Softworx\RocXolid\Components\Contracts\Formable as FormableComponent;
 
+/**
+ * Interface to connect the data form with a container.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 interface Formable
 {
+    /**
+     * Default param for form mappings.
+     */
     const FORM_PARAM = 'default';
 
-    /*
-    public function createForm($class): Form;
+    /**
+     * Set the form reference to data form pool.
+     *
+     * @param \Softworx\RocXolid\Forms\Contracts\Form $form
+     * @param string $param
+     * @return \Softworx\RocXolid\Forms\Contracts\Formable
+     */
+    public function setForm(Form $form, string $param = self::FORM_PARAM): Formable;
 
-    public function setForm(Form $form, $param = self::FORM_PARAM): Formable;
+    /**
+     * Get all assigned forms
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getForms(): Collection;
 
-    public function getForms(): array;
+    /**
+     * Retrieve data form instance upon request.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @return \Softworx\RocXolid\Forms\Contracts\Form
+     * @throws \InvalidArgumentException
+     */
+    public function getForm(CrudRequest $request): Form;
 
-    public function getForm($param = self::FORM_PARAM): Form;
+    /**
+     * Check if the param is already bound.
+     *
+     * @param string $param
+     * @return boolean
+     */
+    public function hasFormAssigned(string $param = self::FORM_PARAM): bool;
 
-    public function hasFormAssigned($param = self::FORM_PARAM): bool;
-
-    public function hasFormClass($param = self::FORM_PARAM): bool;
-
-    public function setFormComponent(FormableComponent $form_component, $param = self::FORM_PARAM): Formable;
-
-    public function getFormComponent($param = self::FORM_PARAM): FormableComponent;
-    */
+    /**
+     * Get data form class name mapped to a parameter.
+     *
+     * @param string $param
+     * @return string
+     */
+    public function getFormMappingType(string $param): string;
 }

@@ -27,11 +27,7 @@ trait DestroysModels
      */
     public function destroyConfirm(CrudRequest $request, Crudable $model)//: View
     {
-        $this->setModel($model);
-
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $model_viewer_component = $this->getModelViewerComponent($this->getModel());
+        $model_viewer_component = $this->getModelViewerComponent($model);
 
         if ($request->ajax()) {
             return $this->response
@@ -56,35 +52,29 @@ trait DestroysModels
      */
     public function destroy(CrudRequest $request, Crudable $model)//: Response - returns JSON for ajax calls
     {
-        $this->setModel($model);
-
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        return $this->onDestroy($request, $repository);
+        return $this->onDestroy($request, $model);
     }
 
     /**
      * Action to take when the 'destroy' form was submitted.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
-     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    protected function onDestroy(CrudRequest $request, AbstractCrudRepository $repository)//: Response
+    protected function onDestroy(CrudRequest $request, Crudable $model)//: Response
     {
-        $model = $repository->deleteModel($this->getModel());
+        $model = $this->getRepository()->deleteModel($model);
 
-        return $this->onModelDestroyed($request, $repository, $model);
+        return $this->onModelDestroyed($request, $model);
     }
 
     /**
      * Action to take after the model is destroyed.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    protected function onModelDestroyed(CrudRequest $request, AbstractCrudRepository $repository, Crudable $model)//: Response
+    protected function onModelDestroyed(CrudRequest $request, Crudable $model)//: Response
     {
         return $this->destroyResponse($request, $model);
     }

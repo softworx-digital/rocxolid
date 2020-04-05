@@ -186,6 +186,21 @@ class ServiceProvider extends AbstractServiceProvider
             Forms\Services\FormService::class
         );
 
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormBuilder::class,
+            Forms\Builders\FormBuilder::class
+        );
+
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormFieldBuilder::class,
+            Forms\Builders\FormFieldBuilder::class
+        );
+
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormFieldFactory::class,
+            Forms\Builders\FormFieldFactory::class
+        );
+
         return $this;
     }
 

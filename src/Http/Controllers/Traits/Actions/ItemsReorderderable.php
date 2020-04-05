@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;

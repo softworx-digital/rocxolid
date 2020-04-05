@@ -23,9 +23,9 @@ use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Contracts\FormFieldable;
 use Softworx\RocXolid\Forms\Contracts\Buttonable;
-use Softworx\RocXolid\Forms\Contracts\FormBuilder;
-use Softworx\RocXolid\Forms\Contracts\FormFieldBuilder;
-use Softworx\RocXolid\Forms\Contracts\FormFieldFactory;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
 // traits
 use Softworx\RocXolid\Forms\Traits\OptionsSetter as OptionsSetterTrait;
 use Softworx\RocXolid\Forms\Traits\FormFieldable as FormFieldableTrait;
@@ -147,6 +147,16 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
      */
     protected $buttons_order = null;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Softworx\RocXolid\Forms\Contracts\Form
+     */
+    public function init(): Form
+    {
+        return $this;
+    }
+
     public function buildFields($validate = true): Form
     {
         $this
@@ -209,21 +219,6 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
 
         return $this;
     }
-
-    /*
-     * Method to pass holder and/or holder properties in concrete classes.
-     *
-     * Sample implementation (for some Controller):
-     *
-     * $this
-     *    ->setController($holder)
-     *    ->setModel($model);
-     *
-     *  return $this;
-     *
-     * @return Form
-     */
-    abstract public function setHolderProperties(Formable $holder): Form;
 
     /**
      * Set the form builder instance.

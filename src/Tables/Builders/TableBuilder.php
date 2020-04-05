@@ -65,7 +65,7 @@ class TableBuilder implements TableBuilderContract
      */
     public function buildTable(Tableable $container, string $type, string $param, array $custom_options = []): Table
     {
-        $table = app($this->checkTableClass($type), [
+        $table = app($this->validateTableType($type), [
             'param' => $param,
         ]);
 
@@ -90,7 +90,7 @@ class TableBuilder implements TableBuilderContract
      * @param string $interface
      * @return string
      */
-    protected function checkTableClass(string $type, string $interface = Table::class): string
+    protected function validateTableType(string $type, string $interface = Table::class): string
     {
         if (!class_exists($type)) {
             throw new \InvalidArgumentException(sprintf('Table class [%s] does not exist.', $type));

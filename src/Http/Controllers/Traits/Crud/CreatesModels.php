@@ -30,22 +30,10 @@ trait CreatesModels
      */
     public function create(CrudRequest $request)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        $this->setModel($repository->getModel());
-
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            ->adjustCreate($request);
-
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
-        $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel())
-            ->setFormComponent($form_component)
-            ->adjustCreate($request, $this);
+        $model_viewer_component = $this->getModelViewerComponent(
+            $this->getRepository()->getModel(),
+            $this->getFormComponent($this->getForm($request))
+        );
 
         if ($request->ajax()) {
             return $this->response
@@ -69,21 +57,14 @@ trait CreatesModels
      */
     public function store(CrudRequest $request)//: Response
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        // @todo: ugly having it this way
-        $this->setModel($repository->getModel());
-
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            //->adjustCreate($request)
-            ->adjustCreateBeforeSubmit($request)
+        $form = $this
+            ->getForm($request)
             ->submit();
 
         if ($form->isValid()) {
-            return $this->onStore($request, $repository, $form);
+            return $this->onStore($request, $form);
         } else {
-            return $this->onStoreError($request, $repository, $form);
+            return $this->onStoreError($request, $form);
         }
     }
 
@@ -91,38 +72,35 @@ trait CreatesModels
      * Action to take when the 'create' form was validated.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStore(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onStore(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'create');
+        $model = $this->getRepository()->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'create');
 
-        return $this->onModelStored($request, $repository, $form, $model);
+        return $this->onModelStored($request, $form, $model);
     }
 
     /**
      * Action to take after the model has been created and saved.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    protected function onModelStored(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form, Crudable $model)//: Response
+    protected function onModelStored(CrudRequest $request, AbstractCrudForm $form, Crudable $model)//: Response
     {
-        return $this->successResponse($request, $repository, $form, $model, 'create');
+        return $this->successResponse($request, $form, $model, 'create');
     }
 
     /**
      * Action to take when the 'create' form was submitted with invalid data.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStoreError(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onStoreError(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        return $this->errorResponse($request, $repository, $form, 'create');
+        return $this->errorResponse($request, $form, 'create');
     }
 }
