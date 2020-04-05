@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Columns;
 
 // rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 // rocXolid table elements
 use Softworx\RocXolid\Tables\AbstractTableElement;
 // rocXolid table column traits

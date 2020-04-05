@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Tables\Traits;
 
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Tables\Contracts\Columnable as ColumnableContract;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 
 /**
  * Enables to assign columns.

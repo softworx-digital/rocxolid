@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 
 /**
  * Builds data table row buttons.
@@ -31,7 +31,7 @@ interface TableButtonBuilder
      * @param string $type
      * @param string $name
      * @param array $options
-     * @return \Softworx\RocXolid\Tables\Contracts\Button
+     * @return \Softworx\RocXolid\Tables\Buttons\Contracts\Button
      */
     public function makeButton(Table $table, string $type, string $name, array $options = []): Button;
 }

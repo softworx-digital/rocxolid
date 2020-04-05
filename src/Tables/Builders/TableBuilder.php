@@ -7,6 +7,7 @@ use Softworx\RocXolid\Http\Requests\TableRequest;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
 use Softworx\RocXolid\Tables\Contracts\Tableable;
+// rocXolid table builder contracts
 use Softworx\RocXolid\Tables\Builders\Contracts\TableBuilder as TableBuilderContract;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder;
@@ -22,16 +23,22 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
 class TableBuilder implements TableBuilderContract
 {
     /**
+     * Reference to table filter builder.
+     *
      * @var \Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder
      */
     protected $table_filter_builder;
 
     /**
+     * Reference to table columns builder.
+     *
      * @var \Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder
      */
     protected $table_column_builder;
 
     /**
+     * Reference to table rows buttons builder.
+     *
      * @var \Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder
      */
     protected $table_button_builder;
@@ -56,14 +63,17 @@ class TableBuilder implements TableBuilderContract
     /**
      * {@inheritDoc}
      */
-    public function buildTable(Tableable $container, string $type, array $custom_options = []): Table
+    public function buildTable(Tableable $container, string $type, string $param, array $custom_options = []): Table
     {
-        $table = app($this->checkTableClass($type));
+        $table = app($this->checkTableClass($type), [
+            'param' => $param,
+        ]);
 
         $this
             ->setTableDependencies($table, $container)
             ->setTableOptions($table, $custom_options);
 
+        // @todo: delegate to subbuilders, not table itself
         $table
             ->buildFilters()
             ->buildColumns()
@@ -116,9 +126,9 @@ class TableBuilder implements TableBuilderContract
     /**
      * Set options on existing table instance.
      *
-     * @param Softworx\RocXolid\Tables\Contracts\Table $table
+     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
      * @param array $custom_options
-     * @return Softworx\RocXolid\Tables\Contracts\TableBuilder
+     * @return \Softworx\RocXolid\Tables\Contracts\TableBuilder
      */
     protected function setTableOptions(Table &$table, array $custom_options = []): TableBuilderContract
     {

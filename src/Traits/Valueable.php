@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Traits;
 
 use Illuminate\Support\Collection;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable as ValueableContract;
 
 /**
@@ -116,6 +117,14 @@ trait Valueable
         }
 
         return $this->values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasValue(int $index = 0): bool
+    {
+        return !is_null($this->getValue($index));
     }
 
     /**

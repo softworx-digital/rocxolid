@@ -3,25 +3,18 @@
 namespace Softworx\RocXolid\Tables;
 
 use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 // rocXolid utils
 use Softworx\RocXolid\Helpers\View as ViewHelper;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid contracts
-use Softworx\RocXolid\Contracts\Requestable;
 use Softworx\RocXolid\Tables\Contracts\Table;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid general traits
 use Softworx\RocXolid\Traits\Controllable;
 use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
-use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
-// rocXolid table traits
-use Softworx\RocXolid\Tables\Traits\Buildable;
-use Softworx\RocXolid\Tables\Traits\Columnable;
-use Softworx\RocXolid\Tables\Traits\Buttonable;
-use Softworx\RocXolid\Tables\Traits\Orderable;
-use Softworx\RocXolid\Tables\Traits\Filterable;
-use Softworx\RocXolid\Tables\Traits\Paginationable;
+use Softworx\RocXolid\Traits\Requestable;
 // rocXolid table button types
 use Softworx\RocXolid\Tables\Buttons\Type\ButtonAnchor;
 
@@ -32,26 +25,45 @@ use Softworx\RocXolid\Tables\Buttons\Type\ButtonAnchor;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractCrudTable implements Table, Requestable
+abstract class AbstractCrudTable implements Table
 {
-    use RequestableTrait;
-    use Buildable;
-    use Columnable;
-    use Buttonable;
-    use Orderable;
-    use Filterable;
-    use Paginationable;
-    use Controllable;
     use Paramable;
+    use Requestable;
+    use Controllable;
     use MethodOptionable;
+    use Traits\Buildable;
+    use Traits\Columnable;
+    use Traits\Buttonable;
+    use Traits\Orderable;
+    use Traits\Filterable;
+    use Traits\Paginationable;
 
     /**
-     * @var CrudableModel
+     * Table repository data holder.
+     *
+     * @var array
      */
-    protected $model;
+    protected $data;
 
+    /**
+     * Table search filters definition.
+     *
+     * @var array
+     */
     protected $filters = [];
 
+    /**
+     * Table columns definition.
+     *
+     * @var array
+     */
+    protected $columns = [];
+
+    /**
+     * Table row buttons definition.
+     *
+     * @var array
+     */
     protected $buttons = [
         'show' => [
             'type' => ButtonAnchor::class,
@@ -138,51 +150,51 @@ abstract class AbstractCrudTable implements Table, Requestable
         ],
     ];
 
+    /**
+     * Constructor
+     *
+     * @param string $param Table parameter serves as reference to better identify the table eg. in session key creation.
+     */
+    public function __construct(string $param)
+    {
+        $this->setParam($param);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function init(): Table
     {
         return $this;
     }
 
-    public function getRoute($route_action, $model = null, $params = [])
+    /**
+     * {@inheritDoc}
+     */
+    public function getData(): LengthAwarePaginator
     {
-        if ($route_action == 'order') {
-            return $this->getController()->getRoute('repositoryOrderBy', $model, [
-                'param' => $this->getParam(),
-                'order_by_column' => $params['order_by']['column'],
-                'order_by_direction' => $params['order_by']['direction'],
-            ]);
+        if (!isset($this->data)) {
+            $this->data = $this
+                ->getController()
+                    ->getRepository()
+                        ->setOrderBy($this->getOrderByColumn(), $this->getOrderByDirection())
+                        ->setFilters($this->getFilters())
+                        ->paginate($this->getCurrentPage(), $this->getPerPage())
+                        ->withPath($this->getPaginatorRoutePath());
         }
 
-        if ($route_action == 'filter') {
-            return $this->getController()->getRoute('repositoryFilter', $model, [
-                'param' => $this->getParam(),
-            ]);
-        }
-
-        return $this->getController()->getRoute($route_action, $model, $params);
+        return $this->data;
     }
 
-    public function processTableOptions(): Table
+    /**
+     * Get session key to store table state.
+     *
+     * @param string $aspect Table aspect eg. ordering state.
+     * @return string
+     */
+    protected function getSessionKey(string $aspect): string
     {
-        $this->mergeOptions([
-            'component' => [
-                'id' => ViewHelper::domId($this, 'table')
-            ]
-        ]);
-
-        return $this;
-    }
-
-    public function setCustomOptions($custom_options): Table
-    {
-        $this->mergeOptions($custom_options);
-
-        return $this;
-    }
-
-    public function getSessionParam(string $param = 'default')
-    {
-        return sprintf('%s-%s', md5(get_class($this)), $param);
+        return sprintf('%s-%s-%s', md5(get_class($this)), $this->getParam(), $aspect);
     }
 
     // @todo: better put this in some definition class
@@ -217,6 +229,17 @@ abstract class AbstractCrudTable implements Table, Requestable
     }
 
     // @todo: component building options - better put this in a trait
+    public function processTableOptions(): Table
+    {
+        $this->mergeOptions([
+            'component' => [
+                'id' => ViewHelper::domId($this, 'table')
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setRoute($route_name): Table
     {
         $this->mergeOptions([
@@ -247,6 +270,13 @@ abstract class AbstractCrudTable implements Table, Requestable
                 'template' => $template
             ]
         ]);
+
+        return $this;
+    }
+
+    public function setCustomOptions($custom_options): Table
+    {
+        $this->mergeOptions($custom_options);
 
         return $this;
     }

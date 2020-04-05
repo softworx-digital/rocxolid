@@ -14,7 +14,7 @@ use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
- * Trait to update a resource.
+ * Update resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -26,7 +26,7 @@ trait UpdatesModels
      * Display the specified resource update form.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function edit(CrudRequest $request, Crudable $model)//: View
@@ -66,7 +66,7 @@ trait UpdatesModels
      * Process the update resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function update(CrudRequest $request, Crudable $model)//: Response
@@ -91,7 +91,7 @@ trait UpdatesModels
     /**
      * Action to take when the 'update' form was validated.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
@@ -105,7 +105,7 @@ trait UpdatesModels
     /**
      * Action to take after the model has been updated and saved.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
@@ -118,7 +118,7 @@ trait UpdatesModels
     /**
      * Action to take when the 'update' form was submitted with invalid data.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */

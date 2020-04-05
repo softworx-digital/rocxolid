@@ -41,7 +41,7 @@ interface Tableable
     /**
      * Retrieve data table instance upon request.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @return \Softworx\RocXolid\Tables\Contracts\Table
      * @throws \InvalidArgumentException
      */

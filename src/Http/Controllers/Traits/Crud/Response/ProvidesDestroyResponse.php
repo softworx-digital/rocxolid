@@ -20,8 +20,8 @@ trait ProvidesDestroyResponse
     /**
      * Redirect to model's index view.
      *
-     * @param Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     protected function destroyResponse(CrudRequest $request, Crudable $model)//: Response
     {

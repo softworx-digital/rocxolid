@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 /**
  * Builds data table filter fields.
@@ -31,7 +31,7 @@ interface TableFilterBuilder
      * @param string $type
      * @param string $name
      * @param array $options
-     * @return \Softworx\RocXolid\Tables\Contracts\Filter
+     * @return \Softworx\RocXolid\Tables\Filters\Contracts\Filter
      */
     public function makeFilter(Table $table, string $type, string $name, array $options = []): Filter;
 }

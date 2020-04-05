@@ -6,7 +6,6 @@ namespace Softworx\RocXolid\Http\Controllers\Contracts;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 use Softworx\RocXolid\Http\Responses\Contracts\Response;
 // rocXolid contracts
-use Softworx\RocXolid\Contracts\Responseable;
 use Softworx\RocXolid\Contracts\Repositoryable;
 use Softworx\RocXolid\Contracts\Modellable;
 // rocXolid controller contracts

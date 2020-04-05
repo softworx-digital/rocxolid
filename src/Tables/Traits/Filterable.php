@@ -3,9 +3,8 @@
 namespace Softworx\RocXolid\Tables\Traits;
 
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-// rocXolid repository contracts
-use Softworx\RocXolid\Tables\Contracts\Filter;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 use Softworx\RocXolid\Tables\Contracts\Filterable as FilterableContract;
 
 /**
@@ -17,136 +16,120 @@ use Softworx\RocXolid\Tables\Contracts\Filterable as FilterableContract;
  */
 trait Filterable
 {
-    private $_filters = null;
+    /**
+     * Filters container.
+     *
+     * @var \Illuminate\Support\Collection
+     * @todo: rename table property to 'filters_definition' or similar and this to 'filters'
+     */
+    private $filters_container;
 
-    protected function applyFilters(EloquentBuilder &$query): FilterableContract
+    /**
+     * {@inheritDoc}
+     */
+    public function setFiltering(array $values): FilterableContract
     {
-        foreach ($this->getFilters() as $filter) {
-            if ($this->useFilter($filter)) {
-                $this->query = $filter->apply($this);
+        $this->resetPagination();
+
+        $values = collect($values)->filter(function ($value, $name) {
+            if ($this->hasFilter($name)) {
+                $this->getFilter($name)->setValue($value);
+
+                return true;
             }
-        }
+
+            return false;
+        });
+
+        $this->getRequest()->session()->put($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM), $values);
 
         return $this;
     }
 
-    protected function useFilter(Filter $filter)
+    /**
+     * {@inheritDoc}
+     */
+    public function clearFiltering(): FilterableContract
     {
-        return !empty($filter->getValue());
-    }
-
-    protected function setFilterValues(): FilterableContract
-    {
-        $input = new Collection($this->getFilterInput());
-
-        if ($input->isNotEmpty()) {
-            $input->each(function ($value, $name) {
-                $this
-                    ->getFilter($name)
-                        ->setValue($value);
-            });
-        }
+        $this->getRequest()->session()->forget($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
 
         return $this;
     }
 
-    protected function getFilterInput(): array
+    /**
+     * {@inheritDoc}
+     */
+    public function setFilters(Collection $filters): FilterableContract
     {
-        $input = $this->getRequest()->has(Filter::DATA_PARAM)
-               ? $this->getRequest()->input(Filter::DATA_PARAM)
-               : $this->getRequest()->session()->get($this->getSessionParam('filter'), []);
+        $this->filters_container = $filters;
 
-        // applying new filter
-        if ($this->getRequest()->has(Filter::DATA_PARAM)) {
-            $this->getRequest()->session()->forget(md5(get_class($this)) . '_page'); // reset paging
-            $this->getRequest()->session()->put($this->getSessionParam('filter'), $this->getRequest()->input(Filter::DATA_PARAM));
-        }
-
-        return $input;
+        return $this;
     }
 
-    public function addFilter(Filter $filter): FilterableContract
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilters(): Collection
+    {
+        return collect($this->filters_container);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilteredValue(Filter $filter): ?string
+    {
+        $session_values = $this->getRequest()->session()->get($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
+
+        return $session_values ? $session_values->get($filter->getName()) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilteringRoute(): string
+    {
+        return $this->getController()->getRoute('tableFilter', [
+            'param' => $this->getParam(),
+        ]);
+    }
+
+    /**
+     * Add filter to container.
+     *
+     * @param \Softworx\RocXolid\Tables\Filters\Contracts\Filter $filter Filter to add.
+     * @return \Softworx\RocXolid\Tables\Contracts\Filterable
+     */
+    protected function addFilter(Filter $filter): FilterableContract
     {
         $this->getFilters()->put($filter->getName(), $filter);
 
         return $this;
     }
 
-    public function hasFilter($filter): bool
+    /**
+     * Retrieve single filter by its name.
+     *
+     * @param string $filter_name Filter name to retrieve filter for.
+     * @return \Softworx\RocXolid\Tables\Filters\Contracts\Filter
+     */
+    protected function getFilter(string $filter_name): Filter
     {
-        return $this->getFilters()->has($filter);
-    }
-
-    public function getFilter($filter): Filter
-    {
-        if ($this->getFilters()->has($filter)) {
-            return $this->getFilters()->get($filter);
-        } else {
-            throw new \InvalidArgumentException(sprintf('Invalid filter (name) [%s] requested in [%s]', $filter, get_class($this)));
-        }
-    }
-
-    public function setFilterGroups($filter_groups): FilterableContract
-    {
-        $this->_filter_groups = new Collection($filter_groups);
-
-        return $this;
-    }
-
-    public function setFilters($filters): FilterableContract
-    {
-        $this->_filters = new Collection($filters);
-
-        return $this;
-    }
-
-    public function getFilters(): Collection
-    {
-        if (is_null($this->_filters)) {
-            $this->_filters = new Collection();
+        if ($this->getFilters()->has($filter_name)) {
+            return $this->getFilters()->get($filter_name);
         }
 
-        return $this->_filters;
+        throw new \InvalidArgumentException(sprintf('Invalid filter (name) [%s] requested in [%s]', $filter_name, get_class($this)));
     }
 
-    public function reorderFilters($order_definition): FilterableContract
+    /**
+     * Check if the filter is present.
+     *
+     * @param string $filter_name Filter name to check.
+     * @return bool
+     */
+    protected function hasFilter(string $filter_name): bool
     {
-        if (is_null($order_definition)) {
-            return $this;
-        }
-
-        if (!is_array($order_definition)) {
-            throw new \InvalidArgumentException(sprintf('Fields order definition has to be an array, [%s] given', get_type($order_definition)));
-        }
-
-        $filters = $this->getFilters()->sortBy(function ($filter, $name) use ($order_definition) {
-            return in_array($name, $order_definition) ? array_search($name, $order_definition) : PHP_INT_MAX;
-        });
-
-        return $this->setFilters($filters);
-    }
-
-    public function getFiltersValues(): Collection
-    {
-        $filters_values = new Collection();
-
-        foreach ($this->getFilters() as $filter) {
-            if (empty($filter->getValue()) && $filter->getValue() !== '0') {
-                $filters_values->put($filter->getName(), null);
-            } else {
-                $filters_values->put($filter->getName(), $filter->getValue());
-            }
-        }
-
-        return $filters_values;
-    }
-
-    public function clearFiltersValues(): FilterableContract
-    {
-        foreach ($this->getFilters() as $filter) {
-            $filter->setValue(null);
-        }
-
-        return $this;
+        return $this->getFilters()->has($filter_name);
     }
 }

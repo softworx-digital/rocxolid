@@ -26,7 +26,7 @@ trait CreatesModels
      * Display the specified resource create form.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function create(CrudRequest $request)//: View
     {
@@ -65,7 +65,7 @@ trait CreatesModels
      * Process the store resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function store(CrudRequest $request)//: Response
     {
@@ -90,7 +90,7 @@ trait CreatesModels
     /**
      * Action to take when the 'create' form was validated.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
@@ -104,7 +104,7 @@ trait CreatesModels
     /**
      * Action to take after the model has been created and saved.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
@@ -117,7 +117,7 @@ trait CreatesModels
     /**
      * Action to take when the 'create' form was submitted with invalid data.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */

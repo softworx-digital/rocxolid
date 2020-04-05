@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -22,7 +22,7 @@ trait ReloadsFormGroup
     /**
      * Reload Create/Update form to dynamically load related field values and return given form field group.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param string $field_group
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */

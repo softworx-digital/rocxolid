@@ -2,9 +2,13 @@
 
 namespace Softworx\RocXolid\Tables\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid contracts
+use Softworx\RocXolid\Contracts\Valueable;
+// rocXolid traits
+use Softworx\RocXolid\Traits\Valueable as ValueableTrait;
 // rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 // rocXolid table elements
 use Softworx\RocXolid\Tables\AbstractTableElement;
 // rocXolid table filter traits
@@ -19,8 +23,9 @@ use Softworx\RocXolid\Components\Tables\TableFilter;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractFilter extends AbstractTableElement implements Filter
+abstract class AbstractFilter extends AbstractTableElement implements Valueable, Filter
 {
+    use ValueableTrait;
     use ComponentOptionsSetter;
 
     /**
@@ -29,13 +34,6 @@ abstract class AbstractFilter extends AbstractTableElement implements Filter
      * @var string
      */
     protected static $component_class = TableFilter::class;
-
-    /**
-     * Filter field value.
-     *
-     * @var mixed
-     */
-    protected $value;
 
     /**
      * 'template' => 'rocXolid::table.filter.text',
@@ -72,13 +70,19 @@ abstract class AbstractFilter extends AbstractTableElement implements Filter
     protected $default_options = [];
 
     /**
-     * Get field name used in the filter form.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getFieldName(): string
     {
         return sprintf('%s[%s]', self::DATA_PARAM, $this->getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAppliable(): bool
+    {
+        return $this->hasValue();
     }
 
     /**
@@ -87,31 +91,8 @@ abstract class AbstractFilter extends AbstractTableElement implements Filter
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return string
      */
-    public function getColumnName(Builder $query): string
+    protected function getColumnName(EloquentBuilder $query): string
     {
         return sprintf('%s.%s', $query->getModel()->getTable(), $this->getName());
-    }
-
-    /**
-     * Set filter value.
-     *
-     * @param mixed $value
-     * @return \Softworx\RocXolid\Tables\Contracts\Filter
-     */
-    public function setValue($value): Filter
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Retrieve filter value.
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
     }
 }

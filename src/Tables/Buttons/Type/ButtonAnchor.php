@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Buttons\Type;
 
 use Softworx\RocXolid\Tables\Buttons\AbstractButton;
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
 // @todo - zatial extenduje AbstractButton - nejako rozdelit zrejme na buttony a columny (fieldy)

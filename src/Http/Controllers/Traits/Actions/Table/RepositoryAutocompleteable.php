@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Table;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -25,7 +25,7 @@ trait RepositoryAutocompleteable
      * Process the incoming autocomplete-field request.
      * Retrieve the field upon request param, set appropriate filter to the field's collection.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @todo: use scopes rather than filter
      * @todo: parameter naming convention ('f' is ugly)

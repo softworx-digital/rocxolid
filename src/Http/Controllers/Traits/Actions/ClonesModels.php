@@ -18,7 +18,7 @@ trait ClonesModels
     /**
      * Display the specified resource clone confirmation dialog.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param int $id
      */
     public function cloneConfirm(CrudRequest $request, Crudable $model)
@@ -39,7 +39,7 @@ trait ClonesModels
     /**
      * Clone the specified resource.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param int $id
      */
     public function clone(CrudRequest $request, Crudable $model)
@@ -56,7 +56,7 @@ trait ClonesModels
     /**
      * Action to take after the model has been cloned.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $original
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $clone
      */

@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Filters\Traits;
 
-use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 trait ComponentOptionsSetter
 {

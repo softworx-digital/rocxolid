@@ -63,11 +63,6 @@ class CollectionTags extends AbstractFormField
         }
     }
 
-    public function setTypeaheadUrl($options)
-    {
-        return $this->setComponentOptions('typeahead-url', $options);
-    }
-
     /*
         public function isFieldValue($value, $index = 0): bool
         {

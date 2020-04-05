@@ -4,9 +4,9 @@ namespace Softworx\RocXolid\Tables\Columns\Type;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-// rocXolid repository contracts
-use Softworx\RocXolid\Tables\Contracts\Column;
-// rocXolid repository columns
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
+// rocXolid table columns
 use Softworx\RocXolid\Tables\Columns\AbstractColumn;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;

@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Columns\Type;
 
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Tables\Columns\AbstractColumn;
 
 class Image extends AbstractColumn

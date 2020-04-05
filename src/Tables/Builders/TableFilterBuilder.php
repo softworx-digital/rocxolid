@@ -2,8 +2,11 @@
 
 namespace Softworx\RocXolid\Tables\Builders;
 
+use Illuminate\Support\Collection;
+// rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
+// rocXolid table builder contracts
 use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder as TableFilterBuilderContract;
 
 /**
@@ -26,7 +29,7 @@ class TableFilterBuilder implements TableFilterBuilderContract
      */
     public function addDefinitionFilters(Table $table, array $definition): TableFilterBuilderContract
     {
-        $filters = [];
+        $filters = collect();
 
         $this
             ->validateFiltersDefinition($definition)
@@ -42,12 +45,13 @@ class TableFilterBuilder implements TableFilterBuilderContract
      */
     public function makeFilter(Table $table, string $type, string $name, array $options = []): Filter
     {
-        $field = new $type($table, $name, $type, $options);
+        $field = (new $type($table, $name, $type, $options));
+        $field->setValue($table->getFilteredValue($field));
 
         return $field;
     }
 
-    protected function processDefinition(Table $table, array $definition, array &$items, ?string $name_prefix = null): TableFilterBuilderContract
+    protected function processDefinition(Table $table, array $definition, Collection &$items, ?string $name_prefix = null): TableFilterBuilderContract
     {
         foreach ($definition as $name => $settings) {
             $type = null;
@@ -63,7 +67,7 @@ class TableFilterBuilder implements TableFilterBuilderContract
                 throw new \InvalidArgumentException(sprintf('Filter [%s] is already set in table [%s] fields', $name, get_class($table)));
             }
 
-            $items[$name] = $this->makeFilter($table, $type, $name, $options);
+            $items->put($name, $this->makeFilter($table, $type, $name, $options));
         }
 
         return $this;
@@ -80,7 +84,7 @@ class TableFilterBuilder implements TableFilterBuilderContract
         return $this;
     }
 
-    protected function processFiltersDefinition(Table $table, array $definition, array &$filters, ?string $name_prefix = null): TableFilterBuilderContract
+    protected function processFiltersDefinition(Table $table, array $definition, Collection &$filters, ?string $name_prefix = null): TableFilterBuilderContract
     {
         $this->processDefinition($table, $definition['filters'], $filters, $name_prefix);
 

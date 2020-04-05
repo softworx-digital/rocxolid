@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -21,7 +21,7 @@ trait ReloadsForm
     /**
      * Reload Create/Update form to dynamically load related field values.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function formReload(CrudRequest $request, ?Crudable $model = null)//: Response

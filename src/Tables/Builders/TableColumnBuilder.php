@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Builders;
 
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder as TableColumnBuilderContract;
 
 /**

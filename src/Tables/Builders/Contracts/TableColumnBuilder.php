@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Builders\Contracts;
 
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 
 /**
  * Builds data table row columns.
@@ -31,7 +31,7 @@ interface TableColumnBuilder
      * @param string $type
      * @param string $name
      * @param array $options
-     * @return \Softworx\RocXolid\Tables\Contracts\Column
+     * @return \Softworx\RocXolid\Tables\Columns\Contracts\Column
      */
     public function makeColumn(Table $table, string $type, string $name, array $options = []): Column;
 }

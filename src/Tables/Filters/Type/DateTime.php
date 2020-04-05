@@ -4,9 +4,11 @@ namespace Softworx\RocXolid\Tables\Filters\Type;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Filterable;
-use Softworx\RocXolid\Tables\Contracts\Filter;
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
+// rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class DateTime extends AbstractFilter
@@ -26,10 +28,8 @@ class DateTime extends AbstractFilter
 
     protected $is_range = false;
 
-    public function apply(Filterable $repository)
+    public function apply(EloquentBuilder $query): EloquentBuilder
     {
-        $query = $repository->getQuery();
-
         if ($this->is_range) {
             $query
                 ->whereDate($this->getColumnName($query), '>=', Carbon::parse($this->getRangeFromValue())->format('Y-m-d'))

@@ -25,7 +25,7 @@ interface Uploadable
      *
      * @param Illuminate\Http\UploadedFile $uploaded_file
      * @param string $storage_path
-     * @return Softworx\RocXolid\Models\Contracts\Uploadable
+     * @return \Softworx\RocXolid\Models\Contracts\Uploadable
      */
     public function setUploadData(UploadedFile $uploaded_file, string $storage_path): Uploadable;
 }

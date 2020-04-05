@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Buttons\Traits;
 
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 
 trait ComponentOptionsSetter
 {

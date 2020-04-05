@@ -10,7 +10,7 @@ use Softworx\RocXolid\Repositories\AbstractCrudRepository;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
- * Trait to remove a resource from storage.
+ * Delete (destroy) resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -22,7 +22,7 @@ trait DestroysModels
      * Display the specified resource destroy confirmation dialog.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function destroyConfirm(CrudRequest $request, Crudable $model)//: View
@@ -51,7 +51,7 @@ trait DestroysModels
      * Process the destroy resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function destroy(CrudRequest $request, Crudable $model)//: Response - returns JSON for ajax calls
@@ -66,7 +66,7 @@ trait DestroysModels
     /**
      * Action to take when the 'destroy' form was submitted.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
@@ -80,7 +80,7 @@ trait DestroysModels
     /**
      * Action to take after the model is destroyed.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */

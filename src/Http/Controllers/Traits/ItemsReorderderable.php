@@ -20,7 +20,7 @@ trait ItemsReorderderable
      * Process incoming request.
      * Retrieve the object order and reset the position column.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param string $relation
      */

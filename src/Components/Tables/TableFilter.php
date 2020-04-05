@@ -6,7 +6,7 @@ use Softworx\RocXolid\Repositories\Contracts\Repository;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\Repositoryable;
 use Softworx\RocXolid\Components\Contracts\TableFilterable as ComponentTableFilterable;
-use Softworx\RocXolid\Tables\Contracts\Filter;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 class TableFilter extends AbstractOptionableComponent implements ComponentTableFilterable
 {

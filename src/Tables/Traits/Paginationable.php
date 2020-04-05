@@ -2,55 +2,59 @@
 
 namespace Softworx\RocXolid\Tables\Traits;
 
-use Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Softworx\RocXolid\Tables\Contracts\Paginationable as PaginationableContract;
 
+/**
+ * Enables data tables to paginate results.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait Paginationable
 {
-    // @todo: configurable
-    //private $_page_limit = 20;
-    private $page_limit = 30;
-
-    public function getPerPage()
+    /**
+     * {@inheritDoc}
+     * @todo: configurable for specific table
+     */
+    public function getPerPage(): int
     {
-        return $this->page_limit;
-    }
-
-    public function getCurrentPage()
-    {
-        $param = $this->getPaginatorSessionParam();
-
-        if ($this->getRequest()->has(static::PAGE_REQUEST_PARAM)) {
-            $this->getRequest()->session()->put($param, $this->getRequest()->get(static::PAGE_REQUEST_PARAM));
-        }
-
-        return $this->getRequest()->session()->get($param, 1);
+        return static::PAGE_LIMIT_DEFAULT;
     }
 
     /**
-     * Retrieve results page.
-     *
-     * @param int $page
-     * @param int $per_page
-     * @param array $columns
-     * @return \Illuminate\Pagination\LengthAwarePaginator
+     * {@inheritDoc}
      */
-    public function paginate($per_page = 1, array $columns = ['*']): LengthAwarePaginator
+    public function getCurrentPage(): int
     {
-        return $this
-            ->getController()
-                ->getRepository()
-                    ->paginate($this->getCurrentPage(), $per_page, $columns)
-                    ->withPath($this->getPaginatorPath());
+        $key = $this->getSessionKey(static::PAGE_SESSION_PARAM);
+
+        if ($this->getRequest()->has(static::PAGE_REQUEST_PARAM)) {
+            $this->getRequest()->session()->put($key, $this->getRequest()->get(static::PAGE_REQUEST_PARAM));
+        }
+
+        return $this->getRequest()->session()->get($key, static::PAGE_FIRST);
     }
 
-    protected function getPaginatorPath()
+    /**
+     * Reset pagination.
+     *
+     * @return \Softworx\RocXolid\Tables\Contracts\Paginationable
+     */
+    protected function resetPagination(): PaginationableContract
     {
-        return $this->getRoute('index');
+        $this->getRequest()->session()->forget($this->getSessionKey(static::PAGE_SESSION_PARAM));
+
+        return $this;
     }
 
-    protected function getPaginatorSessionParam()
+    /**
+     * Obtain paginator base path.
+     *
+     * @return string
+     */
+    protected function getPaginatorRoutePath(): string
     {
-        return sprintf('%s-%s-page', md5(get_class($this)), $this->getParam());
+        return $this->getController()->getRoute('index');
     }
 }

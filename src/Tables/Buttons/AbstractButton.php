@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Buttons;
 
 // rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 // rocXolid table elements
 use Softworx\RocXolid\Tables\AbstractTableElement;
 // rocXolid table filter traits

@@ -51,6 +51,9 @@ class TableService implements TableServiceContract
      */
     public function setConsumer(ServiceConsumer $consumer): ConsumerService
     {
+        // cannot do this more clean coz TableService implements ConsumerService too
+        // and ConsumerService requires ServiceConsumer for setConsumer
+        // extending ServiceConsumer with Tableable and setting Tableable arguments doesn't work
         if (!($consumer instanceof Tableable)) {
             throw new \InvalidArgumentException(sprintf('Provided service consumer [%s] must implement [%s] interface', get_class($consumer), Tableable::class));
         }
@@ -65,10 +68,8 @@ class TableService implements TableServiceContract
      */
     public function createTable(string $param): Table
     {
-        $table = $this->table_builder
-            ->buildTable($this->consumer, $this->consumer->getTableMappingType($param))
-            ->setParam($param);
+        $type = $this->consumer->getTableMappingType($param);
 
-        return $table;
+        return $this->table_builder->buildTable($this->consumer, $type, $param);
     }
 }

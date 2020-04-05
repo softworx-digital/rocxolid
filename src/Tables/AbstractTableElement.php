@@ -86,7 +86,7 @@ abstract class AbstractTableElement implements Optionable, Translatable
     /**
      * Constructor.
      *
-     * @param Softworx\RocXolid\Tables\Contracts\Table $table
+     * @param \Softworx\RocXolid\Tables\Contracts\Table $table
      * @param string $name
      * @param string $type
      * @param array $options
@@ -103,9 +103,7 @@ abstract class AbstractTableElement implements Optionable, Translatable
     }
 
     /**
-     * Get component type for table element.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getComponentClass(): string
     {
@@ -126,7 +124,7 @@ abstract class AbstractTableElement implements Optionable, Translatable
     }
 
     /**
-     * @return Softworx\RocXolid\Tables\Contracts\Table
+     * {@inheritDoc}
      */
     public function getTable(): Table
     {
@@ -147,9 +145,7 @@ abstract class AbstractTableElement implements Optionable, Translatable
     }
 
     /**
-     * Get element's system name.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getName(): string
     {
@@ -170,9 +166,7 @@ abstract class AbstractTableElement implements Optionable, Translatable
     }
 
     /**
-     * Get table element type.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getType(): string
     {

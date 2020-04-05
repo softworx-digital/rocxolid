@@ -16,7 +16,7 @@ trait Translates
     /**
      * Translate the language key.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param int $id
      */
     public function translate(string $key, array $params = [], bool $use_raw_key = false): string

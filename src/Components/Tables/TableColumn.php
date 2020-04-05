@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Components\Tables;
 
 use Softworx\RocXolid\Contracts\Renderable;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
 
@@ -64,12 +64,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
             $direction = 'asc';
         }
 
-        return $repository->getRoute('order', null, [
-            'order_by' => [
-                'column' => $this->getTableColumn()->getName(),
-                'direction' => $direction,
-            ]
-        ]);
+        return $repository->getOrderByRoute($this->getTableColumn()->getName(), $direction);
     }
 
     public function setPreRenderProperties(...$elements): Renderable

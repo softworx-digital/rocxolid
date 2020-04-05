@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -20,7 +20,7 @@ trait ValidatesFormField
     /**
      * Validate single Create/Update form field.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param string $group
      * @param mixed $id
      * @todo: verify if $int can be type hinted as int

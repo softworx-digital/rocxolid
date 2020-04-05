@@ -19,10 +19,11 @@ interface TableBuilder
     /**
      * Get instance of the table which can be modified.
      *
-     * @param \Softworx\RocXolid\Tables\Contracts\Tableable $container
-     * @param string $type
-     * @param array $custom_options
+     * @param \Softworx\RocXolid\Tables\Contracts\Tableable $container Table container.
+     * @param string $type Table class.
+     * @param string $param Table parameter.
+     * @param array $custom_options Custom table options.
      * @return \Softworx\RocXolid\Tables\Contracts\Table
      */
-    public function buildTable(Tableable $container, string $type, array $custom_options = []): Table;
+    public function buildTable(Tableable $container, string $type, string $param, array $custom_options = []): Table;
 }

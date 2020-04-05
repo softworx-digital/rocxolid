@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Columns\Traits;
 
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 
 trait ComponentOptionsSetter
 {

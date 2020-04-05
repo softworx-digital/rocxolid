@@ -2,9 +2,10 @@
 
 namespace Softworx\RocXolid\Tables\Filters\Type;
 
-// contracts
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Filterable;
-//
+// rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class Text extends AbstractFilter
@@ -21,10 +22,8 @@ class Text extends AbstractFilter
         ],
     ];
 
-    public function apply(Filterable $repository)
+    public function apply(EloquentBuilder $query): EloquentBuilder
     {
-        $query = $repository->getQuery();
-
         return $query->where($this->getColumnName($query), 'like', sprintf('%%%s%%', $this->getValue()));
     }
 }

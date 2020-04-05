@@ -3,7 +3,8 @@
 namespace Softworx\RocXolid\Tables\Contracts;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Tables\Contracts\Filter;
+// rocXolid table filter
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 /**
  * Enables to assign filters.
@@ -11,17 +12,25 @@ use Softworx\RocXolid\Tables\Contracts\Filter;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: revise & complete
  */
 interface Filterable
 {
+    const FILTER_SESSION_PARAM = 'filter';
+
     /**
-     * Add filter to container.
+     * Set filter request values to session.
      *
-     * @param \Softworx\RocXolid\Tables\Contracts\Filter $filter
-     * @return \Softworx\RocXolid\Tables\Contracts\Filterable
+     * @param array $values Values to set.
+     * @return Softworx\RocXolid\Tables\Contracts\Filterable
      */
-    public function addFilter(Filter $filter): Filterable;
+    public function setFiltering(array $values): Filterable;
+
+    /**
+     * Clear table filtering.
+     *
+     * @return Softworx\RocXolid\Tables\Contracts\Filterable
+     */
+    public function clearFiltering(): Filterable;
 
     /**
      * Replace the filters with new filters collection.
@@ -39,17 +48,17 @@ interface Filterable
     public function getFilters(): Collection;
 
     /**
-     * Get single filter by its name.
+     * Obtain value from session for given filter.
      *
-     * @param string $name
-     * @return \Softworx\RocXolid\Tables\Contracts\Filter
+     * @param \Softworx\RocXolid\Tables\Filters\Contracts\Filter $filter
+     * @return string|null
      */
-    public function getFilter(string $name): Filter;
-
+    public function getFilteredValue(Filter $filter): ?string;
 
     /**
-     * @param bool $use_filters
-     * @return $this
+     * Get route to submit filter values.
+     *
+     * @return string
      */
-    //public function setUseFilters($use_filters = true): Filterable;
+    public function getFilteringRoute(): string;
 }

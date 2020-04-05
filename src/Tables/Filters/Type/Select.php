@@ -3,9 +3,11 @@
 namespace Softworx\RocXolid\Tables\Filters\Type;
 
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Filterable;
-use Softworx\RocXolid\Tables\Contracts\Filter;
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
+// rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class Select extends AbstractFilter
@@ -23,10 +25,8 @@ class Select extends AbstractFilter
         ],
     ];
 
-    public function apply(Filterable $repository)
+    public function apply(EloquentBuilder $query): EloquentBuilder
     {
-        $query = $repository->getQuery();
-
         return $query->where($this->getColumnName($query), $this->getValue());
     }
 

@@ -2,9 +2,11 @@
 
 namespace Softworx\RocXolid\Tables\Contracts;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 // rocXolid contracts
-use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Paramable;
+use Softworx\RocXolid\Contracts\Requestable;
+use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Optionable;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Columnable;
@@ -25,8 +27,22 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Table extends Controllable, Paramable, Optionable, Columnable, Buttonable, Orderable, Filterable, Paginationable
+interface Table extends Paramable, Requestable, Controllable, Optionable, Columnable, Buttonable, Orderable, Filterable, Paginationable
 {
+    /**
+     * Table initializer.
+     *
+     * @return \Softworx\RocXolid\Tables\Contracts\Table
+     */
+    public function init(): Table;
+
+    /**
+     * Obtain data from connected controller's repository.
+     *
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getData(): LengthAwarePaginator;
+
     /**
      * Set the table builder.
      *

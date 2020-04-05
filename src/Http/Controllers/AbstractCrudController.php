@@ -39,15 +39,15 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Crudable;
     use Traits\Dashboardable;
     use Traits\Tableable;
-    use Traits\RepositoryOrderable;
-    use Traits\RepositoryFilterable;
-    use Traits\RepositoryAutocompleteable; // @todo: consider different approach
+    // use Traits\RepositoryAutocompleteable; // @todo: consider different approach
     use Traits\ItemsReorderderable; // @todo: add only where needed
     use Traits\Actions\SwitchesEnability;
     use Traits\Actions\ClonesModels;
-    use Traits\Actions\ReloadsForm;
-    use Traits\Actions\ReloadsFormGroup;
-    use Traits\Actions\ValidatesFormGroup;
+    use Traits\Actions\Table\OrdersTable;
+    use Traits\Actions\Table\FiltersTable;
+    use Traits\Actions\Form\ReloadsForm;
+    use Traits\Actions\Form\ReloadsFormGroup;
+    use Traits\Actions\Form\ValidatesFormGroup;
 
     /**
      * Mapping of form type params to controller actions.

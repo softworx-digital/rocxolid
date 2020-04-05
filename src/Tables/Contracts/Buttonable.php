@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Contracts;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 
 /**
  * Enables to assign buttons.
@@ -17,7 +17,7 @@ interface Buttonable
     /**
      * Add button to container.
      *
-     * @param \Softworx\RocXolid\Tables\Contracts\Button $button
+     * @param \Softworx\RocXolid\Tables\Buttons\Contracts\Button $button
      * @return \Softworx\RocXolid\Tables\Contracts\Buttonable
      */
     public function addButton(Button $button): Buttonable;
@@ -41,7 +41,7 @@ interface Buttonable
      * Get single button by its name.
      *
      * @param string $name
-     * @return \Softworx\RocXolid\Tables\Contracts\Button
+     * @return \Softworx\RocXolid\Tables\Buttons\Contracts\Button
      */
     public function getButton(string $name): Button;
 }

@@ -69,7 +69,7 @@ interface Valueable
     /**
      * Set the values at once.
      *
-     * @param array Values to set.
+     * @param array $values Values to set.
      * @return \Softworx\RocXolid\Contracts\Valueable
      */
     public function setValues(array $values): Valueable;
@@ -80,6 +80,14 @@ interface Valueable
      * @return \Illuminate\Support\Collection
      */
     public function getValues(): Collection;
+
+    /**
+     * Check if some value is set.
+     *
+     * @param int $index Collection position to check the value at.
+     * @return bool
+     */
+    public function hasValue(int $index = 0): bool;
 
     /**
      * Check if provided value is valid for this type.

@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Components\Tables;
 
 use Softworx\RocXolid\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
-use Softworx\RocXolid\Tables\Contracts\Button as TableButtonContract;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button as TableButtonContract;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Components\General\Button;
 

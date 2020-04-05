@@ -61,9 +61,6 @@ trait Buildable
                     'filters' => $this->getFiltersDefinition()
                 ]);
 
-        $this
-            ->setFilterValues();
-
         return $this;
     }
 

@@ -18,7 +18,7 @@ trait ElementMappable
     /**
      * Get element param based on action.
      *
-     * @param Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param string $element_signature
      * @param string $default
      * @return string

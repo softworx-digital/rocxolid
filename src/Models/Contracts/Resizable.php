@@ -29,7 +29,7 @@ interface Resizable
      * Set model data related to resizing.
      *
      * @param Illuminate\Support\Collection $sizes
-     * @return Softworx\RocXolid\Models\Contracts\Resizable
+     * @return \Softworx\RocXolid\Models\Contracts\Resizable
      */
     public function setResizeData(Collection $sizes): Resizable;
 }

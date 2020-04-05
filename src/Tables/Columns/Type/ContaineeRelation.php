@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Columns\Type;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Tables\Columns\AbstractColumn;
 

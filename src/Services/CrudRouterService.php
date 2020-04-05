@@ -32,24 +32,19 @@ class CrudRouterService
             'uses' => $this->controller . '@search',
         ]);
 
-        Route::get($this->name . '/repository/order-by/{param}/{order_by_column}/{order_by_direction?}', [
-            'as' => 'crud.' . $this->name . '.repository-order',
-            'uses' => $this->controller . '@repositoryOrderBy',
+        Route::get($this->name . '/table/{param}/order-by/{order_by_column}/{order_by_direction?}', [
+            'as' => 'crud.' . $this->name . '.table-order',
+            'uses' => $this->controller . '@tableOrderBy',
         ]);
 
-        Route::post($this->name . '/repository/filter/{param}', [
-            'as' => 'crud.' . $this->name . '.repository-filter',
-            'uses' => $this->controller . '@repositoryFilter',
+        Route::post($this->name . '/table/{param}/filter', [
+            'as' => 'crud.' . $this->name . '.table-filter',
+            'uses' => $this->controller . '@tableFilter',
         ]);
 
         Route::post($this->name . sprintf('/repository/autocomplete/{%s?}', $param), [
             'as' => 'crud.' . $this->name . '.repository-autocomplete',
             'uses' => $this->controller . '@repositoryAutocomplete',
-        ]);
-
-        Route::post($this->name . sprintf('/repository/typeahead/{%s?}', $param), [
-            'as' => 'crud.' . $this->name . '.repository-typeahead',
-            'uses' => $this->controller . '@repositoryTypeahead',
         ]);
 
         Route::post($this->name . sprintf('/form/reload/{%s?}', $param), [

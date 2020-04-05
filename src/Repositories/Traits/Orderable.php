@@ -45,45 +45,20 @@ trait Orderable
     {
         $model = $model ?? $this->query_model;
 
-        if (Schema::hasColumn($model->getTable(), $column_name) && in_array($direction, ['asc', 'desc'])) {
-            $this->setOrderByModel($model);
-            $this->setOrderByColumn($column_name);
-            $this->setOrderByDirection($direction);
+        if (!Schema::hasColumn($model->getTable(), $column_name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid column [%s] for ordering repository of [%s]', $column_name, get_class($model)));
         }
 
+        if (!in_array($direction, ['asc', 'desc'])) {
+            throw new \InvalidArgumentException(sprintf('Invalid direction [%s] for ordering repository of [%s]', $direction, get_class($model)));
+        }
+
+        $this
+            ->setOrderByModel($model)
+            ->setOrderByColumn($column_name)
+            ->setOrderByDirection($direction);
+
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrderByModel(): Model
-    {
-        return $this->order_by_model ?? $this->query_model;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrderByColumn(): string
-    {
-        return $this->order_by_column ?? $this->getDefaultOrderByColumn();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getFullyQualifiedOrderByColumn(): string
-    {
-        return sprintf('%s.%s', $this->getOrderByModel()->getTable(), $this->getOrderByColumn());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOrderByDirection(): string
-    {
-        return $this->order_by_direction ?? $this->getDefaultOrderByDirection();
     }
 
     /**
@@ -97,6 +72,46 @@ trait Orderable
         $query = $query->orderBy($this->getFullyQualifiedOrderByColumn(), $this->getOrderByDirection());
 
         return $this;
+    }
+
+    /**
+     * Get model to get table for ordering.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function getOrderByModel(): Model
+    {
+        return $this->order_by_model ?? $this->query_model;
+    }
+
+    /**
+     * Get order column for repository data.
+     *
+     * @return string
+     */
+    protected function getOrderByColumn(): string
+    {
+        return $this->order_by_column ?? $this->getDefaultOrderByColumn();
+    }
+
+    /**
+     * Get fully qualified order column for repository data.
+     *
+     * @return string
+     */
+    protected function getFullyQualifiedOrderByColumn(): string
+    {
+        return sprintf('%s.%s', $this->getOrderByModel()->getTable(), $this->getOrderByColumn());
+    }
+
+    /**
+     * Get order direction for repository data.
+     *
+     * @return string
+     */
+    protected function getOrderByDirection(): string
+    {
+        return $this->order_by_direction ?? $this->getDefaultOrderByDirection();
     }
 
     /**

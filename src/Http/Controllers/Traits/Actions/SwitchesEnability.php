@@ -19,7 +19,7 @@ trait SwitchesEnability
     /**
      * Clone the specified resource.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param int $id
      */
     public function switchEnability(CrudRequest $request, Crudable $model)

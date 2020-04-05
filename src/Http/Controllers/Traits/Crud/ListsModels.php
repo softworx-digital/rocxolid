@@ -5,7 +5,7 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- * Trait to list resource.
+ * List resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -17,7 +17,7 @@ trait ListsModels
      * Display a listing of the resource.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="viewAny",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function index(CrudRequest $request)//: View
     {

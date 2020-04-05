@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Builders;
 
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder as TableButtonBuilderContract;
 
 /**

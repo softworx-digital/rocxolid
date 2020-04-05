@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Tables\Contracts;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Tables\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 
 /**
  * Enables to assign columns.
@@ -17,7 +17,7 @@ interface Columnable
     /**
      * Add column to container.
      *
-     * @param \Softworx\RocXolid\Tables\Contracts\Column $column
+     * @param \Softworx\RocXolid\Tables\Columns\Contracts\Column $column
      * @return \Softworx\RocXolid\Tables\Contracts\Columnable
      */
     public function addColumn(Column $column): Columnable;
@@ -41,7 +41,7 @@ interface Columnable
      * Get single column by its name.
      *
      * @param string $name
-     * @return \Softworx\RocXolid\Tables\Contracts\Column
+     * @return \Softworx\RocXolid\Tables\Columns\Contracts\Column
      */
     public function getColumn(string $name): Column;
 }

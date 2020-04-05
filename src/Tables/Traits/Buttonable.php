@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Tables\Traits;
 
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Tables\Contracts\Buttonable as ButtonableContract;
-use Softworx\RocXolid\Tables\Contracts\Button;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 
 /**
  * Enables to assign buttons.
