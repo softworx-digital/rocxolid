@@ -63,7 +63,7 @@ trait DestroysModels
      */
     protected function onDestroy(CrudRequest $request, Crudable $model)//: Response
     {
-        $model = $this->getRepository()->deleteModel($model);
+        $model = $this->getRepository()->deleteModel($model, 'destroy');
 
         return $this->onModelDestroyed($request, $model);
     }

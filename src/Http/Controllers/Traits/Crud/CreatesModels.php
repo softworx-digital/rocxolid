@@ -76,21 +76,21 @@ trait CreatesModels
      */
     protected function onStore(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        $model = $this->getRepository()->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'create');
+        $model = $this->getRepository()->createModel($form->getFormFieldsValues(), 'create');
 
-        return $this->onModelStored($request, $form, $model);
+        return $this->onModelStored($request, $model, $form);
     }
 
     /**
      * Action to take after the model has been created and saved.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onModelStored(CrudRequest $request, AbstractCrudForm $form, Crudable $model)//: Response
+    protected function onModelStored(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
-        return $this->successResponse($request, $form, $model, 'create');
+        return $this->successResponse($request, $model, $form, 'create');
     }
 
     /**

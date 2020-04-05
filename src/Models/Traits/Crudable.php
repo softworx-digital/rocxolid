@@ -27,6 +27,7 @@ trait Crudable
     use HasAttributes;
     use HasRelationships;
     use HasTitleColumn;
+    use OnActions\RepositoryActions;
 
     public static function getAuthorizationParameter(): ?string
     {
@@ -73,31 +74,6 @@ trait Crudable
         }
 
         return $singular ? $name : Str::plural($name);
-    }
-
-    public function fillCustom($data, $action = null)
-    {
-        return $this;
-    }
-
-    public function beforeSave($data, $action = null)
-    {
-        return $this;
-    }
-
-    public function afterSave($data, $action = null)
-    {
-        return $this;
-    }
-
-    public function beforeDelete()
-    {
-        return $this;
-    }
-
-    public function afterDelete()
-    {
-        return $this;
     }
 
     public function canBeDeleted()

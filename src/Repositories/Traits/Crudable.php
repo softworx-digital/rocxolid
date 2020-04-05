@@ -2,6 +2,10 @@
 
 namespace Softworx\RocXolid\Repositories\Traits;
 
+use Illuminate\Support\Collection;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+
 /**
  * Trait to make CRUD operations on model.
  *
@@ -16,4 +20,19 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
+
+    /**
+     * Fill model with given data.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Illuminate\Support\Collection $data
+     * @param string $action
+     * @return \Softworx\RocXolid\Models\Contracts\Crudable
+     */
+    protected function fillModel(CrudableModel $model, Collection $data, string $action): CrudableModel
+    {
+        return $model
+            ->fill($data->toArray(), $action)
+            ->fillCustom($data, $action);
+    }
 }

@@ -8,6 +8,8 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
 use Softworx\RocXolid\Forms\Contracts\Form;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 // rocXolid controller traits
 use Softworx\RocXolid\Http\Controllers\Traits\ElementMappable;
 
@@ -54,12 +56,12 @@ trait Formable
     /**
      * {@inheritDoc}
      */
-    public function getForm(CrudRequest $request): Form
+    public function getForm(CrudRequest $request, ?Crudable $model = null): Form
     {
         $param = $this->getMappingParam($request, 'form', FormableContract::FORM_PARAM);
 
         if (!$this->hasFormAssigned($param)) {
-            $model = $this->getRepository()->getModel();
+            $model = $model ?? $this->getRepository()->getModel();
 
             $this->setForm($this->formService()->createForm($model, $param), $param);
         }

@@ -81,7 +81,7 @@ trait HasRelationships
     }
 
     // @todo: ugly? and combine with HasRelationships::resolvePolymorphType()
-    public function resolvePolymorphism(array $data, string $action = null): Crudable
+    public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
         foreach ($data as $attribute => $value) {
             // eg. model_type
@@ -149,8 +149,10 @@ trait HasRelationships
     }
 
     // @todo: subject to refactoring, don't like the current approach
-    public function fillRelationships(array $data, string $action = null): Crudable
+    public function fillRelationships(Collection $data, string $action = null): Crudable
     {
+        $data = $data->toArray();
+
         $this->getRelationshipMethods()->each(function ($relation) use ($data, $action) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));

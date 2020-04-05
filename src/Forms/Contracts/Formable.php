@@ -7,6 +7,8 @@ use Illuminate\Support\Collection;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Interface to connect the data form with a container.
@@ -42,10 +44,11 @@ interface Formable
      * Retrieve data form instance upon request.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $model Form model binding.
      * @return \Softworx\RocXolid\Forms\Contracts\Form
      * @throws \InvalidArgumentException
      */
-    public function getForm(CrudRequest $request): Form;
+    public function getForm(CrudRequest $request, ?Crudable $model = null): Form;
 
     /**
      * Check if the param is already bound.

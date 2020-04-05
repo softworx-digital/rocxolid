@@ -33,7 +33,7 @@ trait UpdatesModels
     {
         $model_viewer_component = $this->getModelViewerComponent(
             $this->getRepository()->getModel(),
-            $this->getFormComponent($this->getForm($request))
+            $this->getFormComponent($this->getForm($request, $model))
         );
 
         if ($request->ajax()) {
@@ -60,7 +60,7 @@ trait UpdatesModels
     public function update(CrudRequest $request, Crudable $model)//: Response
     {
         $form = $this
-            ->getForm($request)
+            ->getForm($request, $model)
             ->submit();
 
         if ($form->isValid()) {
@@ -79,7 +79,7 @@ trait UpdatesModels
      */
     protected function onUpdate(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
-        $model = $this->getRepository()->updateModel($model, $form->getFormFieldsValues()->toArray(), 'update');
+        $model = $this->getRepository()->updateModel($model, $form->getFormFieldsValues(), 'update');
 
         return $this->onModelUpdated($request, $model, $form);
     }

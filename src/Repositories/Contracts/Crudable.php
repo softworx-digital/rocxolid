@@ -19,9 +19,10 @@ interface Crudable extends Repository
      * Create a model instance filled with provided data.
      *
      * @param \Illuminate\Support\Collection $data
+     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function createModel(Collection $data): CrudableModel;
+    public function createModel(Collection $data, string $action): CrudableModel;
 
     /**
      * Get a model instance by its key.
@@ -31,32 +32,32 @@ interface Crudable extends Repository
      */
     public function readModel($key): CrudableModel;
 
-    // @todo: update - still needs a bit of refactoring
-
     /**
      * Update model instance with provided data.
      * Updates direct model data and relations.
      *
-     * @param \Illuminate\Support\Collection $data
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Illuminate\Support\Collection $data
      * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function updateModel(Collection $data, CrudableModel $model, string $action): CrudableModel;
+    public function updateModel(CrudableModel $model, Collection $data, string $action): CrudableModel;
 
     /**
      * Delete a model instance (remains persisted if uses SofDelete).
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function deleteModel(CrudableModel $model): CrudableModel;
+    public function deleteModel(CrudableModel $model, string $action): CrudableModel;
 
     /**
      * Force delete a model instance from storage.
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function forceDeleteModel(CrudableModel $model): CrudableModel;
+    public function forceDeleteModel(CrudableModel $model, string $action): CrudableModel;
 }

@@ -5,9 +5,6 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud\Response;
 // use Symfony\Component\HttpFoundation\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-// rocXolid repositories
-// use Softworx\RocXolid\Repositories\AbstractCrudRepository;
-use Softworx\RocXolid\Repositories\Contracts\Repository;
 // rocXolid forms
 use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid form components
@@ -25,12 +22,8 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
 trait ProvidesSuccessResponse
 {
     // @todo: refactor to ease overrideability
-    protected function successResponse(CrudRequest $request, Repository $repository, AbstractCrudForm $form, Crudable $model, string $action)
+    protected function successResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form, string $action)
     {
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
         $assignments = [];
 
         // @todo: use constants rather than strings
@@ -43,7 +36,7 @@ trait ProvidesSuccessResponse
                 case 'submit-edit':
                     switch ($action) {
                         case 'create':
-                            $this->response->redirect($this->getRoute('edit', $this->getModel()));
+                            $this->response->redirect($this->getRoute('edit', $model));
                         break;
                         case 'update':
                             $this->response->replace($form_component->getDomId(), $form_component->fetch('update'));
@@ -51,31 +44,26 @@ trait ProvidesSuccessResponse
                     }
                 break;
                 case 'submit-show':
-                    $this->response->redirect($this->getRoute('show', $this->getModel()));
+                    $this->response->redirect($this->getRoute('show', $model));
                 break;
                 default:
                     $this->response->redirect($this->getRoute('index'));
             }
 
             return $this->response
-                ->notifySuccess($form_component->translate('text.updated'))
+                ->notifySuccess($model->getModelViewerComponent()->translate('text.updated'))
                 //->append($form_component->getDomId('output'), Message::build($this, $this)->fetch('crud.success', $assignments))
                 ->get();
         } else {
-            /*
-                $route = $this->getModel()->exists
-                        ? $this->getRoute($action, $this->getModel())
-                        : $this->getRoute($action);
-            */
             switch ($request->input('_submit-action')) {
                 case 'submit-new':
                     $route = $this->getRoute('create');
                 break;
                 case 'submit-edit':
-                    $route = $this->getRoute('edit', $this->getModel());
+                    $route = $this->getRoute('edit', $model);
                 break;
                 case 'submit-show':
-                    $route = $this->getRoute('show', $this->getModel());
+                    $route = $this->getRoute('show', $model);
                 break;
                 default:
                     $route = $this->getRoute('index');

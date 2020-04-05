@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Repositories\Traits\Crud;
 
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  * Trait to destroy a CRUDable model instance.
@@ -17,30 +17,30 @@ trait DestroysModels
     /**
      * {@inheritDoc}
      */
-    public function deleteModel(CrudableModel $model): CrudableModel
+    public function deleteModel(Crudable $model, string $action): Crudable
     {
         if (!$model->canBeDeleted()) {
             throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be deleted', (new \ReflectionClass($model))->getName(), $model->getKey()));
         }
 
         return tap($model)
-            ->beforeDelete()
+            ->beforeDelete($action)
             ->delete()
-            ->afterDelete();
+            ->afterDelete($action);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function forceDeleteModel(CrudableModel $model): CrudableModel
+    public function forceDeleteModel(Crudable $model, string $action): Crudable
     {
         if (!$model->canBeDeleted()) {
             throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be deleted', (new \ReflectionClass($model))->getName(), $model->getKey()));
         }
 
         return tap($model)
-            ->beforeDelete()
+            ->beforeDelete($action)
             ->forceDelete()
-            ->afterDelete();
+            ->afterDelete($action);
     }
 }
