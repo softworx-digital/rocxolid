@@ -56,13 +56,12 @@ trait Formable
     /**
      * {@inheritDoc}
      */
-    public function getForm(CrudRequest $request, ?Crudable $model = null): Form
+    public function getForm(CrudRequest $request, ?Crudable $model = null, ?string $param = null): Form
     {
-        $param = $this->getMappingParam($request, 'form', FormableContract::FORM_PARAM);
+        $param = $param ?? $this->getMappingParam($request, 'form', FormableContract::FORM_PARAM);
+        $model = $model ?? $this->getRepository()->getModel();
 
         if (!$this->hasFormAssigned($param)) {
-            $model = $model ?? $this->getRepository()->getModel();
-
             $this->setForm($this->formService()->createForm($model, $param), $param);
         }
 

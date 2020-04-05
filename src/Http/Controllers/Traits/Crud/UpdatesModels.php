@@ -31,10 +31,7 @@ trait UpdatesModels
      */
     public function edit(CrudRequest $request, Crudable $model)//: View
     {
-        $model_viewer_component = $this->getModelViewerComponent(
-            $this->getRepository()->getModel(),
-            $this->getFormComponent($this->getForm($request, $model))
-        );
+        $model_viewer_component = $this->getModelViewerComponent($model, $this->getFormComponent($this->getForm($request, $model)));
 
         if ($request->ajax()) {
             return $this->response
@@ -59,11 +56,9 @@ trait UpdatesModels
      */
     public function update(CrudRequest $request, Crudable $model)//: Response
     {
-        $form = $this
-            ->getForm($request, $model)
-            ->submit();
+        $form = $this->getForm($request, $model);
 
-        if ($form->isValid()) {
+        if ($form->submit()->isValid()) {
             return $this->onUpdate($request, $model, $form);
         } else {
             return $this->onUpdateError($request, $model, $form);

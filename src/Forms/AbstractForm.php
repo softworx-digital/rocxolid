@@ -3,48 +3,34 @@
 namespace Softworx\RocXolid\Forms;
 
 use Illuminate\Support\Arr;
-// general contracts
-use Softworx\RocXolid\Contracts\Paramable;
-use Softworx\RocXolid\Contracts\Optionable;
-use Softworx\RocXolid\Contracts\EventDispatchable;
-use Softworx\RocXolid\Contracts\Requestable;
-use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Contracts\Validable;
 // general traits
-use Softworx\RocXolid\Traits\Paramable as ParamableTrait;
-use Softworx\RocXolid\Traits\MethodOptionable as MethodOptionableTrait;
-use Softworx\RocXolid\Traits\EventDispatchable as EventDispatchableTrait;
-use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
-use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
-use Softworx\RocXolid\Traits\Validable as ValidableTrait;
+use Softworx\RocXolid\Traits\Paramable;
+use Softworx\RocXolid\Traits\MethodOptionable;
+use Softworx\RocXolid\Traits\Requestable;
+use Softworx\RocXolid\Traits\Translatable;
+use Softworx\RocXolid\Traits\Validable;
 // form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
-use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Forms\Contracts\FormField;
-use Softworx\RocXolid\Forms\Contracts\FormFieldable;
-use Softworx\RocXolid\Forms\Contracts\Buttonable;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
 // traits
-use Softworx\RocXolid\Forms\Traits\OptionsSetter as OptionsSetterTrait;
-use Softworx\RocXolid\Forms\Traits\FormFieldable as FormFieldableTrait;
 use Softworx\RocXolid\Forms\Traits\Buttonable as ButtonableTrait;
 
 /**
  * @todo: subject to refactoring
  */
-abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionable, EventDispatchable, Requestable, Translatable, Validable, Paramable
+abstract class AbstractForm implements Form
 {
-    use ParamableTrait;
-    use MethodOptionableTrait;
-    use OptionsSetterTrait;
-    use FormFieldableTrait;
-    use ButtonableTrait;
-    use EventDispatchableTrait;
-    use RequestableTrait;
-    use TranslatableTrait;
-    use ValidableTrait;
+    use Paramable;
+    use MethodOptionable;
+    use Requestable;
+    use Translatable;
+    use Validable;
+    use Traits\OptionsSetter;
+    use Traits\FormFieldable;
+    use Traits\Buttonable;
 
     /**
      * @var FormBuilder
@@ -146,6 +132,16 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
      * ];
      */
     protected $buttons_order = null;
+
+    /**
+     * Constructor
+     *
+     * @param string $param Table parameter serves as reference to better identify the table eg. in session key creation.
+     */
+    public function __construct(string $param)
+    {
+        $this->setParam($param);
+    }
 
     /**
      * {@inheritDoc}

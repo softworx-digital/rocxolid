@@ -45,10 +45,11 @@ interface Formable
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $model Form model binding.
+     * @param string|null $param Form parameter.
      * @return \Softworx\RocXolid\Forms\Contracts\Form
      * @throws \InvalidArgumentException
      */
-    public function getForm(CrudRequest $request, ?Crudable $model = null): Form;
+    public function getForm(CrudRequest $request, ?Crudable $model = null, ?string $param = null): Form;
 
     /**
      * Check if the param is already bound.

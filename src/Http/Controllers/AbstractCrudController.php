@@ -34,7 +34,6 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Components\TableComponentable;
     use Traits\Components\FormComponentable;
     use Traits\Components\ModelViewerComponentable;
-    // use Traits\RepositoryAutocompleteable; // @todo: consider different approach
     use Traits\Actions\ItemsReorderderable; // @todo: add only where needed
     use Traits\Actions\SwitchesEnability;
     use Traits\Actions\ClonesModels;
@@ -43,6 +42,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Actions\Form\ReloadsForm;
     use Traits\Actions\Form\ReloadsFormGroup;
     use Traits\Actions\Form\ValidatesFormGroup;
+    use Traits\Actions\Form\RepositoryAutocompleteable; // @todo: consider different approach !!
 
     /**
      * Mapping of form type params to controller actions.

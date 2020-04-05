@@ -16,7 +16,7 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
 trait ElementMappable
 {
     /**
-     * Get element param based on action.
+     * Get element param based on request (action, section and param).
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param string $element_signature
@@ -29,13 +29,33 @@ trait ElementMappable
         $method = $request->route()->getActionMethod();
         $property = sprintf('%s_mapping', $element_signature);
 
+        if ($request->filled('_param'))
+        {
+            if (in_array($request->_param, $this->$property)) {
+                return $request->_param;
+            } else {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid _param [%s] sent in request for %s [%s]',
+                    $request->_param,
+                    $element_signature,
+                    get_class($this)
+                ));
+            }
+        }
+
         if ($request->filled('_section'))
         {
             $method = sprintf('%s.%s', $method, $request->_section);
 
-            if (isset($this->$property[$method]))
-            {
+            if (isset($this->$property[$method])) {
                 return $this->$property[$method];
+            } else {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid _section [%s].[%s] sent in request for %s [%s]',
+                    $request->route()->getActionMethod(),
+                    $request->_section, $element_signature,
+                    get_class($this)
+                ));
             }
         }
 
@@ -47,7 +67,12 @@ trait ElementMappable
             return $default;
         }
 
-        throw new \InvalidArgumentException(sprintf('No controller [%s] %s mapping for method [%s]', get_class($this), $element_signature, $method));
+        throw new \InvalidArgumentException(sprintf(
+            'No controller [%s] %s mapping for method [%s]',
+            get_class($this),
+            $element_signature,
+            $method
+        ));
     }
 
     /**

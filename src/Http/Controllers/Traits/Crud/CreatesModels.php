@@ -57,11 +57,9 @@ trait CreatesModels
      */
     public function store(CrudRequest $request)//: Response
     {
-        $form = $this
-            ->getForm($request)
-            ->submit();
+        $form = $this->getForm($request);
 
-        if ($form->isValid()) {
+        if ($form->submit()->isValid()) {
             return $this->onStore($request, $form);
         } else {
             return $this->onStoreError($request, $form);
@@ -101,6 +99,6 @@ trait CreatesModels
      */
     protected function onStoreError(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        return $this->errorResponse($request, $form, 'create');
+        return $this->errorResponse($request, $this->getRepository()->getModel(), $form, 'create');
     }
 }

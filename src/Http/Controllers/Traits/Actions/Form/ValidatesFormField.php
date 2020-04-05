@@ -21,11 +21,10 @@ trait ValidatesFormField
      * Validate single Create/Update form field.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param string $group
-     * @param mixed $id
-     * @todo: verify if $int can be type hinted as int
+     * @param string $field
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function formValidateField(CrudRequest $request, string $field, $id = null)//: Response
+    public function formValidateField(CrudRequest $request, string $field, ?Crudable $model = null)//: Response
     {
         dd(__METHOD__, 'INCOMPLETE');
     }

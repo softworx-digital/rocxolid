@@ -28,34 +28,14 @@ trait ReloadsFormGroup
      */
     public function formReloadGroup(CrudRequest $request, string $field_group, ?Crudable $model = null)//: Response
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-        $model = $model ?? $repository->getModel();
-
-        $this->setModel($model);
-
-        // @todo: refactor to clearly identify the form we want to get, not artificially like this
-        // put form->options['route-action'], or full identification data into the request
-        // this can serve as a fallback
-        if ($model->exists) {
-            $form = $repository
-                ->getForm($this->getFormParam($request, 'update'))
-                    ->setFieldsRequestInput($request->input());
-        } else {
-            $form = $repository
-                ->getForm($this->getFormParam($request, 'create'))
-                    ->setFieldsRequestInput($request->input());
-        }
-
-        $form_field_group = $form->getFormFieldGroup($field_group);
-
+        $model = $model ?? $this->getRepository()->getModel();
+        // create form with this group
+        $form = $this->getForm($request, $model)->setFieldsRequestInput($request->input());
         // this is needed for composing the fields
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
-
-        // this is needed for DOM id
+        $form_component = $this->getFormComponent($form); // @todo: make this not needed...?
+        // this is needed for DOM ID
         $form_field_group_component = FormFieldGroupComponent::build($this, $this)
-            ->setFormFieldGroup($form_field_group);
+            ->setFormFieldGroup($form->getFormFieldGroup($field_group));
 
         $this->response->replace(
             $form_field_group_component->getDomId($field_group),

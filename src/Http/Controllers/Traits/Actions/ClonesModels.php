@@ -19,13 +19,11 @@ trait ClonesModels
      * Display the specified resource clone confirmation dialog.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function cloneConfirm(CrudRequest $request, Crudable $model)
     {
-        $this->setModel($model);
-
-        $model_viewer_component = $this->getModelViewerComponent($this->getModel());
+        $model_viewer_component = $this->getModelViewerComponent($model);
 
         if ($request->ajax()) {
             return $this->response
@@ -40,15 +38,13 @@ trait ClonesModels
      * Clone the specified resource.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param int $id
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
     public function clone(CrudRequest $request, Crudable $model)
     {
-        $this->setModel($model);
-
         $with_relations = $request->input('_data.with_relations', []);
         $clone_log = collect();
-        $clone = $this->getModel()->clone($clone_log, [], $with_relations);
+        $clone = $model->clone($clone_log, [], $with_relations);
 
         return $this->onModelCloned($request, $model, $clone);
     }

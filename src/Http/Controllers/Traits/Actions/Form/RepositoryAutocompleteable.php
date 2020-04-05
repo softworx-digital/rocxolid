@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Table;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -17,7 +17,7 @@ use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: refactor this feature
+ * @todo: totally refactor this feature
  */
 trait RepositoryAutocompleteable
 {
@@ -32,28 +32,19 @@ trait RepositoryAutocompleteable
      */
     public function repositoryAutocomplete(CrudRequest $request, ?Crudable $model = null)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-        $model = $model ?? $repository->getModel();
+        $model = $model ?? $this->getRepository()->getModel();
         // @todo: the repository calls the controller to get the model, which can be different from
         // what is needed (eg. user registration controller vs. city_id)
         $model->setQueryString($request->get('q', null));
-
-        $this->setModel($model);
-
-        if ($request->has('form-param')) {
-            $form_param = $request->get('form-param');
-        } else {
-            $form_param = $model->exists ? 'update' : 'create';
-        }
-
-        $field = $repository
-                ->getForm($form_param)
-                ->getFormField($request->get('f', null))
-                    ->addFilter([
-                        'class' => StartsWith::class,
-                        'data' => $model
-                    ]);
-
+        // create form
+        $form = $this->getForm($request, $model)->setFieldsRequestInput($request->input());
+        // set field values filter based on query param
+        $field = $form->getFormField($request->get('f', null))
+            ->addFilter([
+                'class' => StartsWith::class,
+                'data' => $model
+            ]);
+        // @todo: use collection
         $response = [];
 
         foreach ($field->getCollection() as $value => $text) {

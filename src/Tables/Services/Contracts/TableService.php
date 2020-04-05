@@ -20,7 +20,8 @@ interface TableService extends ConsumerService
      * Create data table based on provided parameter which is set back to the created table.
      *
      * @param string $param
+     * @param string|null $type
      * @return \Softworx\RocXolid\Tables\Contracts\Table
      */
-    public function createTable(string $param): Table;
+    public function createTable(string $param, ?string $type = null): Table;
 }

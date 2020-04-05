@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Routing\Controller as IlluminateController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+// rocXolid service contracts
+use Softworx\RocXolid\Services\Contracts\ConsumerService;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Responseable;
 use Softworx\RocXolid\Contracts\ServiceConsumer;
@@ -81,8 +83,12 @@ abstract class AbstractController extends IlluminateController implements Respon
                 throw new \RuntimeException(sprintf('Controller [%s] already has property or service accessor [%s] assigned', get_class($this), $method));
             }
 
+            if ($service instanceof ConsumerService) {
+                $service->setConsumer($this);
+            }
+
             $this->service_accessors[$method] = function() use ($service) {
-                return $service->setConsumer($this);
+                return $service;
             };
         });
 

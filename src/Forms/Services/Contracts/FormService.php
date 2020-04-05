@@ -23,7 +23,8 @@ interface FormService extends ConsumerService
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param string $param
+     * @param string|null $type
      * @return \Softworx\RocXolid\Forms\Contracts\Form
      */
-    public function createForm(Crudable $model, string $param): Form;
+    public function createForm(Crudable $model, string $param, ?string $type = null): Form;
 }

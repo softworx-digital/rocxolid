@@ -66,9 +66,9 @@ class TableService implements TableServiceContract
     /**
      * {@inheritDoc}
      */
-    public function createTable(string $param): Table
+    public function createTable(string $param, ?string $type = null): Table
     {
-        $type = $this->consumer->getTableMappingType($param);
+        $type = $type ?? $this->consumer->getTableMappingType($param);
 
         return $this->table_builder->buildTable($this->consumer, $type, $param);
     }

@@ -2,14 +2,23 @@
 
 namespace Softworx\RocXolid\Forms\Contracts;
 
+// rocXolid contracts
+use Softworx\RocXolid\Contracts\Paramable;
+use Softworx\RocXolid\Contracts\Optionable;
+use Softworx\RocXolid\Contracts\Requestable;
+use Softworx\RocXolid\Contracts\Translatable; // @todo: ?
+use Softworx\RocXolid\Contracts\Validable;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\FormFieldable;
+use Softworx\RocXolid\Forms\Contracts\Buttonable;
 // rocXolid form builder contracts
 use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
 
-// @todo: phpDoc
-// @todo: add missing methods
-interface Form
+// @todo: documentationn
+// @todo: revise & finish
+interface Form extends Paramable, FormFieldable, Buttonable, Optionable, Requestable, Translatable, Validable
 {
     /**
      * Form initializer.
