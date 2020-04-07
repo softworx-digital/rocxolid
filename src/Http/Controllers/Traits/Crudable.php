@@ -20,8 +20,10 @@ trait Crudable
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
     use Crud\Response\ProvidesSuccessResponse;
-    use Crud\Response\ProvidesErrorResponse;
+    use Crud\Response\ProvidesSuccessCreateResponse;
+    use Crud\Response\ProvidesSuccessUpdateResponse;
     use Crud\Response\ProvidesDestroyResponse;
+    use Crud\Response\ProvidesErrorResponse;
 
     // protected static $model_type; // should be defined in specific controller class
 

@@ -329,15 +329,14 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
 
     public function getFinalValue()
     {
-        // @todo: temporary hotfix for BelongsToMany fields
-        if ($this->isArray()
-            && method_exists($this->getForm()->getController()->getModel(), $this->name)
-            && ($this->getForm()->getController()->getModel()->{$this->name}() instanceof BelongsToMany)) {
+        $model = $this->getForm()->getModel();
 
+        // @todo: temporary hotfix for BelongsToMany fields
+        if ($this->isArray() && method_exists($model, $this->name) && ($model->{$this->name}() instanceof BelongsToMany)) {
             $values = $this->getValues();
 
             // @todo: awkward
-            $relation = $this->getForm()->getController()->getModel()->{$this->name}();
+            $relation = $model->{$this->name}();
             $related = $relation->getRelated();
             $pivot_fields = $this->getForm()->getPivotFormFields($relation);
 
@@ -353,7 +352,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
                 // $pivot_data = collect($data[$relation->getPivotAccessor()] ?? [])->get($related_key);
 
                 $this->addNewPivot($relation, [
-                    $relation->getForeignPivotKeyName() => $this->getForm()->getController()->getModel()->getKey(),
+                    $relation->getForeignPivotKeyName() => $model->getKey(),
                     $relation->getRelatedPivotKeyName() => $related_key,
                 ] + $pivot_data->toArray());
             });

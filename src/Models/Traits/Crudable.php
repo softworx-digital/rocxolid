@@ -3,11 +3,13 @@
 namespace Softworx\RocXolid\Models\Traits;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 // relations
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\AbstractCrudController;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\FormField;
 // rocXolid model contracts
@@ -29,6 +31,7 @@ trait Crudable
     use HasTitleColumn;
     use OnActions\RepositoryActions;
 
+    // @todo: revise
     public static function getAuthorizationParameter(): ?string
     {
         return null;
@@ -36,7 +39,7 @@ trait Crudable
 
     public function getModelViewerComponent(string $view_package = null)
     {
-        $model_viewer = app($this->getControllerClass())->getModelViewerComponent($this);
+        $model_viewer = $this->getCrudController()->getModelViewerComponent($this);
 
         if (!is_null($view_package)) {
             $model_viewer->setViewPackage($view_package);
@@ -45,6 +48,7 @@ trait Crudable
         return $model_viewer;
     }
 
+    // @todo: revise
     public function getExtraAttributes()
     {
         return $this->extra;
@@ -76,54 +80,121 @@ trait Crudable
         return $singular ? $name : Str::plural($name);
     }
 
-    public function canBeDeleted()
+    /**
+     * Business rules to prevent model instances to be created.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return boolean
+     */
+    public function canBeCreated(Request $request): bool
     {
-        return static::$can_be_deleted;
+        return true;
     }
 
-    public function getCrudController()
+    /**
+     * Business rules to prevent model instances to be updated.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return boolean
+     */
+    public function canBeUpdated(Request $request): bool
     {
-        return app($this->getControllerClass());
+        return true;
     }
 
-    public function getControllerClass()
+    /**
+     * Business rules to prevent model instances to be deleted.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return boolean
+     */
+    public function canBeDeleted(Request $request): bool
     {
-        if (property_exists($this, 'controller_class')) {
-            return static::$controller_class;
+        return true;
+    }
+
+    /**
+     * Obtain CRUD controller this model is assigned to by default.
+     *
+     * @return \Softworx\RocXolid\Http\Controllers\AbstractCrudController
+     */
+    public function getCrudController(): AbstractCrudController
+    {
+        return app($this->getCrudControllerType());
+    }
+
+    /**
+     * Obtain CRUD controller type.
+     *
+     * @return string
+     */
+    private function getCrudControllerType(): string
+    {
+        if (property_exists($this, 'controller_type')) {
+            return static::$controller_type;
         }
 
-        return $this->guessControllerClass();
+        return $this->guessCrudControllerType();
     }
 
-    public function guessControllerClass()
+    /**
+     * Naively guess the CRUD controller type based on model namespace.
+     *
+     * @return string
+     */
+    private function guessCrudControllerType(): string
     {
         return sprintf('\%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
     }
 
-    public function getAppControllerClass()
+    /**
+     * Get CRUD controller route.
+     *
+     * @param string $method
+     * @param array $params
+     * @return string
+     */
+    public function getControllerRoute(string $method = 'show', array $params = []): string
     {
-        if (property_exists($this, 'app_controller_class')) {
-            return static::$app_controller_class;
-        }
-
-        return $this->guessAppControllerClass();
-    }
-
-    public function guessAppControllerClass()
-    {
-        return sprintf('\App\Http\Controllers\%sController', (new \ReflectionClass($this))->getShortName());
-    }
-
-    public function getControllerRoute($method = 'show', $params = []): string
-    {
-        $action = sprintf('%s@%s', $this->getControllerClass(), $method);
+        $action = sprintf('%s@%s', $this->getCrudControllerType(), $method);
 
         return action($action, [ $this ] + $params);
     }
 
-    public function getAppControllerRoute($method = 'show', $params = []): string
+    /**
+     * Obtain App (namespace) controller type.
+     *
+     * @return string
+     */
+    private function getAppControllerType(): string
     {
-        $action = sprintf('%s@%s', $this->getAppControllerClass(), $method);
+        if (property_exists($this, 'app_controller_type')) {
+            return static::$app_controller_type;
+        }
+
+        return $this->guessAppControllerType();
+    }
+
+    /**
+     * Naively guess the App (namespace) controller type based on model namespace.
+     *
+     * @return string
+     */
+    private function guessAppControllerType(): string
+    {
+        return sprintf('\App\Http\Controllers\%sController', (new \ReflectionClass($this))->getShortName());
+    }
+
+    /**
+     * Get App (namespace) controller route.
+     *
+     * @param string $method
+     * @param array $params
+     * @return string
+     */
+    public function getAppControllerRoute(string $method = 'show', array $params = []): string
+    {
+        $action = sprintf('%s@%s', $this->getAppControllerType(), $method);
 
         return action($action, [ $this ] + $params);
     }
@@ -180,7 +251,13 @@ trait Crudable
         }
     }
 
-    public function getShowAttributes($except = [], $with = [])
+    /**
+     * Get attributes for 'show' action.
+     *
+     * @param array $except
+     * @param array $with
+     */
+    public function getShowAttributes(array $except = [], array $with = []): array
     {
         $attributes = $this->getAttributes();
         $attributes = array_diff_key($attributes, array_flip($this->getSystemAttributes()), array_flip($except)) + $with;
@@ -192,19 +269,37 @@ trait Crudable
         return $attributes;
     }
 
-    public function isBooleanAttribute($attribute)
+    /**
+     * Check if to treat attribute as boolean value.
+     *
+     * @param string $attribute
+     * @return boolean
+     */
+    public function isBooleanAttribute(string $attribute): bool
     {
         // @todo: you can do (maybe) better than checking substring
         return (substr($attribute, 0, 3) === 'is_');
     }
 
-    public function isJsonAttribute($attribute)
+    /**
+     * Check if attribute value is in JSON format.
+     *
+     * @param string $attribute
+     * @return boolean
+     */
+    public function isJsonAttribute(string $attribute): bool
     {
         // @todo: you can do (maybe) better than checking substring
         return (substr($attribute, -5) === '_json');
     }
 
-    public function isColorAttribute($attribute)
+    /**
+     * Check if attribute value represents hex color.
+     *
+     * @param string $attribute
+     * @return boolean
+     */
+    public function isColorAttribute(string $attribute): bool
     {
         // @todo: you can do (maybe) better than checking substring
         return (substr($attribute, -5) === 'color');

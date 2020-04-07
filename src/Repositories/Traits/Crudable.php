@@ -26,13 +26,13 @@ trait Crudable
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Illuminate\Support\Collection $data
-     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    protected function fillModel(CrudableModel $model, Collection $data, string $action): CrudableModel
+    public function fillModel(CrudableModel $model, Collection $data): CrudableModel
     {
         return $model
-            ->fill($data->toArray(), $action)
-            ->fillCustom($data, $action);
+            ->fill($data->toArray())
+            ->fillCustom($data)
+            ->resolvePolymorphism($data);
     }
 }

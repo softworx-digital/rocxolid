@@ -20,6 +20,9 @@ use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
+/**
+ * @todo: revise
+ */
 trait HasRelationships
 {
     public function getReflectedRelationshipMethods()
@@ -83,18 +86,18 @@ trait HasRelationships
     // @todo: ugly? and combine with HasRelationships::resolvePolymorphType()
     public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
-        foreach ($data as $attribute => $value) {
+        $data->each(function($value, $attribute) use ($data) {
             // eg. model_type
             if (substr($attribute, -5) === '_type') {
                 // eg. model_id
                 $id_attribute = sprintf('%s_id', substr($attribute, 0, -5));
 
-                if (array_key_exists($id_attribute, $data)) {
+                if ($data->has($id_attribute)) {
                     $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
 
                     if (method_exists($this, $method)) {
                         $this->$attribute = $this->$method();
-                        $this->$id_attribute = $data[$id_attribute];
+                        $this->$id_attribute = $data->get($id_attribute);
                     } else {
                         $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
 
@@ -109,11 +112,11 @@ trait HasRelationships
                         }
 
                         $this->$attribute = $type;
-                        $this->$id_attribute = $data[$id_attribute];
+                        $this->$id_attribute = $data->get($id_attribute);
                     }
                 }
             }
-        }
+        });
 
         return $this;
     }
@@ -149,11 +152,11 @@ trait HasRelationships
     }
 
     // @todo: subject to refactoring, don't like the current approach
-    public function fillRelationships(Collection $data, string $action = null): Crudable
+    public function fillRelationships(Collection $data): Crudable
     {
         $data = $data->toArray();
 
-        $this->getRelationshipMethods()->each(function ($relation) use ($data, $action) {
+        $this->getRelationshipMethods()->each(function ($relation) use ($data) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));
 

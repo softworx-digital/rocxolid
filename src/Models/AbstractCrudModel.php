@@ -26,7 +26,7 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
     use CrudableTrait;
     use BelongsToThrough;
     use HasUserAttributes;
-    use AutocompleteSearchableTrait;
+    use AutocompleteSearchableTrait; // @todo: revise
 
     /**
      * Attribute to use for parent's position.
@@ -34,13 +34,6 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
      * @var string
      */
     const POSITION_COLUMN = 'model_attribute_position';
-
-    /**
-     * Flag if model instances can be user deleted.
-     *
-     * @var bool
-     */
-    protected static $can_be_deleted = true;
 
     /**
      * The attributes that should be hidden for arrays.

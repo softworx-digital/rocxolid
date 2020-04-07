@@ -18,17 +18,17 @@ trait UpdatesModels
     /**
      * {@inheritDoc}
      */
-    public function updateModel(Crudable $model, Collection $data, string $action): Crudable
+    public function updateModel(Crudable $model, Collection $data): Crudable
     {
-        // @todo: use tap
-        $model->onUpdateBeforeSave($data, $action);
-        $model = $this->fillModel($model, $data, $action);
-        $model->resolvePolymorphism($data, $action);
-        $model->save();
-        $model->onUpdateAfterSave($data, $action);
-        $model->fillRelationships($data, $action);
-        $model->onUpdateFinish($data, $action);
+        $model = $this
+            ->fillModel($model, $data)
+            ->onUpdateBeforeSave($data);
 
-        return $model;
+        // save returns bool so tapping
+        return tap($model)
+            ->save()
+            ->onUpdateAfterSave($data)
+            ->fillRelationships($data)
+            ->onUpdated($data);
     }
 }

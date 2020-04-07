@@ -20,7 +20,7 @@ trait IsContained
     /**
      * @override
      */
-    public function resolvePolymorphism($data, $action = null)
+    public function resolvePolymorphism(Collection $data, string $action = null)
     {
         return $this;
     }

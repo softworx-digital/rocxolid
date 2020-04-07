@@ -4,6 +4,8 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 // rocXolid repositories
 use Softworx\RocXolid\Repositories\AbstractCrudRepository;
 // rocXolid forms
@@ -11,7 +13,9 @@ use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid form components
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
 
 /**
  * Update resource CRUD action.
@@ -29,22 +33,47 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function edit(CrudRequest $request, Crudable $model)//: View
+    public function edit(CrudRequest $request, CrudableModel $model)//: View
     {
-        $model_viewer_component = $this->getModelViewerComponent($model, $this->getFormComponent($this->getForm($request, $model)));
+        $model_viewer_component = $this->getModelViewerComponent(
+            $model,
+            $this->getFormComponent($this->getForm($request, $model))
+        );
 
-        if ($request->ajax()) {
-            return $this->response
-                ->modal($model_viewer_component->fetch('modal.update'))
-                ->get();
-        } else {
-            return $this
-                ->getDashboard()
-                ->setModelViewerComponent($model_viewer_component)
-                ->render('model', [
-                    'model_viewer_template' => 'update'
-                ]);
-        }
+        return $request->ajax()
+            ? $this->editAjax($request, $model, $model_viewer_component)
+            : $this->editNonAjax($request, $model, $model_viewer_component);
+    }
+
+    /**
+     * Display the specified resource update form modal for AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function editAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    {
+        return $this->response
+            ->modal($model_viewer_component->fetch('modal.update'))
+            ->get();
+    }
+
+    /**
+     * Display the specified resource update form view for non-AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function editNonAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    {
+        return $this
+            ->getDashboard()
+            ->setModelViewerComponent($model_viewer_component)
+            ->render('model', [
+                'model_viewer_template' => 'update'
+            ]);
     }
 
     /**
@@ -54,29 +83,34 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function update(CrudRequest $request, Crudable $model)//: Response
+    public function update(CrudRequest $request, CrudableModel $model)//: Response
     {
+        // last time to check if something prevents the model to be updated
+        if (!$model->canBeUpdated($request)) {
+            throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be updated', (new \ReflectionClass($model))->getName(), $model->getKey()));
+        }
+
         $form = $this->getForm($request, $model);
 
-        if ($form->submit()->isValid()) {
-            return $this->onUpdate($request, $model, $form);
-        } else {
-            return $this->onUpdateError($request, $model, $form);
-        }
+        return $form->submit()->isValid()
+            ? $this->onUpdateFormValid($request, $model, $form)
+            : $this->onUpdateFormInvalid($request, $model, $form);
     }
 
     /**
-     * Action to take when the 'update' form was validated.
+     * Action to take when the 'update' form is valid.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onUpdate(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
+    protected function onUpdateFormValid(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
     {
-        $model = $this->getRepository()->updateModel($model, $form->getFormFieldsValues(), 'update');
+        $model = $this->getRepository()->updateModel($model, $form->getFormFieldsValues());
 
-        return $this->onModelUpdated($request, $model, $form);
+        return $this
+            ->onModelUpdated($request, $model, $form)
+            ->onModelUpdatedSuccessResponse($request, $model, $form);
     }
 
     /**
@@ -85,10 +119,23 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return \Softworx\RocXolid\Http\Controllers\Contracts\Crudable
      */
-    protected function onModelUpdated(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
+    protected function onModelUpdated(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form): Crudable
     {
-        return $this->successResponse($request, $model, $form, 'update');
+        return $this;
+    }
+
+    /**
+     * Respond to successful model update.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onModelUpdatedSuccessResponse(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
+    {
+        return $this->successUpdateResponse($request, $model, $form);
     }
 
     /**

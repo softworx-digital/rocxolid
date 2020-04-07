@@ -18,19 +18,20 @@ trait CreatesModels
     /**
      * {@inheritDoc}
      */
-    public function createModel(Collection $data, string $action): Crudable
+    public function createModel(Collection $data): Crudable
     {
+        // obtain new model instance
         $model = $this->getModel();
 
-        // @todo: use tap
-        $model->onCreateBeforeSave($data, $action);
-        $model = $this->fillModel($model, $data, $action);
-        $model->resolvePolymorphism($data, $action);
-        $model->save();
-        $model->onCreateAfterSave();
-        $model->fillRelationships($data, $action);
-        $model->onCreateFinish($data, $action);
+        $model = $this
+            ->fillModel($model, $data)
+            ->onCreateBeforeSave($data);
 
-        return $model;
+        // save returns bool so tapping
+        return tap($model)
+            ->save()
+            ->onCreateAfterSave($data)
+            ->fillRelationships($data)
+            ->onCreated($data);
     }
 }

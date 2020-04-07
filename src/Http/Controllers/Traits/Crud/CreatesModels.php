@@ -4,6 +4,8 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 // rocXolid repositories
 use Softworx\RocXolid\Repositories\AbstractCrudRepository;
 // rocXolid forms
@@ -11,7 +13,9 @@ use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid form components
 use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
 
 /**
  * Trait to create a resource.
@@ -35,18 +39,38 @@ trait CreatesModels
             $this->getFormComponent($this->getForm($request))
         );
 
-        if ($request->ajax()) {
-            return $this->response
-                ->modal($model_viewer_component->fetch('modal.create'))
-                ->get();
-        } else {
-            return $this
-                ->getDashboard()
-                ->setModelViewerComponent($model_viewer_component)
-                ->render('model', [
-                    'model_viewer_template' => 'create'
-                ]);
-        }
+        return $request->ajax()
+            ? $this->createAjax($request, $model_viewer_component)
+            : $this->createNonAjax($request, $model_viewer_component);
+    }
+
+    /**
+     * Display the specified resource create form modal for AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function createAjax(CrudRequest $request, CrudModelViewerComponent $model_viewer_component)//: View
+    {
+        return $this->response
+            ->modal($model_viewer_component->fetch('modal.create'))
+            ->get();
+    }
+
+    /**
+     * Display the specified resource create form view for non-AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function createNonAjax(CrudRequest $request, CrudModelViewerComponent $model_viewer_component)//: View
+    {
+        return $this
+            ->getDashboard()
+            ->setModelViewerComponent($model_viewer_component)
+            ->render('model', [
+                'model_viewer_template' => 'create'
+            ]);
     }
 
     /**
@@ -57,26 +81,31 @@ trait CreatesModels
      */
     public function store(CrudRequest $request)//: Response
     {
+        // last time to check if something prevents the model to be created
+        if (!$this->getRepository()->getModel()->canBeCreated($request)) {
+            throw new \RuntimeException(sprintf('Model [%s] cannot be created', (new \ReflectionClass($this->getRepository()->getModel()))->getName()));
+        }
+
         $form = $this->getForm($request);
 
-        if ($form->submit()->isValid()) {
-            return $this->onStore($request, $form);
-        } else {
-            return $this->onStoreError($request, $form);
-        }
+        return $form->submit()->isValid()
+            ? $this->onStoreFormValid($request, $form)
+            : $this->onStoreFormInvalid($request, $form);
     }
 
     /**
-     * Action to take when the 'create' form was validated.
+     * Action to take when the 'create' form is valid.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStore(CrudRequest $request, AbstractCrudForm $form)//: Response
+    protected function onStoreFormValid(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        $model = $this->getRepository()->createModel($form->getFormFieldsValues(), 'create');
+        $model = $this->getRepository()->createModel($form->getFormFieldsValues());
 
-        return $this->onModelStored($request, $model, $form);
+        return $this
+            ->onModelStored($request, $model, $form)
+            ->onModelStoredSuccessResponse($request, $model, $form);
     }
 
     /**
@@ -85,10 +114,23 @@ trait CreatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return \Softworx\RocXolid\Http\Controllers\Contracts\Crudable
      */
-    protected function onModelStored(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
+    protected function onModelStored(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form): Crudable
     {
-        return $this->successResponse($request, $model, $form, 'create');
+        return $this;
+    }
+
+    /**
+     * Respond to successful model creation.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onModelStoredSuccessResponse(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
+    {
+        return $this->successStoreResponse($request, $model, $form, 'create');
     }
 
     /**
@@ -97,7 +139,7 @@ trait CreatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStoreError(CrudRequest $request, AbstractCrudForm $form)//: Response
+    protected function onStoreFormInvalid(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
         return $this->errorResponse($request, $this->getRepository()->getModel(), $form, 'create');
     }

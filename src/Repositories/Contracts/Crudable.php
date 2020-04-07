@@ -18,11 +18,19 @@ interface Crudable extends Repository
     /**
      * Create a model instance filled with provided data.
      *
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Illuminate\Support\Collection $data
-     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function createModel(Collection $data, string $action): CrudableModel;
+    public function fillModel(CrudableModel $model, Collection $data): CrudableModel;
+
+    /**
+     * Create a model instance filled with provided data.
+     *
+     * @param \Illuminate\Support\Collection $data
+     * @return \Softworx\RocXolid\Models\Contracts\Crudable
+     */
+    public function createModel(Collection $data): CrudableModel;
 
     /**
      * Get a model instance by its key.
@@ -38,26 +46,23 @@ interface Crudable extends Repository
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Illuminate\Support\Collection $data
-     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function updateModel(CrudableModel $model, Collection $data, string $action): CrudableModel;
+    public function updateModel(CrudableModel $model, Collection $data): CrudableModel;
 
     /**
      * Delete a model instance (remains persisted if uses SofDelete).
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
-     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function deleteModel(CrudableModel $model, string $action): CrudableModel;
+    public function deleteModel(CrudableModel $model): CrudableModel;
 
     /**
      * Force delete a model instance from storage.
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
-     * @param string $action
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
-    public function forceDeleteModel(CrudableModel $model, string $action): CrudableModel;
+    public function forceDeleteModel(CrudableModel $model): CrudableModel;
 }

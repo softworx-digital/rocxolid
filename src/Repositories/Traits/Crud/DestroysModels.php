@@ -17,30 +17,24 @@ trait DestroysModels
     /**
      * {@inheritDoc}
      */
-    public function deleteModel(Crudable $model, string $action): Crudable
+    public function deleteModel(Crudable $model): Crudable
     {
-        if (!$model->canBeDeleted()) {
-            throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be deleted', (new \ReflectionClass($model))->getName(), $model->getKey()));
-        }
+        $model = $model->beforeDelete();
 
         return tap($model)
-            ->beforeDelete($action)
             ->delete()
-            ->afterDelete($action);
+            ->afterDelete();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function forceDeleteModel(Crudable $model, string $action): Crudable
+    public function forceDeleteModel(Crudable $model): Crudable
     {
-        if (!$model->canBeDeleted()) {
-            throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be deleted', (new \ReflectionClass($model))->getName(), $model->getKey()));
-        }
+        $model = $model->beforeDelete();
 
         return tap($model)
-            ->beforeDelete($action)
             ->forceDelete()
-            ->afterDelete($action);
+            ->afterDelete();
     }
 }
