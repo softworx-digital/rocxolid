@@ -8,7 +8,7 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
- * Trait to enable reordering of objects.
+ * Trait to enable reordering of child objects.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid

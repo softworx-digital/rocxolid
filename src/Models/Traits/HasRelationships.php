@@ -25,6 +25,18 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  */
 trait HasRelationships
 {
+    // @todo: kinda hardcoded
+    public function isParentSingle()
+    {
+        return ($this->parent->{$this->model_attribute}() instanceof MorphOne);
+    }
+
+    // @todo: kinda hardcoded
+    public function isParentPrimary()
+    {
+        return $this->is_model_primary;
+    }
+
     public function getReflectedRelationshipMethods()
     {
         $reflect = new \ReflectionClass($this);

@@ -107,6 +107,10 @@ class Repository implements RepositoryContract
      */
     protected function getQuery(): Builder
     {
+        // rebooting, because some traits might not been
+        // properly booted before (eg. ProtectsRoot)
+        $this->query_model::boot();
+
         $query = $this->query_model->query();
 
         $this
