@@ -22,12 +22,14 @@ trait ModelViewerComponentable
     /**
      * Retrieve model viewer component to show.
      *
-     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $model
      * @param \Softworx\RocXolid\Components\Forms\CrudForm|null $form_component
      * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
      */
-    public function getModelViewerComponent(CrudableModel $model, ?CrudFormComponent $form_component = null): CrudModelViewerComponent
+    public function getModelViewerComponent(?CrudableModel $model = null, ?CrudFormComponent $form_component = null): CrudModelViewerComponent
     {
+        $model = $model ?? $this->getRepository()->getModel();
+
         $model_viewer_component = static::$model_viewer_type::build($this, $this)
             ->setModel($model)
             ->setController($this);

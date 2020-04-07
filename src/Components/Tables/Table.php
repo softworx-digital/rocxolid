@@ -89,7 +89,7 @@ class Table extends AbstractOptionableComponent implements Tableable
 
     protected function loadTableFiltersComponents(): Tableable
     {
-        $this->filter_components = new Collection();
+        $this->filter_components = collect();
 
         foreach ($this->getTable()->getFilters() as $filter) {
             $this->filter_components->put(
@@ -108,7 +108,7 @@ class Table extends AbstractOptionableComponent implements Tableable
 
     protected function loadTableColumnsComponents(): Tableable
     {
-        $this->column_components = new Collection();
+        $this->column_components = collect();
 
         foreach ($this->getTable()->getColumns() as $column) {
             $this->column_components->put(
@@ -128,7 +128,7 @@ class Table extends AbstractOptionableComponent implements Tableable
 
     protected function loadTableButtonsComponents(): Tableable
     {
-        $this->button_components = new Collection();
+        $this->button_components = collect();
 
         foreach ($this->getTable()->getButtons() as $button) {
             $this->button_components->put(

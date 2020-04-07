@@ -298,7 +298,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     protected function getModelAttributes(): Collection
     {
-        $attributes = new Collection();
+        $attributes = collect();
 
         /*
         foreach ($this->getModel()->toArray() as $attribute => $value)
@@ -325,7 +325,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     protected function getModelRelationships(): Collection
     {
-        $relationships = new Collection();
+        $relationships = collect();
 
         foreach ($this->getModel()->getRelationshipMethods() as $method) {
             $relation = $this->getModel()->$method();

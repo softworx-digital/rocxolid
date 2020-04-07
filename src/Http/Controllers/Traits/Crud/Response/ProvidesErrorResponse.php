@@ -55,8 +55,8 @@ trait ProvidesErrorResponse
 
             $route_params = $request->filled('_section') ? [ '_section' => $request->get('_section') ] : [];
 
-            $route = $this->getModel()->exists
-                ? $this->getRoute($action, $this->getModel(), $route_params)
+            $route = $model->exists
+                ? $this->getRoute($action, $model, $route_params)
                 : $this->getRoute($action, $route_params);
 
             return redirect($route)

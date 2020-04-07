@@ -23,21 +23,21 @@ trait Buttonable
 
     public function setButtonToolbars($buttontoolbars): ButtonableContract
     {
-        $this->_buttontoolbars = new Collection($buttontoolbars);
+        $this->_buttontoolbars = collect($buttontoolbars);
 
         return $this;
     }
 
     public function setButtonGroups($buttongroups): ButtonableContract
     {
-        $this->_buttongroups = new Collection($buttongroups);
+        $this->_buttongroups = collect($buttongroups);
 
         return $this;
     }
 
     public function setButtons($buttons): ButtonableContract
     {
-        $this->_buttons = new Collection($buttons);
+        $this->_buttons = collect($buttons);
 
         return $this;
     }
@@ -45,7 +45,7 @@ trait Buttonable
     public function getButtonToolbars(): Collection
     {
         if (is_null($this->_buttontoolbars)) {
-            $this->_buttontoolbars = new Collection();
+            $this->_buttontoolbars = collect();
         }
 
         return $this->_buttontoolbars;
@@ -54,7 +54,7 @@ trait Buttonable
     public function getButtonGroups(): Collection
     {
         if (is_null($this->_buttongroups)) {
-            $this->_buttongroups = new Collection();
+            $this->_buttongroups = collect();
         }
 
         return $this->_buttongroups;
@@ -63,7 +63,7 @@ trait Buttonable
     public function getButtons(): Collection
     {
         if (is_null($this->_buttons)) {
-            $this->_buttons = new Collection();
+            $this->_buttons = collect();
         }
 
         return $this->_buttons;

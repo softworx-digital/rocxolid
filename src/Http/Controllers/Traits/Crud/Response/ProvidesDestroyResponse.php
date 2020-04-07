@@ -51,6 +51,8 @@ trait ProvidesDestroyResponse
      */
     protected function destroyAjaxResponse(CrudRequest $request, Crudable $model)
     {
-        return $this->response->redirect($this->getRoute('index'))->get();
+        return $this->response
+            ->redirect($this->getRoute('index'))
+            ->get();
     }
 }

@@ -78,9 +78,12 @@ trait ProvidesSuccessResponse
         // $action = $request->route()->getActionName();
         // $action = $request->route()->getActionMethod();
 
+        $model_viewer_component = $this->getModelViewerComponent($model);
+
         return $this->response
-            ->notifySuccess($this->getModelViewerComponent($model)->translate('text.updated'))
-            ->redirect($this->successReponseRoute($request, $model, $form))
+            ->notifySuccess($model_viewer_component->translate('text.updated'))
+            ->modalClose($model_viewer_component->getDomId(sprintf('modal-%s', $form->getParam())))
+            // ->redirect($this->successReponseRoute($request, $model, $form))
             ->get();
     }
 

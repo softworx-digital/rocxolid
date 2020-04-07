@@ -31,7 +31,7 @@ trait ClonesModels
                 ->modal($model_viewer_component->fetch('modal.clone-confirm'))
                 ->get();
         } else {
-            return redirect($this->getRoute('edit', $this->getModel()));
+            return redirect($this->getRoute('edit', $model));
         }
     }
 

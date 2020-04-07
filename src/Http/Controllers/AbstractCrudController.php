@@ -13,7 +13,6 @@ use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 use Softworx\RocXolid\Repositories\Contracts\Repository;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Repositoryable;
-use Softworx\RocXolid\Traits\Modellable;
 
 /**
  * Base rocXolid controller for CRUD (and associated) operations.
@@ -25,7 +24,6 @@ use Softworx\RocXolid\Traits\Modellable;
  */
 abstract class AbstractCrudController extends AbstractController implements Crudable
 {
-    use Modellable; // @todo: consider different approach
     use Repositoryable;
     use Traits\Crudable;
     use Traits\Dashboardable;
