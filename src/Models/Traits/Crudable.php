@@ -81,6 +81,16 @@ trait Crudable
     }
 
     /**
+     * Check for model existance (being persisted).
+     *
+     * @return boolean
+     */
+    public function exists(): bool
+    {
+        return $this->exists;
+    }
+
+    /**
      * Business rules to prevent model instances to be created.
      *
      * @param \Illuminate\Http\Request $request

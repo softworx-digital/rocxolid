@@ -41,6 +41,11 @@ class ModelRelation extends AbstractColumn
         return $model->{$this->getOption('relation.name')}()->get();
     }
 
+    public function canUseCountryFlag(CrudableModel $model): bool
+    {
+        return filled($model->is_label_with_flag) && optional($model->country)->exists();
+    }
+
     protected function setAjax($ajax): Column
     {
         $this->setComponentOptions('ajax', true);
