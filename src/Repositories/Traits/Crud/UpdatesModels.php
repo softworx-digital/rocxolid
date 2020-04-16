@@ -22,11 +22,13 @@ trait UpdatesModels
     {
         $model = $this
             ->fillModel($model, $data)
+            ->onBeforeSave($data)
             ->onUpdateBeforeSave($data);
 
         // save returns bool so tapping
         return tap($model)
             ->save()
+            ->onAfterSave($data)
             ->onUpdateAfterSave($data)
             ->fillRelationships($data)
             ->onUpdated($data);

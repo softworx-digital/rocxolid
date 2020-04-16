@@ -12,7 +12,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: revise & adjust & add authorization
+ * @todo: revise & adjust (according to eg. createsmodels) & add authorization
  */
 trait ClonesModels
 {

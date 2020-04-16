@@ -17,6 +17,16 @@ trait RepositoryActions
         return $this;
     }
 
+    public function onBeforeSave(Collection $data): Crudable
+    {
+        return $this;
+    }
+
+    public function onAfterSave(Collection $data): Crudable
+    {
+        return $this;
+    }
+
     public function onCreateBeforeSave(Collection $data): Crudable
     {
         return $this;

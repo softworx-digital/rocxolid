@@ -25,6 +25,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
 trait ProvidesErrorResponse
 {
     // @todo: refactor to ease overrideability & add model reference if possible
+    // @todo: seprate ajax / non-ajax like success response
     protected function errorResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form, string $action)
     {
         $form_component = $this->getFormComponent($form);

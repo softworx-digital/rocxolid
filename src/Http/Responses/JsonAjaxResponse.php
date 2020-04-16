@@ -223,6 +223,20 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
+    public function file64(string $content, ?string $filename = null): AjaxResponse
+    {
+        $this->message_bag->add('file64', collect([
+            'base64' => base64_encode($content),
+            'type' => (new \finfo())->buffer($content, FILEINFO_MIME_TYPE),
+            'filename' => $filename,
+        ])->filter());
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function get(): array
     {
         return $this->message_bag->jsonSerialize();

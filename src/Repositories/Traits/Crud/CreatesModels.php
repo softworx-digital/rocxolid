@@ -25,11 +25,13 @@ trait CreatesModels
 
         $model = $this
             ->fillModel($model, $data)
+            ->onBeforeSave($data)
             ->onCreateBeforeSave($data);
 
         // save returns bool so tapping
         return tap($model)
             ->save()
+            ->onAfterSave($data)
             ->onCreateAfterSave($data)
             ->fillRelationships($data)
             ->onCreated($data);
