@@ -2,10 +2,17 @@
 
 namespace Softworx\RocXolid\Services;
 
-use Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 
-// @todo: refator
+/**
+ * CRUD controller routes registrar.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo: refator & consider routes registration responsibility delegation to controllers
+ */
 class CrudRouterService
 {
     protected $extra_routes = [];
@@ -14,19 +21,26 @@ class CrudRouterService
     protected $options = null;
     protected $controller = null;
 
-    public static function create($name, $controller, $options = [])
+    public static function create(string $name, string $controller, ?array $options = [])
     {
         return new static($name, $controller, $options);
     }
 
-    public function __construct($name, $controller, $options)
+    private function __construct(string $name, string $controller, array $options)
     {
+        $param = Str::slug($this->name, '_');
+
         $this->name = $name;
         $this->controller = $controller;
         $this->options = $options;
 
-        $param = Str::slug($this->name, '_');
+        $this
+            ->registerPlatformRoutes($param)
+            ->registerPackageRoutes($param);
+    }
 
+    private function registerPlatformRoutes(string $param): CrudRouterService
+    {
         Route::post($this->name . '/search', [
             'as' => 'crud.' . $this->name . '.search',
             'uses' => $this->controller . '@search',
@@ -106,6 +120,13 @@ class CrudRouterService
             'as' => 'crud.' . $this->name . '.switch-enability',
             'uses' => $this->controller . '@switchEnability',
         ]);
+
+        return $this;
+    }
+
+    protected function registerPackageRoutes(string $param): CrudRouterService
+    {
+        return $this;
     }
 
     /**
@@ -131,7 +152,8 @@ class CrudRouterService
         Route::resource($this->name, $this->controller, $options_with_default_route_names);
     }
 
-    public function with($injectables)
+    // @todo: purpose & correctness?
+    public function with($injectables): CrudRouterService
     {
         if (is_string($injectables)) {
             $this->extra_routes[] = 'with' . ucwords($injectables);
@@ -139,18 +161,15 @@ class CrudRouterService
             foreach ($injectables as $injectable) {
                 $this->extra_routes[] = 'with' . ucwords($injectable);
             }
-        } else {
-            $reflection = new \Reflectionfunction ($injectables);
-
-            if ($reflection->isClosure()) {
-                $this->extra_routes[] = $injectables;
-            }
+        } elseif ((new \ReflectionFunction($injectables))->isClosure()) {
+            $this->extra_routes[] = $injectables;
         }
 
         return $this->registerExtraRoutes();
     }
 
-    private function registerExtraRoutes()
+    // @todo: purpose & correctness?
+    private function registerExtraRoutes(): CrudRouterService
     {
         foreach ($this->extra_routes as $route) {
             if (is_string($route)) {
@@ -159,8 +178,11 @@ class CrudRouterService
                 $route();
             }
         }
+
+        return $this;
     }
 
+    // @todo: purpose & correctness?
     public function __call($method, $parameters = null)
     {
         if (method_exists($this, $method)) {
