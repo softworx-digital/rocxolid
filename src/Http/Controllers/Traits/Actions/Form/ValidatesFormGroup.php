@@ -28,8 +28,7 @@ trait ValidatesFormGroup
      */
     public function formValidateGroup(CrudRequest $request, string $field_group, ?Crudable $model = null)//: Response
     {
-        // $model = $id ? $this->getRepository()->findOrFail($id) : $repository->getModel();
-        $model = $model ?? $repository->getModel();
+        $model = $model ?? $this->getRepository()->getModel();
         // create form with this group
         $form = $this->getForm($request, $model)->setFieldsRequestInput($request->input());
         // submit form with group fields only
