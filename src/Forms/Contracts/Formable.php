@@ -55,7 +55,7 @@ interface Formable
      * Check if the param is already bound.
      *
      * @param string $param
-     * @return boolean
+     * @return bool
      */
     public function hasFormAssigned(string $param = self::FORM_PARAM): bool;
 

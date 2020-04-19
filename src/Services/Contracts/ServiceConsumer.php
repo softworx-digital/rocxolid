@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Contracts;
+namespace Softworx\RocXolid\Services\Contracts;
 
 /**
  * Enables object to be set as service consumer for services that require it.
@@ -11,4 +11,5 @@ namespace Softworx\RocXolid\Contracts;
  */
 interface ServiceConsumer
 {
+
 }

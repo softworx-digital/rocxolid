@@ -95,7 +95,8 @@ trait HasRelationships
         return $relationships;
     }
 
-    // @todo: ugly? and combine with HasRelationships::resolvePolymorphType()
+    // @todo: ugly ! and combine with HasRelationships::resolvePolymorphType()
+    // @todo: maybe use resource registrar
     public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
         $data->each(function($value, $attribute) use ($data) {

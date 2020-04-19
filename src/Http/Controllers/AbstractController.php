@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Softworx\RocXolid\Services\Contracts\ConsumerService;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Responseable;
-use Softworx\RocXolid\Contracts\ServiceConsumer;
+use Softworx\RocXolid\Services\Contracts\ServiceConsumer;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
 use Softworx\RocXolid\Contracts\TranslationParamProvider;
 // rocXolid traits

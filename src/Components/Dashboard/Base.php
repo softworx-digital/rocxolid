@@ -6,4 +6,5 @@ use Softworx\RocXolid\Components\AbstractActiveComponent;
 
 class Base extends AbstractActiveComponent
 {
+
 }

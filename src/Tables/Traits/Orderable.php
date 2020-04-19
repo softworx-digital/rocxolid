@@ -65,7 +65,7 @@ trait Orderable
     /**
      * Check if table ordering has been set by user.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isSetCustomOrder(): bool
     {
@@ -100,7 +100,7 @@ trait Orderable
     /**
      * Check if table ordering request is valid.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isValidRequest(string $column_name, string $direction): bool
     {

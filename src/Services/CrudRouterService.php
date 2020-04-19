@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
  * @package Softworx\RocXolid
  * @version 1.0.0
  * @todo: refator & consider routes registration responsibility delegation to controllers
+ * @todo: or create custom ResourceRegistrar (extends Illuminate\Routing\ResourceRegistrar)
  */
 class CrudRouterService
 {
@@ -28,11 +29,11 @@ class CrudRouterService
 
     private function __construct(string $name, string $controller, array $options)
     {
-        $param = Str::slug($this->name, '_');
-
         $this->name = $name;
         $this->controller = $controller;
         $this->options = $options;
+
+        $param = Str::slug($this->name, '_');
 
         $this
             ->registerPlatformRoutes($param)

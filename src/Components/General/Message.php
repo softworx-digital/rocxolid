@@ -13,4 +13,5 @@ use Softworx\RocXolid\Components\AbstractComponent;
  */
 class Message extends AbstractComponent
 {
+
 }

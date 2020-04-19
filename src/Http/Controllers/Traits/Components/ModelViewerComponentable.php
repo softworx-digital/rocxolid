@@ -3,10 +3,10 @@
 namespace Softworx\RocXolid\Http\Controllers\Traits\Components;
 
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+use Softworx\RocXolid\Models\Contracts\Crudable;
 // rocXolid components
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
-use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
+use Softworx\RocXolid\Components\Forms\CrudForm;
 
 /**
  * Helper trait to obtain model viewer component.
@@ -17,7 +17,7 @@ use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
  */
 trait ModelViewerComponentable
 {
-    protected static $model_viewer_type = CrudModelViewerComponent::class;
+    protected static $model_viewer_type = CrudModelViewer::class;
 
     /**
      * Retrieve model viewer component to show.
@@ -26,7 +26,7 @@ trait ModelViewerComponentable
      * @param \Softworx\RocXolid\Components\Forms\CrudForm|null $form_component
      * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
      */
-    public function getModelViewerComponent(?CrudableModel $model = null, ?CrudFormComponent $form_component = null): CrudModelViewerComponent
+    public function getModelViewerComponent(?Crudable $model = null, ?CrudForm $form_component = null): CrudModelViewer
     {
         $model = $model ?? $this->getRepository()->getModel();
 

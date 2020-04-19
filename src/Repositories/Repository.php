@@ -151,7 +151,7 @@ class Repository implements RepositoryContract
      * Validate if provided model class is suitable for repository.
      *
      * @param string $model_type
-     * @return boolean
+     * @return bool
      */
     protected function validateModelType(string $model_type): bool
     {

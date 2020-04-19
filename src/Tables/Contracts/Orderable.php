@@ -28,7 +28,7 @@ interface Orderable
      * Check if table is ordered by given column.
      *
      * @param Column $column
-     * @return boolean
+     * @return bool
      */
     public function isOrderColumn(Column $column): bool;
 
@@ -36,7 +36,7 @@ interface Orderable
      * Check if table is ordered by given direction.
      *
      * @param string $direction
-     * @return boolean
+     * @return bool
      */
     public function isOrderDirection(string $direction): bool;
 

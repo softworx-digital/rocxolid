@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid contracts
-use Softworx\RocXolid\Models\Contracts\Cloneable;
+use Softworx\RocXolid\Models\Contracts\Cloneable as CloneableContract;
 use Softworx\RocXolid\Models\Contracts\Container;
 use Softworx\RocXolid\Models\Contracts\Containee;
 // @todo: quick n dirty
@@ -21,7 +21,7 @@ use Softworx\RocXolid\CMS\Models\HtmlWrapper;
 /**
  * @todo: subject to refactoring
  */
-trait CanClone
+trait Cloneable
 {
     /**
      * Model relationship methods that can be possibly cloned.
@@ -30,7 +30,7 @@ trait CanClone
      */
     //protected $clone_relationships = [];
 
-    public function clone(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
+    public function clone(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
     {
         $class = (new \ReflectionClass($this))->getName();
 
@@ -91,7 +91,7 @@ trait CanClone
     protected function cloneContainees($clone, $clone_log, $fill, $with_relations)
     {
         $this->getAllContainees()->each(function ($containee, $index) use ($clone, $clone_log, $fill, $with_relations) {
-            if (($containee instanceof Cloneable) && $containee->getContaineePivotData()->is_owned) {
+            if (($containee instanceof CloneableContract) && $containee->getContaineePivotData()->is_owned) {
                 $containee_clone = $containee->clone($clone_log, $fill, $with_relations);
 
                 $clone->attachContainee($containee->getContaineePivotData()->container_relation, $containee_clone);
@@ -133,22 +133,22 @@ trait CanClone
         return $this;
     }
 
-    protected function afterCloning(Cloneable $clone): Cloneable
+    protected function afterCloning(CloneableContract $clone): CloneableContract
     {
         return $this;
     }
 
-    protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
+    protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
     {
         return $this;
     }
 
-    protected function fillClonedAfterSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
+    protected function fillClonedAfterSave(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
     {
         return $this;
     }
 
-    protected function buildRelationsAfter(Collection $clone_log): Cloneable
+    protected function buildRelationsAfter(Collection $clone_log): CloneableContract
     {
         return $this;
     }

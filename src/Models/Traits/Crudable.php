@@ -83,7 +83,7 @@ trait Crudable
     /**
      * Check for model existance (being persisted).
      *
-     * @return boolean
+     * @return bool
      */
     public function exists(): bool
     {
@@ -94,7 +94,7 @@ trait Crudable
      * Business rules to prevent model instances to be created.
      *
      * @param \Illuminate\Http\Request $request
-     * @return boolean
+     * @return bool
      */
     public function canBeCreated(Request $request): bool
     {
@@ -105,7 +105,7 @@ trait Crudable
      * Business rules to prevent model instances to be updated.
      *
      * @param \Illuminate\Http\Request $request
-     * @return boolean
+     * @return bool
      */
     public function canBeUpdated(Request $request): bool
     {
@@ -116,7 +116,7 @@ trait Crudable
      * Business rules to prevent model instances to be deleted.
      *
      * @param \Illuminate\Http\Request $request
-     * @return boolean
+     * @return bool
      */
     public function canBeDeleted(Request $request): bool
     {
@@ -283,7 +283,7 @@ trait Crudable
      * Check if to treat attribute as boolean value.
      *
      * @param string $attribute
-     * @return boolean
+     * @return bool
      */
     public function isBooleanAttribute(string $attribute): bool
     {
@@ -295,7 +295,7 @@ trait Crudable
      * Check if attribute value is in JSON format.
      *
      * @param string $attribute
-     * @return boolean
+     * @return bool
      */
     public function isJsonAttribute(string $attribute): bool
     {
@@ -307,7 +307,7 @@ trait Crudable
      * Check if attribute value represents hex color.
      *
      * @param string $attribute
-     * @return boolean
+     * @return bool
      */
     public function isColorAttribute(string $attribute): bool
     {

@@ -3,9 +3,9 @@
 namespace Softworx\RocXolid\Forms\Services;
 
 // rocXolid service contracts
-use Softworx\RocXolid\Services\Contracts\ConsumerService;
-// rocXolid service contracts
-use Softworx\RocXolid\Contracts\ServiceConsumer;
+use Softworx\RocXolid\Services\Contracts\ServiceConsumer;
+// rocXolid service traits
+use Softworx\RocXolid\Services\Traits\HasServiceConsumer;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Services\Contracts\FormService as FormServiceContract;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
@@ -23,12 +23,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  */
 class FormService implements FormServiceContract
 {
-    /**
-     * Service consumer reference.
-     *
-     * @var \Softworx\RocXolid\Forms\Contracts\Formable
-     */
-    protected $consumer;
+    use HasServiceConsumer;
 
     /**
      * Form builder reference.
@@ -51,27 +46,18 @@ class FormService implements FormServiceContract
     /**
      * {@inheritDoc}
      */
-    public function setConsumer(ServiceConsumer $consumer): ConsumerService
-    {
-        // cannot do this more clean coz FormService implements ConsumerService too
-        // and ConsumerService requires ServiceConsumer for setConsumer
-        // extending ServiceConsumer with Formable and setting Formable arguments doesn't work
-        if (!($consumer instanceof Formable)) {
-            throw new \InvalidArgumentException(sprintf('Provided service consumer [%s] must implement [%s] interface', get_class($consumer), Formable::class));
-        }
-
-        $this->consumer = $consumer;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function createForm(Crudable $model, string $param, ?string $type = null): Form
     {
         $type = $type ?? $this->consumer->getFormMappingType($param);
 
         return $this->form_builder->buildForm($this->consumer, $model, $type, $param);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function validateServiceConsumer(ServiceConsumer $consumer): bool
+    {
+        return ($consumer instanceof Formable);
     }
 }

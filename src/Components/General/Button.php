@@ -13,4 +13,5 @@ use Softworx\RocXolid\Components\AbstractOptionableComponent;
  */
 class Button extends AbstractOptionableComponent
 {
+
 }

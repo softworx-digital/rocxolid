@@ -16,7 +16,7 @@ interface RepositoryFilterProvider
     /**
      * Check if to apply the filter.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAppliable(): bool;
 

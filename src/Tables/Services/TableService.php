@@ -3,9 +3,9 @@
 namespace Softworx\RocXolid\Tables\Services;
 
 // rocXolid service contracts
-use Softworx\RocXolid\Services\Contracts\ConsumerService;
-// rocXolid service contracts
-use Softworx\RocXolid\Contracts\ServiceConsumer;
+use Softworx\RocXolid\Services\Contracts\ServiceConsumer;
+// rocXolid service traits
+use Softworx\RocXolid\Services\Traits\HasServiceConsumer;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Services\Contracts\TableService as TableServiceContract;
 use Softworx\RocXolid\Tables\Builders\Contracts\TableBuilder;
@@ -21,12 +21,7 @@ use Softworx\RocXolid\Tables\Contracts\Table;
  */
 class TableService implements TableServiceContract
 {
-    /**
-     * Service consumer reference.
-     *
-     * @var \Softworx\RocXolid\Tables\Contracts\Tableable
-     */
-    protected $consumer;
+    use HasServiceConsumer;
 
     /**
      * Table builder reference.
@@ -49,27 +44,18 @@ class TableService implements TableServiceContract
     /**
      * {@inheritDoc}
      */
-    public function setConsumer(ServiceConsumer $consumer): ConsumerService
-    {
-        // cannot do this more clean coz TableService implements ConsumerService too
-        // and ConsumerService requires ServiceConsumer for setConsumer
-        // extending ServiceConsumer with Tableable and setting Tableable arguments doesn't work
-        if (!($consumer instanceof Tableable)) {
-            throw new \InvalidArgumentException(sprintf('Provided service consumer [%s] must implement [%s] interface', get_class($consumer), Tableable::class));
-        }
-
-        $this->consumer = $consumer;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function createTable(string $param, ?string $type = null): Table
     {
         $type = $type ?? $this->consumer->getTableMappingType($param);
 
         return $this->table_builder->buildTable($this->consumer, $type, $param);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function validateServiceConsumer(ServiceConsumer $consumer): bool
+    {
+        return ($consumer instanceof Tableable);
     }
 }

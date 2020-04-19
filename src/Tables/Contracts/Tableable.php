@@ -51,7 +51,7 @@ interface Tableable
      * Check if the param is already bound.
      *
      * @param string $param
-     * @return boolean
+     * @return bool
      */
     public function hasTableAssigned(string $param = self::TABLE_PARAM): bool;
 

@@ -8,7 +8,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
 use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits\Crudable as CrudableTrait;
-use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearchableTrait;
+use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearchableTrait; // @todo: wtf?
 // rocXolid relations
 use Softworx\RocXolid\Models\Relations\Traits\BelongsToThrough;
 // rocXolid user management traits

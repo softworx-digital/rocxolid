@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Services\Contracts;
 
-use Softworx\RocXolid\Contracts\ServiceConsumer;
+use Softworx\RocXolid\Services\Contracts\ServiceConsumer;
 
 /**
  * Declares the service requires a consumer.
@@ -16,7 +16,7 @@ interface ConsumerService
     /**
      * Set service consumer reference.
      *
-     * @param mixed $consumer
+     * @param \Softworx\RocXolid\Services\Contracts\ServiceConsumer $consumer
      * @return \Softworx\RocXolid\Services\Contracts\ConsumerService
      */
     public function setConsumer(ServiceConsumer $consumer): ConsumerService;
