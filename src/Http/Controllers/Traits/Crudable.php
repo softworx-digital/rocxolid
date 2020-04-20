@@ -57,7 +57,7 @@ trait Crudable
         }
 
         if (!(new \ReflectionClass($model_type))->implementsInterface(CrudableModel::class)) {
-            throw new \RuntimeException(sprintf('Controller\'s [%s] guessed model type [%s] is not CRUDable.', static::class, $model_type));
+            throw new \RuntimeException(sprintf('Controller [%s] guessed model type [%s] that is not [%s].', static::class, $model_type, CrudableModel::class));
         }
 
         return $model_type;
