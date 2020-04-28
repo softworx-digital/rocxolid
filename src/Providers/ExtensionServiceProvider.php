@@ -34,15 +34,26 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
      */
     private function extendCollections(): IlluminateServiceProvider
     {
-        /*
-        * Get the diff between two collections of array records.
-        */
+        /**
+         * Get the diff between two collections of array records.
+         */
         Collection::macro('diffRecords', function ($items) {
             return new static($this->filter(function ($item) use ($items){
                 return collect($items)->filter(function ($a) use ($item) {
                     return $a === $item;
                 })->isEmpty();
             }));
+        });
+
+        /**
+         * Create associative collection.
+         */
+        Collection::macro('toAssoc', function () {
+            return $this->reduce(function ($assoc, $keyValuePair) {
+                list($key, $value) = $keyValuePair;
+                $assoc[$key] = $value;
+                return $assoc;
+            }, new static);
         });
 
         return $this;

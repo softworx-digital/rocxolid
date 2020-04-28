@@ -28,4 +28,15 @@ abstract class AbstractColumn extends AbstractTableElement implements Column
      * @var string
      */
     protected static $component_class = TableColumn::class;
+
+    /**
+     * Obtain value to be used in the view.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function getModelAttributeViewValue($value)
+    {
+        return $value;
+    }
 }

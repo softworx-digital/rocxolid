@@ -3,23 +3,14 @@
 namespace Softworx\RocXolid\Contracts;
 
 /**
- * Enables object to translate language keys.
+ * Enables object to fully handle translation with provided translation package and param.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface Translatable
+interface Translatable extends TranslationProvider
 {
-    /**
-     * Translate the language key.
-     *
-     * @param string $key Translation key to translate.
-     * @param bool $use_raw_key Flag to use raw or transform the key.
-     * @return string
-     */
-    public function translate(string $key, array $params = [], bool $use_raw_key = false): string;
-
     /**
      * Return the key to be used for translation.
      *

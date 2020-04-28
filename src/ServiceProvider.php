@@ -132,20 +132,20 @@ class ServiceProvider extends AbstractServiceProvider
         );
 
         $this->app->singleton(
-            Services\Contracts\ViewService::class,
-            Services\ViewService::class
+            Http\Responses\Contracts\AjaxResponse::class,
+            Http\Responses\JsonAjaxResponse::class
         );
 
-        $this->app->when(Services\ViewService::class)
+        $this->app->singleton(
+            Rendering\Services\Contracts\RenderingService::class,
+            Rendering\Services\RenderingService::class
+        );
+
+        $this->app->when(Rendering\Services\RenderingService::class)
             ->needs(IlluminateCacheRepository::class)
             ->give(function () {
                 return Cache::store('array');
             });
-
-        $this->app->singleton(
-            Http\Responses\Contracts\AjaxResponse::class,
-            Http\Responses\JsonAjaxResponse::class
-        );
 
         return $this
             ->bindRepositoriesContracts()
@@ -163,7 +163,7 @@ class ServiceProvider extends AbstractServiceProvider
      */
     private function bindRepositoriesContracts(): AbstractServiceProvider
     {
-        $this->app->singleton(
+        $this->app->bind(
             Repositories\Contracts\Repository::class,
             Repositories\CrudRepository::class
         );

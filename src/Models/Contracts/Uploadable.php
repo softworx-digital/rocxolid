@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo: split to storeable and uploadable (extends storeable)
  */
 interface Uploadable
 {
@@ -28,4 +29,12 @@ interface Uploadable
      * @return \Softworx\RocXolid\Models\Contracts\Uploadable
      */
     public function setUploadData(UploadedFile $uploaded_file, string $storage_path): Uploadable;
+
+    /**
+     * Set model data related to stored physical file.
+     *
+     * @param string $storage_path
+     * @return \Softworx\RocXolid\Models\Contracts\Uploadable
+     */
+    public function setStorageData(string $storage_path): Uploadable;
 }

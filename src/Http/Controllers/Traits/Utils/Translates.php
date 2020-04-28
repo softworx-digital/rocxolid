@@ -14,10 +14,8 @@ use Softworx\RocXolid\Components\General\Message;
 trait Translates
 {
     /**
-     * Translate the language key.
+     * {@inheritDoc}
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
-     * @param int $id
      */
     public function translate(string $key, array $params = [], bool $use_raw_key = false): string
     {

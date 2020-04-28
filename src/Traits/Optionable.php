@@ -13,6 +13,7 @@ use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo: use collections
  */
 trait Optionable
 {
@@ -125,6 +126,14 @@ trait Optionable
         $options = $this->getOptions()->toArray();
 
         return Arr::has($options, $option);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasNotNullOption(string $option): bool
+    {
+        return !$this->isOptionValue($option, null);
     }
 
     /**

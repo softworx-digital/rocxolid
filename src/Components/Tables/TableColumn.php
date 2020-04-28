@@ -2,11 +2,12 @@
 
 namespace Softworx\RocXolid\Components\Tables;
 
-use Softworx\RocXolid\Contracts\Renderable;
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
 use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
 
+// @todo: doc
 class TableColumn extends AbstractOptionableComponent implements ComponentTableColumnable
 {
     const ARRAY_TEMPLATE_NAME = 'array';
@@ -52,6 +53,11 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
         $attribute = $this->getTableColumn()->getName();
 
         return $this->getOption('model')->$attribute;
+    }
+
+    public function getModelAttributeViewValue()
+    {
+        return $this->getTableColumn()->getModelAttributeViewValue($this->getModelValue());
     }
 
     public function getOrderRoute()

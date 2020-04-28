@@ -70,7 +70,7 @@ class FormFieldGroupAddable extends AbstractFormField
 
     public function getGroupCount()
     {
-        return $this->group_count;
+        return max(1, $this->group_count);
     }
 
     public function setGroupCount($group_count)
@@ -87,11 +87,11 @@ class FormFieldGroupAddable extends AbstractFormField
 
     protected function setButtonAdd($button_options): FormField
     {
-        return $this->setComponentOptions('button-add', (new Button())->setOptions($button_options));
+        return $this->setComponentOptions('button-add', app(Button::class)->setOptions($button_options));
     }
 
     protected function setButtonRemove($button_options): FormField
     {
-        return $this->setComponentOptions('button-remove', (new Button())->setOptions($button_options));
+        return $this->setComponentOptions('button-remove', app(Button::class)->setOptions($button_options));
     }
 }

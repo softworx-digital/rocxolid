@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Validation\Validator as IlluminateValidator;
 // third-party
 use DvK\Laravel\Vat\Facades\Validator as VatValidator;
-// rocXolid services
-use Softworx\RocXolid\Services\ViewService;
+// rocXolid rendering services
+use Softworx\RocXolid\Rendering\Services\RenderingService;
 
 /**
  * Validator extension.
@@ -284,7 +284,7 @@ class Validator extends IlluminateValidator
         $value = str_replace('-&gt;', '->', $value);
 
         try {
-            ViewService::render($value, $variables);
+            RenderingService::render($value, $variables);
         } catch (\Throwable $e) {
             $this->exception = $e;
 

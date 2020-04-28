@@ -145,7 +145,7 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onUpdateError(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
+    protected function onUpdateFormInvalid(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
     {
         return $this->errorResponse($request, $model, $form, 'update');
     }

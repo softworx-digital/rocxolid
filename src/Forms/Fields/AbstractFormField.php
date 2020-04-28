@@ -23,6 +23,7 @@ use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
 // rocXolid form field traits
 use Softworx\RocXolid\Forms\Fields\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
 
+// @todo: refactor
 abstract class AbstractFormField implements FormField, Valueable, PivotValueable, Optionable, ErrorMessageable, Translatable
 {
     use ValueableTrait;
@@ -358,6 +359,10 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
             });
 
             return $this->getPivotData()->toArray();
+        }
+
+        if ($this->isArray()) {
+            return $this->getValues();
         }
 
         return $this->getValue();

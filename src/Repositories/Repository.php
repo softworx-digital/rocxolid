@@ -54,6 +54,14 @@ class Repository implements RepositoryContract
     /**
      * {@inheritDoc}
      */
+    public function getQuery(): Builder
+    {
+        return $this->query_model->query();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function all(array $columns = ['*']): Collection
     {
         return $this
@@ -85,7 +93,7 @@ class Repository implements RepositoryContract
     public function findBy(string $column, $value, array $columns = ['*']): ?Model
     {
         return $this
-            ->getQuery()
+            ->initQuery()
             ->where($column, '=', $value)
             ->first($columns);
     }
@@ -96,7 +104,7 @@ class Repository implements RepositoryContract
     public function findOrFail($key, array $columns = ['*']): Model
     {
         return $this
-            ->getQuery()
+            ->initQuery()
             ->findOrFail($key, $columns);
     }
 
@@ -105,13 +113,13 @@ class Repository implements RepositoryContract
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function getQuery(): Builder
+    protected function initQuery(): Builder
     {
         // rebooting, because some traits might not been
         // properly booted before (eg. ProtectsRoot)
         $this->query_model::boot();
 
-        $query = $this->query_model->query();
+        $query = $this->getQuery();
 
         $this
             ->applyScopes($query)
@@ -127,7 +135,7 @@ class Repository implements RepositoryContract
      */
     protected function getCollectionQuery(): Builder
     {
-        $query = $this->getQuery();
+        $query = $this->initQuery();
 
         $this
             ->applyOrder($query)

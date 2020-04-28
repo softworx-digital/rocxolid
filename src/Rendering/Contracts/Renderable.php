@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Contracts;
+namespace Softworx\RocXolid\Rendering\Contracts;
 
 use Illuminate\View\View;
 
@@ -13,11 +13,13 @@ use Illuminate\View\View;
  */
 interface Renderable
 {
+    const DEFAULT_TEMPLATE_NAME = 'default';
+
     /**
      * Possibility to dynamically set properties before rendering.
      * Can be overriden in specific Renderable class.
      *
-     * @return \Softworx\RocXolid\Components\Contracts\Renderable
+     * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
     public function setPreRenderProperties(...$elements): Renderable;
 
@@ -40,17 +42,10 @@ interface Renderable
     public function fetch(string $view_name, array $assignments = []): string;
 
     /**
-     * Check if the component has a view package defined.
-     *
-     * @return bool
-     */
-    public function hasViewPackage(): bool;
-
-    /**
      * Set a view package to the component.
      *
      * @param string $package Package identifier to set.
-     * @return \Softworx\RocXolid\Components\Contracts\Renderable
+     * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
     public function setViewPackage(string $package): Renderable;
 
@@ -62,10 +57,17 @@ interface Renderable
     public function getViewPackage(): string;
 
     /**
+     * Check if the component has a view package defined.
+     *
+     * @return bool
+     */
+    public function hasViewPackage(): bool;
+
+    /**
      * Set a view directory of the view package to the component.
      *
      * @param string $directory Directory path to set.
-     * @return \Softworx\RocXolid\Components\Contracts\Renderable
+     * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
     public function setViewDirectory(string $directory): Renderable;
 
@@ -75,4 +77,18 @@ interface Renderable
      * @return string
      */
     public function getViewDirectory(): string;
+
+    /**
+     * Check if the component has a view directory defined.
+     *
+     * @return bool
+     */
+    public function hasViewDirectory(): bool;
+
+    /**
+     * Return name of the default template to be used when rendering unspecified template.
+     *
+     * @return string
+     */
+    public function getDefaultTemplateName(): string;
 }

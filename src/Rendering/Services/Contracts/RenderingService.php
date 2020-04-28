@@ -1,10 +1,10 @@
 <?php
 
-namespace Softworx\RocXolid\Services\Contracts;
+namespace Softworx\RocXolid\Rendering\Services\Contracts;
 
 use Illuminate\View\View;
 // rocXolid contracts
-use Softworx\RocXolid\Contracts\Renderable;
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
 
 /**
  * Retrieves view for given object and view name.
@@ -13,7 +13,7 @@ use Softworx\RocXolid\Contracts\Renderable;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-interface ViewService
+interface RenderingService
 {
     /**
      * Compile given content as a blade template.
@@ -27,7 +27,7 @@ interface ViewService
     /**
      * Return view for given component.
      *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component to retrieve view for.
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component to retrieve view for.
      * @param string $view View name to retrieve.
      * @param array $assignments View variables to assign.
      * @return \Illuminate\View\View
@@ -38,7 +38,7 @@ interface ViewService
     /**
      * Get full view path for given view.
      *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component to retrieve view path for.
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component to retrieve view path for.
      * @param string $view View name to get path for.
      * @return string
      */

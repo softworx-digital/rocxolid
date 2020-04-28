@@ -2,12 +2,15 @@
 
 namespace Softworx\RocXolid\Components;
 
+// rocXolid renderables
+use Softworx\RocXolid\Rendering\AbstractRenderable;
+// rocXolid helpers
 use Softworx\RocXolid\Helpers\View as ViewHelper;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Contracts\Renderable;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
 use Softworx\RocXolid\Contracts\TranslationParamProvider;
-use Softworx\RocXolid\Traits\Renderable as RenderableTrait;
+// rocXolid traits
 use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
 
 /**
@@ -18,12 +21,9 @@ use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractComponent implements Renderable, Translatable
+abstract class AbstractComponent extends AbstractRenderable implements Translatable
 {
-    use RenderableTrait;
     use TranslatableTrait;
-
-    const DEFAULT_TEMPLATE_NAME = 'default';
 
     /**
      * @var string
@@ -35,16 +35,11 @@ abstract class AbstractComponent implements Renderable, Translatable
      */
     protected $view_package = 'rocXolid';
 
-    /**
-     * @var string
-     */
-    protected $view_directory = '';
-
     public static function build(
         TranslationPackageProvider $translation_package_provider = null,
         TranslationParamProvider $translation_param_provider = null
     ) {
-        $component = new static();
+        $component = app(static::class);
 
         if (!is_null($translation_package_provider)) {
             $component->setTranslationPackage($translation_package_provider->provideTranslationPackage());

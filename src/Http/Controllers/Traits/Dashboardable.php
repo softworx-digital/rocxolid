@@ -10,7 +10,7 @@ use Softworx\RocXolid\Components\AbstractActiveComponent;
  */
 trait Dashboardable
 {
-    // protected static $dashboard_class; // should be defined in specific class
+    // protected static $dashboard_type; // should be defined in specific class
 
     /**
      * @var Softworx\RocXolid\Components\AbstractActiveComponent
@@ -22,7 +22,7 @@ trait Dashboardable
      */
     public function getDashboardClass(): string
     {
-        return static::$dashboard_class;
+        return static::$dashboard_type;
     }
 
     /**

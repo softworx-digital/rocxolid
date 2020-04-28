@@ -1,21 +1,19 @@
 <?php
 
-namespace Softworx\RocXolid\Services;
+namespace Softworx\RocXolid\Rendering\Services;
 
-use View;
-use Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\View as IlluminateView;
 use Illuminate\View\Factory as IlluminateViewFactory;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
-// rocXolid contracts
-use Softworx\RocXolid\Contracts\Renderable;
-// rocXolid services contracts
-use Softworx\RocXolid\Services\Contracts\ViewService as ViewServiceContract;
-// rocXolid services exceptions
-use Softworx\RocXolid\Services\Exceptions\ViewNotFoundException;
+// rocXolid rendering contracts
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
+// rocXolid rendering exceptions
+use Softworx\RocXolid\Rendering\Exceptions\ViewNotFoundException;
 
 /**
  * Retrieves view for given object and view name.
@@ -24,7 +22,7 @@ use Softworx\RocXolid\Services\Exceptions\ViewNotFoundException;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-class ViewService implements ViewServiceContract
+class RenderingService implements Contracts\RenderingService
 {
     /**
      * @param array
@@ -40,6 +38,11 @@ class ViewService implements ViewServiceContract
         '_generic',
     ];
 
+    /**
+     * View not found exception view.
+     *
+     * @var string
+     */
     protected static $not_found_view_path = 'rocXolid::not-found';
 
     /**
@@ -105,7 +108,7 @@ class ViewService implements ViewServiceContract
     {
         try {
             return View::make($this->getViewPath($component, $view_name), $assignments);
-        } catch (\Throwable $e) {
+        } catch (ViewNotFoundException $e) {
             return View::make($this->getNotFoundViewPath(), [ 'e' => $e ]);
         }
     }
@@ -118,7 +121,8 @@ class ViewService implements ViewServiceContract
         $cache_key = $this->getCacheKey($component, $view_name);
 
         if ($this->cache->has($cache_key)) {
-            return $this->cache->get($cache_key);
+// dump('from cache', $cache_key);
+            // return $this->cache->get($cache_key);
         }
 
         $hierarchy = $this->getHierarchy($component);
@@ -128,11 +132,12 @@ class ViewService implements ViewServiceContract
         // looks better than using Collection::each()
         foreach ($this->getViewPackages($component, $hierarchy) as $view_package) {
             foreach ($this->getViewDirectories($component, $hierarchy) as $view_dir) {
-                $candidate = $this->composePackageViewPath($view_package, $view_dir, $view_name);
+                $candidate = $this->composePackageViewPath($component, $view_package, $view_dir, $view_name);
                 $search_paths->push($candidate);
 
                 if (View::exists($candidate)) {
-                    $this->cache->put($cache_key, $candidate);
+// dump('to cache', $candidate);
+                    // $this->cache->put($cache_key, $candidate);
 
                     return $candidate;
                 }
@@ -165,7 +170,7 @@ class ViewService implements ViewServiceContract
      * Create hierarchical collection of components classes for future use.
      * Start with given component and add its eligible parents.
      *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component at the hierarchy top.
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component at the hierarchy top.
      * @return \Illuminate\Support\Collection
      */
     protected function getHierarchy(Renderable $component): Collection
@@ -176,7 +181,7 @@ class ViewService implements ViewServiceContract
 
         do  {
             $hierarchy->push([
-                'class' => $reflection->getName(),
+                'type' => $reflection->getName(),
                 'dir' => $this->getClassNameViewDirectory($reflection),
             ]);
         } while (
@@ -191,14 +196,14 @@ class ViewService implements ViewServiceContract
     /**
      * Create priority collection of view packages to look for the view.
      *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component being rendered.
      * @param \Illuminate\Support\Collection $hierarchy Component hierarchy.
      * @return \Illuminate\Support\Collection
      */
     protected function getViewPackages(Renderable $component, Collection $hierarchy): Collection
     {
-        $hierarchy_view_packages = $hierarchy->pluck('class')->map(function ($class_name) {
-            return app($class_name)->getViewPackage();
+        $hierarchy_view_packages = $hierarchy->pluck('type')->map(function ($type) {
+            return app($type)->getViewPackage();
         })->toArray();
 
         return collect(array_merge(
@@ -211,18 +216,12 @@ class ViewService implements ViewServiceContract
     /**
      * Create priority collection of view directories inside package to look for the view.
      *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component being rendered.
      * @param \Illuminate\Support\Collection $hierarchy Component hierarchy.
      * @return \Illuminate\Support\Collection
      */
     protected function getViewDirectories(Renderable $component, Collection $hierarchy): Collection
     {
-        /*
-        $hierarchy_view_dirs = $hierarchy->pluck('class')->map(function ($class_name) {
-            return app($class_name)->getViewDirectory();
-        })->toArray();
-        */
-
         $hierarchy_view_dirs = $hierarchy->pluck('dir')->toArray();
 
         return collect(array_merge(
@@ -234,6 +233,7 @@ class ViewService implements ViewServiceContract
 
     /**
      * Create directory path based on component's fully qualified name.
+     * Takes the namespace parts in the Components sub-namespace and consider them as directories (in kebab case).
      *
      * @param \ReflectionClass $reflection Component's reflection.
      * @return string
@@ -251,12 +251,13 @@ class ViewService implements ViewServiceContract
     /**
      * Create full view path based on given package, package subdirectory and view name.
      *
+     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
      * @param string $view_package View package to get the view from.
      * @param string $view_dir Directory inside the package.
      * @param string $view_name View name.
      * @return string
      */
-    protected function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string
+    protected function composePackageViewPath(Renderable $component, string $view_package, string $view_dir, string $view_name): string
     {
         return sprintf('%s::%s.%s', $view_package, $view_dir, $view_name);
     }

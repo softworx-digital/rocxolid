@@ -12,12 +12,12 @@ use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Tables\Contracts\Table;
 
 /**
- * Table filter field abstraction.
+ * Table elment abstraction.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- */
+ * */
 abstract class AbstractTableElement implements Optionable, Translatable
 {
     use TranslatableTrait;

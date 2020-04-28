@@ -1,0 +1,133 @@
+<?php
+
+namespace Softworx\RocXolid\Rendering\Traits;
+
+use Illuminate\View\View;
+// rocXolid rendering contracts
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
+
+/**
+ * Enables object to be rendered at the front-end.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+trait CanBeRendered
+{
+    /**
+     * Identifier for package containing views for component using this trait.
+     *
+     * @var string
+     */
+    protected $view_package;
+
+    /**
+     * Enables to define specific directory containing views for component using this trait.
+     *
+     * @var string
+     */
+    protected $view_directory;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPreRenderProperties(...$elements): Renderable
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewPath(string $view_name = null): string
+    {
+        $view_name = is_null($view_name)
+                   ? $this->getDefaultTemplateName()
+                   : $view_name;
+
+        return $this->getRenderingService()->getViewPath($this, $view_name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render(string $view_name = null, array $assignments = []): View
+    {
+        $view_name = is_null($view_name)
+                   ? $this->getDefaultTemplateName()
+                   : $view_name;
+
+        return $this->getRenderingService()->getView($this, $view_name, $assignments + [
+            'component' => $this
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetch(string $view_name = null, array $assignments = []): string
+    {
+        return (string)$this->render($view_name, $assignments)->render();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setViewPackage(string $package): Renderable
+    {
+        $this->view_package = $package;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewPackage(): string
+    {
+        return $this->view_package;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasViewPackage(): bool
+    {
+        return !is_null($this->view_package);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setViewDirectory(string $directory): Renderable
+    {
+        $this->view_directory = $directory;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewDirectory(): string
+    {
+        return $this->view_directory ?? '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasViewDirectory(): bool
+    {
+        return !is_null($this->view_directory);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultTemplateName(): string
+    {
+        return static::DEFAULT_TEMPLATE_NAME;
+    }
+}

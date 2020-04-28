@@ -479,6 +479,9 @@ abstract class AbstractForm implements Form
         if ($input->has(FormField::ARRAY_DATA_PARAM)) {
             collect($input->get(FormField::ARRAY_DATA_PARAM))
                 ->each(function ($groupdata, $name) {
+                    $this->getFormField($name)
+                        ->setValues(collect());
+
                     collect($groupdata)
                         ->each(function ($value, $index) use ($name) {
                             // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name

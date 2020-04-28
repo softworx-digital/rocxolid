@@ -35,6 +35,14 @@ trait Filterable
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getFilters(): Collection
+    {
+        return collect($this->filters);
+    }
+
+    /**
      * Apply filter conditions to query.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -42,7 +50,7 @@ trait Filterable
      */
     protected function applyFilters(EloquentBuilder &$query): FilterableContract
     {
-        $this->filters->filter(function($filter) {
+        $this->getFilters()->filter(function($filter) {
             return $filter->isAppliable();
         })->each(function($filter) use ($query) {
             $query = $filter->apply($query);

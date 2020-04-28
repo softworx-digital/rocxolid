@@ -2,7 +2,6 @@
 
 namespace Softworx\RocXolid\Repositories\Contracts;
 
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +34,13 @@ interface Repository extends Scopeable, Orderable, Filterable, Paginationable
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function getModel(): Model;
+
+    /**
+     * Retrieve the model query.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getQuery(): Builder;
 
     /**
      * Retrieve data set based on scopes, order, filter and paging.

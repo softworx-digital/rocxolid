@@ -84,7 +84,7 @@ class Table extends AbstractOptionableComponent implements Tableable
 
     public function getPaginationLinksViewPath()
     {
-        return $this->getViewService()->getViewPath($this, 'include.pagination-ajax');
+        return $this->getRenderingService()->getViewPath($this, 'include.pagination-ajax');
     }
 
     protected function loadTableFiltersComponents(): Tableable

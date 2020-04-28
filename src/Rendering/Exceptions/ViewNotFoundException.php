@@ -1,12 +1,12 @@
 <?php
 
-namespace Softworx\RocXolid\Services\Exceptions;
+namespace Softworx\RocXolid\Rendering\Exceptions;
 
 use Illuminate\Support\Collection;
-// rocXolid contracts
-use Softworx\RocXolid\Contracts\Renderable;
 // rocXolid exceptions
 use Softworx\RocXolid\Exceptions\Exception;
+// rocXolid rendering contracts
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
 
 /**
  * Serves to be passed to a "not-found" view.
@@ -18,7 +18,7 @@ use Softworx\RocXolid\Exceptions\Exception;
 class ViewNotFoundException extends Exception
 {
     /**
-     * @var \Softworx\RocXolid\Contracts\Renderable
+     * @var \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
     protected $component;
 
@@ -35,7 +35,7 @@ class ViewNotFoundException extends Exception
     /**
      * Constructor.
      *
-     * @var \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
+     * @var \Softworx\RocXolid\Rendering\Contracts\Renderable $component Component being rendered.
      * @var string $view_name View name being retrieved path for.
      * @var \Illuminate\Support\Collection $search_paths Invalid paths the service was trying to find in the view.
      */
@@ -51,7 +51,7 @@ class ViewNotFoundException extends Exception
     /**
      * Component getter.
      *
-     * @return \Softworx\RocXolid\Contracts\Renderable
+     * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
     public function getComponent(): Renderable
     {

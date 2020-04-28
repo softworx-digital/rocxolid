@@ -2,14 +2,14 @@
 
 namespace Softworx\RocXolid\Tables\Columns\Type;
 
-use Softworx\RocXolid\Tables\Columns\Contracts\Column;
-use Softworx\RocXolid\Tables\Columns\AbstractColumn;
+use Softworx\RocXolid\Tables\Columns\Type\Date;
 
-class DateTime extends AbstractColumn
+class DateTime extends Date
 {
     protected $default_options = [
         'type-template' => 'date-time',
-        'format' => 'j.n.Y H:i:s',
+        'format' => null,
+        'isoFormat' => 'LLLL',
         /*
         // field wrapper
         'wrapper' => false,
@@ -19,9 +19,4 @@ class DateTime extends AbstractColumn
         ],
         */
     ];
-
-    protected function setFormat($format): Column
-    {
-        return $this->setComponentOptions('format', $format);
-    }
 }
