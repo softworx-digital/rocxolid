@@ -121,8 +121,7 @@ class RenderingService implements Contracts\RenderingService
         $cache_key = $this->getCacheKey($component, $view_name);
 
         if ($this->cache->has($cache_key)) {
-// dump('from cache', $cache_key);
-            // return $this->cache->get($cache_key);
+            return $this->cache->get($cache_key);
         }
 
         $hierarchy = $this->getHierarchy($component);
@@ -136,8 +135,7 @@ class RenderingService implements Contracts\RenderingService
                 $search_paths->push($candidate);
 
                 if (View::exists($candidate)) {
-// dump('to cache', $candidate);
-                    // $this->cache->put($cache_key, $candidate);
+                    $this->cache->put($cache_key, $candidate);
 
                     return $candidate;
                 }

@@ -27,4 +27,11 @@ interface ModelViewer
      * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
      */
     public function getModelViewerComponent(): CrudModelViewer;
+
+    /**
+     * Check if the model viewer component is assigned.
+     *
+     * @return bool
+     */
+    public function hasModelViewerComponent(): bool;
 }
