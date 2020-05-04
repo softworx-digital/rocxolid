@@ -289,7 +289,7 @@ class PermissionScannerService
     private function getPermissionName(string $model, string $policy_ability, string $attribute = null)
     {
         return implode('.', array_filter([
-            Str::kebab((new \ReflectionClass($model))->getShortName()),
+            app($model)->getModelName(),
             $attribute,
             Str::kebab($policy_ability),
         ]));

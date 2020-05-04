@@ -2,6 +2,8 @@
 
 namespace Softworx\RocXolid\Traits;
 
+use Illuminate\Support\Str;
+
 /**
  * Enables object to provide translation key.
  *
@@ -39,6 +41,6 @@ trait TranslationKeyProvider
 
     protected function guessTranslationKey(): ?string
     {
-        return null;
+        return Str::kebab((new \ReflectionClass($this))->getShortName());
     }
 }

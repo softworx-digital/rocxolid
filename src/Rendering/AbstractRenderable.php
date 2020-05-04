@@ -23,6 +23,13 @@ abstract class AbstractRenderable implements Contracts\Renderable
     protected $rendering_service;
 
     /**
+     * Flag if the cache should be used when rendering this component.
+     *
+     * @var bool
+     */
+    protected $use_rendering_cache = true;
+
+    /**
      * Constructor.
      *
      * @param \Softworx\RocXolid\Rendering\Services\Contracts\RenderingService $rendering_service
@@ -30,6 +37,14 @@ abstract class AbstractRenderable implements Contracts\Renderable
     public function __construct(RenderingService $rendering_service)
     {
         $this->rendering_service = $rendering_service;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function useRenderingCache(): bool
+    {
+        return $this->use_rendering_cache;
     }
 
     /**

@@ -19,6 +19,8 @@ use Softworx\RocXolid\Models\Traits\HasOwner;
 use Softworx\RocXolid\Models\Traits\HasAttributes;
 use Softworx\RocXolid\Models\Traits\HasRelationships;
 use Softworx\RocXolid\Models\Traits\HasTitleColumn;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * @todo: subject to refactoring
@@ -37,7 +39,7 @@ trait Crudable
         return null;
     }
 
-    public function getModelViewerComponent(?string $view_package = null)
+    public function getModelViewerComponent(?string $view_package = null): CrudModelViewer
     {
         $model_viewer = $this->getCrudController()->getModelViewerComponent($this);
 
@@ -46,6 +48,11 @@ trait Crudable
         }
 
         return $model_viewer;
+    }
+
+    public function setModelViewerComponentProperties(CrudModelViewer &$model_viewer_component): CrudableModel
+    {
+        return $this;
     }
 
     // @todo: revise
@@ -227,20 +234,20 @@ trait Crudable
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
             ] + ($model ? [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->getModelName(),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
             ] : [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($this->$relation_name))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
             ]);
         } elseif ($relation instanceof MorphToMany) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
             ] + ($model ? [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($model))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->getModelName(),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
             ] : [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => Str::kebab((new \ReflectionClass($this->$relation_name))->getShortName()),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
             ]);
         } elseif ($relation instanceof BelongsTo) {
             return [

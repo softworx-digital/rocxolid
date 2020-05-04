@@ -33,6 +33,13 @@ interface Renderable
     public function render(string $view_name, array $assignments = []): View;
 
     /**
+     * Check if the cache should be used when rendering this component.
+     *
+     * @return bool
+     */
+    public function useRenderingCache(): bool;
+
+    /**
      * Compose the blade template and returns it compiled as a string.
      *
      * @param string $view_name Name of the view to compose.
@@ -91,4 +98,22 @@ interface Renderable
      * @return string
      */
     public function getDefaultTemplateName(): string;
+
+    /**
+     * Create full view path based on given package, package subdirectory and view name.
+     *
+     * @param string $view_package View package to get the view from.
+     * @param string $view_dir Directory inside the package.
+     * @param string $view_name View name.
+     * @return string
+     */
+    public function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string;
+
+    /**
+     * Generate key for caching the view paths.
+     *
+     * @param string $view_name View name.
+     * @return string
+     */
+    public function getPackageViewCacheKey(string $view_name): string;
 }

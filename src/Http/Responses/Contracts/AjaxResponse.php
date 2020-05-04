@@ -157,6 +157,14 @@ interface AjaxResponse extends Response
     public function redirect(string $url): AjaxResponse;
 
     /**
+     * Instruct the response receiver to open a new browser tab with given URL.
+     *
+     * @param string $url Target URL.
+     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     */
+    public function openTab(string $url): AjaxResponse;
+
+    /**
      * Instruct the response receiver to reload current location.
      *
      * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse

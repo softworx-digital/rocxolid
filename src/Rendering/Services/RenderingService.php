@@ -118,9 +118,9 @@ class RenderingService implements Contracts\RenderingService
      */
     public function getViewPath(Renderable $component, string $view_name): string
     {
-        $cache_key = $this->getCacheKey($component, $view_name);
+        $cache_key = $component->getPackageViewCacheKey($view_name);
 
-        if ($this->cache->has($cache_key)) {
+        if ($component->useRenderingCache() && $this->cache->has($cache_key)) {
             return $this->cache->get($cache_key);
         }
 
@@ -131,11 +131,13 @@ class RenderingService implements Contracts\RenderingService
         // looks better than using Collection::each()
         foreach ($this->getViewPackages($component, $hierarchy) as $view_package) {
             foreach ($this->getViewDirectories($component, $hierarchy) as $view_dir) {
-                $candidate = $this->composePackageViewPath($component, $view_package, $view_dir, $view_name);
+                $candidate = $component->composePackageViewPath($view_package, $view_dir, $view_name);
                 $search_paths->push($candidate);
 
                 if (View::exists($candidate)) {
-                    $this->cache->put($cache_key, $candidate);
+                    if ($component->useRenderingCache()) {
+                        $this->cache->put($cache_key, $candidate);
+                    }
 
                     return $candidate;
                 }
@@ -244,31 +246,5 @@ class RenderingService implements Contracts\RenderingService
         return $path->map(function ($dir) {
             return Str::kebab($dir);
         })->implode('.');
-    }
-
-    /**
-     * Create full view path based on given package, package subdirectory and view name.
-     *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
-     * @param string $view_package View package to get the view from.
-     * @param string $view_dir Directory inside the package.
-     * @param string $view_name View name.
-     * @return string
-     */
-    protected function composePackageViewPath(Renderable $component, string $view_package, string $view_dir, string $view_name): string
-    {
-        return sprintf('%s::%s.%s', $view_package, $view_dir, $view_name);
-    }
-
-    /**
-     * Generate key for caching the view paths.
-     *
-     * @param \Softworx\RocXolid\Contracts\Renderable $component Component being rendered.
-     * @param string $view_name View name.
-     * @return string
-     */
-    protected function getCacheKey(Renderable $component, string $view_name): string
-    {
-        return sprintf('%s-%s-%s', get_class($component), $component->getViewPackage(), $view_name);
     }
 }

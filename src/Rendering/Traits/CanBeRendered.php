@@ -130,4 +130,20 @@ trait CanBeRendered
     {
         return static::DEFAULT_TEMPLATE_NAME;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string
+    {
+        return sprintf('%s::%s.%s', $view_package, $view_dir, $view_name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPackageViewCacheKey(string $view_name): string
+    {
+        return sprintf('%s-%s-%s', get_class($this), $this->getViewPackage(), $view_name);
+    }
 }

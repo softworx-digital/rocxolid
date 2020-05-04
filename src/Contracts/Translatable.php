@@ -12,6 +12,24 @@ namespace Softworx\RocXolid\Contracts;
 interface Translatable extends TranslationProvider
 {
     /**
+     * Return the translation of given key.
+     *
+     * @param string $key
+     * @param array $params
+     * @param boolean $use_raw_key
+     * @return string
+     */
+    public function translate(string $key, array $params = [], bool $use_raw_key = false): string;
+
+    /**
+    * Return all translations of given key.
+    *
+    * @param string $key
+    * @return array
+    */
+   public function translations(string $key): array;
+
+    /**
      * Return the key to be used for translation.
      *
      * @return string

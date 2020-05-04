@@ -213,6 +213,16 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
+    public function openTab(string $url): AjaxResponse
+    {
+        $this->message_bag->add('openTab', $url);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function reload(): AjaxResponse
     {
         $this->message_bag->add('reload', true);

@@ -17,6 +17,11 @@ use Softworx\RocXolid\Components\Forms\CrudForm;
  */
 trait ModelViewerComponentable
 {
+    /**
+     * Model viewer type definition.
+     *
+     * @var string
+     */
     protected static $model_viewer_type = CrudModelViewer::class;
 
     /**
@@ -33,6 +38,8 @@ trait ModelViewerComponentable
         $model_viewer_component = static::$model_viewer_type::build($this, $this)
             ->setModel($model)
             ->setController($this);
+
+        $model->setModelViewerComponentProperties($model_viewer_component);
 
         if ($form_component) {
             $model_viewer_component->setFormComponent($form_component);

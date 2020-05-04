@@ -40,6 +40,20 @@ trait Translatable
     /**
      * {@inheritdoc}
      */
+    public function translations(string $key): array
+    {
+        $translations = $this->getTranslationService()->getTranslation($this, $key);
+
+        if (!is_array($translations)) {
+            throw new \RuntimeException(sprintf('Translations should be of array type, type [%s] returned: [%s]', gettype($translations), $translations));
+        }
+
+        return $translations;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTranslationKey(string $key): string
     {
         return $key;
