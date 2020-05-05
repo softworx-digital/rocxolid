@@ -16,12 +16,27 @@ use Softworx\RocXolid\Generators\Pdf\AbstractPdfGenerator;
  */
 class MPdfGenerator extends AbstractPdfGenerator
 {
+    protected static $default_config = [
+        'format' => 'A4',
+        'default_font_size' => 0,
+        'default_font' => '',
+        'margin_left' => 15,
+        'margin_right' => 15,
+        'margin_top' => 16,
+        'margin_bottom' => 16,
+        'margin_header' => 9,
+        'margin_footer' => 9,
+        'orientation' => 'P',
+    ];
+
     /**
      * {@inheritDoc}
      */
-    public function init(?Collection $options = null): Contracts\PdfGenerator
+    public function init(?Collection $config = null): Contracts\PdfGenerator
     {
-        $this->generator = app(Mpdf::class);
+        $this->generator = app(Mpdf::class, [
+            'config' => collect(static::$default_config)->merge($config)->toArray()
+        ]);
 
         return $this;
     }

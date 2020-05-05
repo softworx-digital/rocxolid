@@ -31,7 +31,7 @@ class Html2PdfGenerator extends AbstractPdfGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(?Collection $options = null): string
+    public function generate(Contracts\PdfDataProvider $provider): string
     {
         return $this->generator
             ->writeHTML($this->getContent())
