@@ -107,6 +107,7 @@ class RenderingService implements Contracts\RenderingService
     public function getView(Renderable $component, string $view_name, array $assignments = []): IlluminateView
     {
         try {
+// dd(View::make($this->getViewPath($component, $view_name), $assignments)->toHtml());
             return View::make($this->getViewPath($component, $view_name), $assignments);
         } catch (ViewNotFoundException $e) {
             return View::make($this->getNotFoundViewPath(), [ 'e' => $e ]);
