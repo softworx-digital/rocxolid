@@ -80,21 +80,26 @@ class RenderingService implements Contracts\RenderingService
 
         $php = Blade::compileString($content);
 
-        $obLevel = ob_get_level();
+        $ob_level = ob_get_level();
+
         ob_start();
         extract($data, EXTR_SKIP);
 
         try {
-            eval('?' . '>' . $php);
+            eval('?>' . $php);
         } catch (\Throwable $e) {
-            while (ob_get_level() > $obLevel) {
+            while (ob_get_level() > $ob_level) {
                 ob_end_clean();
             }
+
+            logger()->error($e);
+
             throw $e;
         } catch (\Throwable $e) {
-            while (ob_get_level() > $obLevel) {
+            while (ob_get_level() > $ob_level) {
                 ob_end_clean();
             }
+
             throw new FatalThrowableError($e);
         }
 
@@ -107,7 +112,6 @@ class RenderingService implements Contracts\RenderingService
     public function getView(Renderable $component, string $view_name, array $assignments = []): IlluminateView
     {
         try {
-// dd(View::make($this->getViewPath($component, $view_name), $assignments)->toHtml());
             return View::make($this->getViewPath($component, $view_name), $assignments);
         } catch (ViewNotFoundException $e) {
             return View::make($this->getNotFoundViewPath(), [ 'e' => $e ]);
