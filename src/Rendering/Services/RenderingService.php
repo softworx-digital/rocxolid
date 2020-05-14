@@ -74,6 +74,14 @@ class RenderingService implements Contracts\RenderingService
     /**
      * {@inheritDoc}
      */
+    public static function renderComponent(Renderable $component, string $view_name = null, array $assignments = [])
+    {
+        echo $component->render($view_name, $assignments);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public static function render(string $content, array $data = []): string
     {
         $data['__env'] = app(IlluminateViewFactory::class);
@@ -136,15 +144,16 @@ class RenderingService implements Contracts\RenderingService
         // looks better than using Collection::each()
         foreach ($this->getViewPackages($component, $hierarchy) as $view_package) {
             foreach ($this->getViewDirectories($component, $hierarchy) as $view_dir) {
-                $candidate = $component->composePackageViewPath($view_package, $view_dir, $view_name);
-                $search_paths->push($candidate);
+                foreach ($component->composePackageViewPaths($view_package, $view_dir, $view_name) as $candidate) {
+                    $search_paths->push($candidate);
 
-                if (View::exists($candidate)) {
-                    if ($component->useRenderingCache()) {
-                        $this->cache->put($cache_key, $candidate);
+                    if (View::exists($candidate)) {
+                        if ($component->useRenderingCache()) {
+                            $this->cache->put($cache_key, $candidate);
+                        }
+
+                        return $candidate;
                     }
-
-                    return $candidate;
                 }
             }
         }

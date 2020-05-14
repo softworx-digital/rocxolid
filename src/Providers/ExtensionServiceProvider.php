@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Providers;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 /**
@@ -22,7 +23,8 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
     public function boot()
     {
         $this
-            ->extendCollections();
+            ->extendCollections()
+            ->extendBlade();
 
         return $this;
     }
@@ -54,6 +56,21 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
                 $assoc[$key] = $value;
                 return $assoc;
             }, new static);
+        });
+
+        return $this;
+    }
+
+    /**
+     * Register Blade directives extensions.
+     *
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    private function extendBlade(): IlluminateServiceProvider
+    {
+        Blade::directive('render', function ($args) {
+            $args = sprintf('$component, %s', $args);
+            return "<?php \Softworx\RocXolid\Rendering\Services\RenderingService::renderComponent($args); ?>";
         });
 
         return $this;

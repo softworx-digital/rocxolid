@@ -134,9 +134,9 @@ trait CanBeRendered
     /**
      * {@inheritDoc}
      */
-    public function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string
+    public function composePackageViewPaths(string $view_package, string $view_dir, string $view_name): array
     {
-        return sprintf('%s::%s.%s', $view_package, $view_dir, $view_name);
+        return [ sprintf('%s::%s.%s', $view_package, $view_dir, $view_name) ];
     }
 
     /**

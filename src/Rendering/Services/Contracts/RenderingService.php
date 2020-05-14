@@ -16,6 +16,17 @@ use Softworx\RocXolid\Rendering\Contracts\Renderable;
 interface RenderingService
 {
     /**
+     * Indirectly render given view with given component  and assignments.
+     * Used in Blade @render extension.
+     *
+     * @param \Softworx\RocXolid\Rendering\Contracts\Renderable $component
+     * @param string $view_name
+     * @param array $assignments
+     * @return void
+     */
+    public static function renderComponent(Renderable $component, string $view_name = null, array $assignments = []);
+
+    /**
      * Compile given content as a blade template.
      *
      * @param string $content Blade template content.

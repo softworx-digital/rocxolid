@@ -100,14 +100,14 @@ interface Renderable
     public function getDefaultTemplateName(): string;
 
     /**
-     * Create full view path based on given package, package subdirectory and view name.
+     * Create full view candidate path(s) based on given package, package subdirectory and view name.
      *
      * @param string $view_package View package to get the view from.
      * @param string $view_dir Directory inside the package.
      * @param string $view_name View name.
-     * @return string
+     * @return array
      */
-    public function composePackageViewPath(string $view_package, string $view_dir, string $view_name): string;
+    public function composePackageViewPaths(string $view_package, string $view_dir, string $view_name): array;
 
     /**
      * Generate key for caching the view paths.

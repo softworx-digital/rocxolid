@@ -47,6 +47,7 @@ class MPdfGenerator extends AbstractPdfGenerator
     public function generate(Contracts\PdfDataProvider $provider): string
     {
         $this->generator->WriteHTML($this->getContent());
+        // $this->generator->setFooter("Page {PAGENO} of {nb}");
 
         return $this->generator->Output($provider->provideFilename(), \Mpdf\Output\Destination::STRING_RETURN);
     }
