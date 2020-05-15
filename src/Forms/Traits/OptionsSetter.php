@@ -108,6 +108,17 @@ trait OptionsSetter
         return $this;
     }
 
+    protected function setTitleTemplate(string $title_template): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'title-template' => sprintf('modal.form.%s', $title_template)
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setTemplate(string $template): Form
     {
         $this->mergeOptions([

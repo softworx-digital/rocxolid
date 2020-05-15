@@ -5,8 +5,8 @@ namespace Softworx\RocXolid\Models\Traits;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 // relations
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\AbstractCrudController;
@@ -220,14 +220,13 @@ trait Crudable
      * Create route params for model's relation actions.
      *
      * @param string $attribute Name of the attribute - relation on parent's side.
-     * @param string $relation Name of the relation on child's side.
+     * @param string $relation_name Name of the relation on child's side.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model Parent model.
      * @return array
      */
-    public function getRouteRelationParam(string $attribute, string $relation, ?CrudableModel $model = null): array
+    public function getRouteRelationParam(string $attribute, string $relation_name, ?CrudableModel $model = null): array
     {
-        $relation_name = $relation;
-        $relation = $this->$relation();
+        $relation = $this->{$relation_name}();
 
         if ($relation instanceof MorphTo) {
             return [
@@ -261,9 +260,9 @@ trait Crudable
                 'Unsupported relation type [%s] for [%s::%s()] in [%s::%s()]',
                 get_class($relation),
                 get_class($this),
-                $relation->getRelationName(),
+                $relation_name,
                 get_class($this),
-                'getRouteRelationParam',
+                'getRouteRelationParam'
             ));
         }
     }
