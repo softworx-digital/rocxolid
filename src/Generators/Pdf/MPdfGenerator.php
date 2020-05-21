@@ -20,13 +20,18 @@ class MPdfGenerator extends AbstractPdfGenerator
         'format' => 'A4',
         'default_font_size' => 0,
         'default_font' => '',
+        /*
         'margin_left' => 15,
         'margin_right' => 15,
-        'margin_top' => 16,
+        'margin_top' => 80,
         'margin_bottom' => 16,
         'margin_header' => 9,
-        'margin_footer' => 9,
+        'margin_footer' => 40,
+        */
         'orientation' => 'P',
+        'setAutoTopMargin' => 'stretch',
+        'setAutoBottomMargin' => 'stretch',
+        'shrink_tables_to_fit' => 1,
     ];
 
     /**
@@ -47,7 +52,18 @@ class MPdfGenerator extends AbstractPdfGenerator
     public function generate(Contracts\PdfDataProvider $provider): string
     {
         $this->generator->WriteHTML($this->getContent());
-        // $this->generator->setFooter("Page {PAGENO} of {nb}");
+
+        /*
+        if ($this->hasHeader()) {
+            // $this->generator->SetHeader($this->getHeader());
+            $this->generator->SetHeader($this->getHeader(), 'O', true);
+            $this->generator->SetHeader($this->getHeader(), 'E', true);
+        }
+
+        if ($this->hasFooter()) {
+            $this->generator->SetHTMLFooter($this->getFooter());
+        }
+        */
 
         return $this->generator->Output($provider->provideFilename(), \Mpdf\Output\Destination::STRING_RETURN);
     }

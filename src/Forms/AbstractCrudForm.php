@@ -349,4 +349,9 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
         return $connection;
     }
+
+    public function provideDomIdParam(): string
+    {
+        return $this->getModel()->provideDomIdParam();
+    }
 }

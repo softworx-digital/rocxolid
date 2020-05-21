@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
+use Illuminate\Support\Collection;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable;
 // rocXolid form fields

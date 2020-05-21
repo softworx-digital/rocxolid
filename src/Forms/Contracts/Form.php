@@ -70,4 +70,6 @@ interface Form extends Paramable, FormFieldable, Buttonable, Optionable, Request
     public function disableBrowserValidation();
 
     public function getInput(): array;
+
+    public function provideDomIdParam(): string;
 }

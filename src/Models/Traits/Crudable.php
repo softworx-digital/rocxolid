@@ -55,6 +55,11 @@ trait Crudable
         return $this;
     }
 
+    public function provideDomIdParam(): string
+    {
+        return collect([ $this->getModelName(), $this->getKey() ])->filter()->join(':');
+    }
+
     // @todo: revise
     public function getExtraAttributes()
     {
@@ -175,7 +180,18 @@ trait Crudable
     {
         $action = sprintf('%s@%s', $this->getCrudControllerType(), $method);
 
-        return action($action, [ $this ] + $params);
+        return action($action, [ $this ] + $this->getDefaultControllerRouteParams($method) + $params);
+    }
+
+    /**
+     * Obtain default params for controller route.
+     *
+     * @param string $method
+     * @return array
+     */
+    protected function getDefaultControllerRouteParams(string $method): array
+    {
+        return [];
     }
 
     /**

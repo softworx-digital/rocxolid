@@ -617,4 +617,9 @@ abstract class AbstractForm implements Form
     {
         return $buttons;
     }
+
+    public function provideDomIdParam(): string
+    {
+        return md5(get_class($this));
+    }
 }

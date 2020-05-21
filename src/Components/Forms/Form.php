@@ -2,11 +2,11 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
-use App;
 use Illuminate\Support\Collection;
+// rocXolid helpers
+use Softworx\RocXolid\Helpers\View as ViewHelper;
 // rocXolid contracts
 use Softworx\RocXolid\Forms\Contracts\Form as FormContract;
-use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\Contracts\Formable as ComponentFormableContract;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
@@ -216,5 +216,10 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         return $this;
+    }
+
+    protected function makeDomId(...$params): string
+    {
+        return ViewHelper::domId($this, $this->getForm()->provideDomIdParam(), ...$params);
     }
 }

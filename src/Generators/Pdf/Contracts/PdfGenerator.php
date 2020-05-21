@@ -32,6 +32,50 @@ interface PdfGenerator
     public function generate(PdfDataProvider $provider): string;
 
     /**
+     * Set HTML header.
+     *
+     * @param string|null $header
+     * @return \Softworx\RocXolid\Generators\Pdf\Contracts\PdfGenerator
+     */
+    public function setHeader(?string $header): PdfGenerator;
+
+    /**
+     * Get HTML header.
+     *
+     * @return string
+     */
+    public function getHeader(): string;
+
+    /**
+     * Check if header is set.
+     *
+     * @return boolean
+     */
+    public function hasHeader(): bool;
+
+    /**
+     * Set HTML footer.
+     *
+     * @param string|null $footer
+     * @return \Softworx\RocXolid\Generators\Pdf\Contracts\PdfGenerator
+     */
+    public function setFooter(?string $footer): PdfGenerator;
+
+    /**
+     * Get HTML footer.
+     *
+     * @return string
+     */
+    public function getFooter(): string;
+
+    /**
+     * Check if footer is set.
+     *
+     * @return boolean
+     */
+    public function hasFooter(): bool;
+
+    /**
      * Set HTML content to generate.
      *
      * @param string $content HTML content to be generated.
