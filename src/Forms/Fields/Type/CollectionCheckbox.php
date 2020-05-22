@@ -33,6 +33,8 @@ class CollectionCheckbox extends AbstractFormField
         'attributes' => [
             'class' => 'flat'
         ],
+        'except-attributes' => null,
+        'enable-custom-values' => false,
     ];
 
     public function setCollection($option)
@@ -68,6 +70,13 @@ class CollectionCheckbox extends AbstractFormField
         return $this->collection;
     }
 
+    public function getCustomValues($index = 0): Collection
+    {
+        return collect($this->getFieldValue($index))->filter(function ($value) {
+            return filled($value) && !$this->getCollection()->keys()->contains($value);
+        });
+    }
+
     public function getFieldName(int $index = 0): string
     {
         if ($this->isArray()) {
@@ -90,5 +99,19 @@ class CollectionCheckbox extends AbstractFormField
     public function isFieldValue($value, $index = 0): bool
     {
         return $this->getFieldValue($index) && $this->getFieldValue($index)->contains($value);
+    }
+
+    public function setExceptAttributes($attributes)
+    {
+        $this->setComponentOptions('except-attributes', $attributes);
+
+        return $this;
+    }
+
+    public function setEnableCustomValues(bool $enable)
+    {
+        $this->setComponentOptions('enable-custom-values', $enable);
+
+        return $this;
     }
 }

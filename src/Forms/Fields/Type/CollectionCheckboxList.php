@@ -2,15 +2,12 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use Softworx\RocXolid\Forms\Contracts\FormField;
-use Softworx\RocXolid\Forms\Fields\AbstractFormField;
+use Illuminate\Support\Collection;
+// rocXolid form field types
+use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
 
-class CollectionCheckboxList extends AbstractFormField
+class CollectionCheckboxList extends CollectionCheckbox
 {
-    protected $show_null_option = false;
-
-    protected $collection = null;
-
     protected $default_options = [
         'type-template' => 'collection-checkbox-list',
         // field wrapper
@@ -47,26 +44,5 @@ class CollectionCheckboxList extends AbstractFormField
         }
 
         return $this;
-    }
-
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-    public function setExceptAttributes($attributes)
-    {
-        $this->setComponentOptions('except-attributes', $attributes);
-
-        return $this;
-    }
-
-    public function getFieldName(int $index = 0): string
-    {
-        if ($this->isArray()) {
-            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
-        } else {
-            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
-        }
     }
 }
