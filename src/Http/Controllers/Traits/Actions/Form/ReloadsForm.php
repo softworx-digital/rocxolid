@@ -6,8 +6,6 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
-// rocXolid form components
-use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 
 /**
  * Trait to reload a form (upon field data change to adjust other fields' data).

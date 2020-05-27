@@ -23,6 +23,13 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
 trait DestroysModels
 {
     /**
+     * Flag if to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
+     *
+     * @var boolean
+     */
+    protected $use_ajax_destroy_confirmation = false;
+
+    /**
      * Display the specified resource update form.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update",scopes="['policy.scope.all','policy.scope.owned']")
@@ -123,5 +130,15 @@ trait DestroysModels
     protected function onModelDestroyedSuccessResponse(CrudRequest $request, CrudableModel $model)//: Response
     {
         return $this->destroyResponse($request, $model);
+    }
+
+    /**
+     * Decide whether to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
+     *
+     * @return boolean
+     */
+    public function useAjaxDestroyConfirmation(): bool
+    {
+        return $this->use_ajax_destroy_confirmation;
     }
 }
