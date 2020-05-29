@@ -343,7 +343,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
 
             $this->setPivotData(collect());
 
-            $values->each(function ($related_key, $index) use ($relation, $pivot_fields) {
+            $values->each(function ($related_key, $index) use ($model, $relation, $pivot_fields) {
                 $pivot_data = collect();
 
                 $pivot_fields->each(function ($pivot_field) use ($pivot_data, $index) {
