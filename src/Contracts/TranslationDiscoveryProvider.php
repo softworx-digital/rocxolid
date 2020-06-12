@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Contracts;
 
 /**
- * Enables object to provide fully qulified translation key.
+ * Enables object to provide fully quallified translation key.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
