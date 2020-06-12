@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits\Crud\Response;
 
-// use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid model contracts
@@ -22,6 +22,7 @@ trait ProvidesDestroyResponse
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Illuminate\Http\Response|array
      */
     protected function destroyResponse(CrudRequest $request, Crudable $model)
     {
@@ -35,9 +36,10 @@ trait ProvidesDestroyResponse
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Illuminate\Http\Response
      * @todo: action result notification
      */
-    protected function destroyNonAjaxResponse(CrudRequest $request, Crudable $model)
+    protected function destroyNonAjaxResponse(CrudRequest $request, Crudable $model)//: Response
     {
         return redirect($this->getRoute('index'));
     }
@@ -47,9 +49,10 @@ trait ProvidesDestroyResponse
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return array
      * @todo: action result notification
      */
-    protected function destroyAjaxResponse(CrudRequest $request, Crudable $model)
+    protected function destroyAjaxResponse(CrudRequest $request, Crudable $model): array
     {
         return $this->response
             ->redirect($this->getRoute('index'))

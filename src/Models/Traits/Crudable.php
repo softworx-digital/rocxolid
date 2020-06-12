@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 // relations
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid controller contracts
@@ -233,6 +234,16 @@ trait Crudable
     }
 
     /**
+     * Retrieve model's route param key name.
+     *
+     * @return string
+     */
+    public function getRouteParamKeyName(): string
+    {
+        return sprintf('%s_%s', Str::snake((new \ReflectionClass($this))->getShortName()), $this->getKeyName());
+    }
+
+    /**
      * Create route params for model's relation actions.
      *
      * @param string $attribute Name of the attribute - relation on parent's side.
@@ -271,7 +282,14 @@ trait Crudable
             ] + ($model ? [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
             ] : []);
-        } else {
+        }/* elseif ($relation instanceof HasMany) { // @todo: finish support of this relation type
+            return [
+                sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
+                sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
+            ] + ($model ? [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $model->getRouteParamKeyName()) => $model->getKey()
+            ] : []);
+        }*/ else {
             throw new \RuntimeException(sprintf(
                 'Unsupported relation type [%s] for [%s::%s()] in [%s::%s()]',
                 get_class($relation),
@@ -292,7 +310,7 @@ trait Crudable
     public function getShowAttributes(array $except = [], array $with = []): array
     {
         $attributes = $this->getAttributes();
-        $attributes = array_diff_key($attributes, array_flip($this->getSystemAttributes()), array_flip($except)) + $with;
+        $attributes = array_diff_key($attributes, array_flip(array_merge($this->getSystemAttributes(), $this->getHidden())), array_flip($except)) + $with;
         // @todo: you can do better than checking substring
         $attributes = array_filter($attributes, function ($attribute) {
             return (substr($attribute, -3) != '_id');

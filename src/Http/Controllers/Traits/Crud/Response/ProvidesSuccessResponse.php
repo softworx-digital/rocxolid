@@ -3,13 +3,11 @@
 namespace Softworx\RocXolid\Http\Controllers\Traits\Crud\Response;
 
 use Illuminate\Support\Str;
-// use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid forms
 use Softworx\RocXolid\Forms\AbstractCrudForm;
-// rocXolid form components
-use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
@@ -39,6 +37,7 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return \Illuminate\Http\Response|array
      */
     protected function successResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form)
     {
@@ -53,9 +52,10 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return \Illuminate\Http\Response
      * @todo: action result notification
      */
-    protected function successNonAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form)
+    protected function successNonAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
         // $action = $request->route()->getActionName();
         // $action = $request->route()->getActionMethod();
@@ -71,9 +71,10 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return array
      * @todo: action result notification text upon action
      */
-    protected function successAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form)
+    protected function successAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
     {
         // $action = $request->route()->getActionName();
         // $action = $request->route()->getActionMethod();
