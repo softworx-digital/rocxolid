@@ -34,7 +34,18 @@ trait Translatable
      */
     public function translate(string $key, array $params = [], bool $use_raw_key = false): string
     {
-        return $this->getTranslationService()->getTranslation($this, $key, $params, $use_raw_key);
+        $translation = $this->getTranslationService()->getTranslation($this, $key, $params, $use_raw_key);
+
+        if (!is_string($translation)) {
+            throw new \RuntimeException(sprintf(
+                "Invalid translation for [%s::%s.%s], string value expected",
+                $this->getTranslationPackage(),
+                $this->getTranslationParam(),
+                $key
+            ));
+        }
+
+        return $translation;
     }
 
     /**
