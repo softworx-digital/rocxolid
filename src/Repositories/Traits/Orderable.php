@@ -46,11 +46,11 @@ trait Orderable
         $model = $model ?? $this->query_model;
 
         if (!Schema::hasColumn($model->getTable(), $column_name)) {
-            throw new \InvalidArgumentException(sprintf('Invalid column [%s] for ordering repository of [%s]', $column_name, get_class($model)));
+            throw new \InvalidArgumentException(sprintf('Invalid column [%s] for ordering repository of [%s], table [%s]', $column_name, get_class($model), $model->getTable()));
         }
 
         if (!in_array($direction, ['asc', 'desc'])) {
-            throw new \InvalidArgumentException(sprintf('Invalid direction [%s] for ordering repository of [%s]', $direction, get_class($model)));
+            throw new \InvalidArgumentException(sprintf('Invalid direction [%s] for ordering repository of [%s], table [%s]', $direction, get_class($model), $model->getTable()));
         }
 
         $this

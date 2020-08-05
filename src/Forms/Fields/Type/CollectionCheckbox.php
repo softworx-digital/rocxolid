@@ -77,15 +77,6 @@ class CollectionCheckbox extends AbstractFormField
         });
     }
 
-    public function getFieldName(int $index = 0): string
-    {
-        if ($this->isArray()) {
-            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
-        } else {
-            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
-        }
-    }
-
     public function setValue($value, int $index = 0): Valueable
     {
         // coming from submitted data
@@ -98,7 +89,9 @@ class CollectionCheckbox extends AbstractFormField
 
     public function isFieldValue($value, $index = 0): bool
     {
-        return $this->getFieldValue($index) && $this->getFieldValue($index)->contains($value);
+        return $this->getFieldValue($index) && $this->getFieldValue($index)->transform(function ($value) {
+            return (string)$value;
+        })->containsStrict((string)$value);
     }
 
     public function setExceptAttributes($attributes)
@@ -113,5 +106,14 @@ class CollectionCheckbox extends AbstractFormField
         $this->setComponentOptions('enable-custom-values', $enable);
 
         return $this;
+    }
+
+    public function getFieldName(int $index = 0): string
+    {
+        if ($this->isArray()) {
+            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
+        } else {
+            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
+        }
     }
 }

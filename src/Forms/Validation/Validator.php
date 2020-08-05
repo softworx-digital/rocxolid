@@ -182,6 +182,70 @@ class Validator extends IlluminateValidator
     }
 
     /**
+     * Validate the size of an (localized) decimal attribute is greater than a minimun value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateMinDecimal(string $attribute, $value, array $parameters): bool
+    {
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value >= $parameters[0];
+    }
+
+    /**
+     * Replace all place-holders for the min decimal rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceMinDecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        // @todo: hotfixed formatting
+        return str_replace(':min_decimal', number_format($parameters[0], 2, ',', ''), $message);
+    }
+
+    /**
+     * Validate the size of an (localized) decimal attribute is less than a maximum value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateMaxDecimal(string $attribute, $value, array $parameters): bool
+    {
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value <= $parameters[0];
+    }
+
+    /**
+     * Replace all place-holders for the max decimal rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceMaxDecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        // @todo: hotfixed formatting
+        return str_replace(':max_decimal', number_format($parameters[0], 2, ',', ''), $message);
+    }
+
+    /**
      * Validate that a (localized) decimal number is greater than another attribute.
      *
      * @param string $attribute

@@ -12,6 +12,8 @@ interface FormField
     const SINGLE_DATA_PARAM = '_data';
 
     const ARRAY_DATA_PARAM = '_datagroup';
+
+    public function getTitle(): string;
     /*
     public function render(array $options = [], $show_label = true, $show_field = true, $show_error = true);
 

@@ -233,6 +233,19 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return filled($this->pivot_relation_name);
     }
 
+    /**
+     * @inheritDoc
+     */
+    // @todo: kinda hacky, don't like this approach
+    public function getTitle(): string
+    {
+        if ($this->hasOption('component.label.title-translated')) {
+            return $this->getOption('component.label.title-translated');
+        }
+
+        return $this->getForm()->getController()->translate(sprintf('field.%s', $this->getOption('component.label.title', $this->getName())));
+    }
+
     // @todo: kinda hacky, don't like this approach
     public function updateParent()
     {
@@ -323,9 +336,10 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $value;
     }
 
+    // @todo: refactoring & unit testing candidate
     public function isFieldValue($value, $index = 0): bool
     {
-        return ($this->getFieldValue($index) == $value);
+        return !is_null($this->getFieldValue($index)) && !is_null($value) && ((string)$this->getFieldValue($index) === (string)$value);
     }
 
     public function getFinalValue()

@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
 class CollectionRadioList extends AbstractFormField
@@ -29,6 +28,8 @@ class CollectionRadioList extends AbstractFormField
         'attributes' => [
             'class' => 'form-control',
         ],
+        'justified' => true,
+        'enable-custom-values' => false,
     ];
 
     public function setCollection($option)
@@ -61,9 +62,30 @@ class CollectionRadioList extends AbstractFormField
         return $this->collection;
     }
 
+    public function getCustomValues($index = 0): Collection
+    {
+        return collect($this->getFieldValue($index))->filter(function ($value) {
+            return filled($value) && !$this->getCollection()->keys()->contains($value);
+        });
+    }
+
     public function setExceptAttributes($attributes)
     {
         $this->setComponentOptions('except-attributes', $attributes);
+
+        return $this;
+    }
+
+    public function setJustified(bool $justified)
+    {
+        $this->setComponentOptions('justified', $justified);
+
+        return $this;
+    }
+
+    public function setEnableCustomValues(bool $enable)
+    {
+        $this->setComponentOptions('enable-custom-values', $enable);
 
         return $this;
     }

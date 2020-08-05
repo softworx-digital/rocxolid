@@ -27,7 +27,7 @@ class CheckboxToggle extends AbstractFormField
             'data-toggle' => 'toggle',
             'data-size' => 'small',
             'data-width' => '60',
-            'data-style' => 'round',
+            // 'data-style' => 'round',
             'data-on' => '<i class=\'fa fa-check\'></i>',
             'data-off' => '<i class=\'fa fa-close\'></i>',
         ],

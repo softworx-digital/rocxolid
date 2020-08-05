@@ -43,13 +43,7 @@ class FormRequest extends IlluminateFormRequest
         foreach ($fields as $name => $field) {
             $validation['attributes'][] = $field->getRuleKey();
 
-            // eg. hidden fields may not have a title
-            if ($field->hasOption('component.label.title')) {
-                $validation['translation'][$field->getRuleKey()] = $field
-                    ->getForm()
-                        ->getController()
-                            ->translate(sprintf('field.%s', $field->getOption('component.label.title')));
-            }
+            $validation['translation'][$field->getRuleKey()] = $field->getTitle();
 
             if ($rules = $field->getOption('validation.rules', false)) {
                 $validation['rules'][$field->getRuleKey()] = $rules;
