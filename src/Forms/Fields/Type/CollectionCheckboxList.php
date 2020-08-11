@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Forms\Fields\Type;
 use Illuminate\Support\Collection;
 // rocXolid form field types
 use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
+use Softworx\RocXolid\Models\AbstractCrudModel;
 
 class CollectionCheckboxList extends CollectionCheckbox
 {
@@ -31,7 +32,7 @@ class CollectionCheckboxList extends CollectionCheckbox
         if ($option instanceof Collection) {
             $this->collection = $option;
         } else {
-            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $model = ($option['model'] instanceof AbstractCrudModel) ? $option['model'] : new $option['model'];
             $query = $model::query();
 
             if (isset($option['filters'])) {
@@ -40,7 +41,9 @@ class CollectionCheckboxList extends CollectionCheckbox
                 }
             }
 
-            $this->collection = $query->get();
+            $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
+                return $item->initAsFieldItem($this);
+            });
         }
 
         return $this;

@@ -41,7 +41,7 @@ class CollectionCheckbox extends AbstractFormField
     {
         if ($option instanceof Collection) {
             $this->collection = $option;
-        } else {
+        } elseif (isset($option['model']) && isset($option['column'])) {
             $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
             $query = $model::query();
 
@@ -60,6 +60,8 @@ class CollectionCheckbox extends AbstractFormField
                     return $model->find($id)->{$method}();
                 });
             }
+        } else {
+            throw new \InvalidArgumentException(sprintf('The "collection" option for [%s] field requires en entire collection to be set or model and column definition', $this->name));
         }
 
         return $this;

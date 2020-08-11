@@ -3,8 +3,8 @@
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
+use Softworx\RocXolid\Models\AbstractCrudModel;
 
 class CollectionRadioListOtherSelect extends AbstractFormField
 {
@@ -37,7 +37,7 @@ class CollectionRadioListOtherSelect extends AbstractFormField
         if ($option instanceof Collection) {
             $this->collection = $option;
         } else {
-            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $model = ($option['model'] instanceof AbstractCrudModel) ? $option['model'] : new $option['model'];
             $query = $model::query();
 
             if (isset($option['filters'])) {
@@ -46,7 +46,9 @@ class CollectionRadioListOtherSelect extends AbstractFormField
                 }
             }
 
-            $this->collection = $query->get();
+            $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
+                return $item->initAsFieldItem($this);
+            });
         }
 
         return $this;
