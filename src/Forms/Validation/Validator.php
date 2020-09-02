@@ -15,6 +15,7 @@ use Softworx\RocXolid\Rendering\Services\RenderingService;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo: separate to traits accordiing to validation types
  */
 class Validator extends IlluminateValidator
 {

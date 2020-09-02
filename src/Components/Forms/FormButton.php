@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
 use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\General\Button;
 use Softworx\RocXolid\Components\Contracts\FormButtonable as ComponentFormButtonable;

@@ -31,7 +31,7 @@ class FormFieldGroupAddable extends AbstractFormField
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-field-group form-inline col-xs-11'
+            'class' => 'form-field-group form-inline col-xs-10'
         ],
         // buttons
         'button-add' => [
@@ -40,15 +40,10 @@ class FormFieldGroupAddable extends AbstractFormField
                 // 'title' => 'add',
             ],
             'attributes' => [
-                'class' => 'btn btn-primary margin-top-24',
+                'class' => 'btn btn-primary',
                 'data-add-form-field-group' => '.form-field-group-addable',
                 'data-add-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
-            'wrapper' => [
-                'attributes' => [
-                    'class' => 'col-xs-1 text-center'
-                ]
-            ]
         ],
         'button-remove' => [
             'label' => [
@@ -56,15 +51,10 @@ class FormFieldGroupAddable extends AbstractFormField
                 // 'title' => 'remove',
             ],
             'attributes' => [
-                'class' => 'btn btn-danger margin-top-24',
+                'class' => 'btn btn-danger',
                 'data-remove-form-field-group' => '.form-field-group-addable',
                 'data-remove-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
-            'wrapper' => [
-                'attributes' => [
-                    'class' => 'col-xs-1 text-center'
-                ]
-            ]
         ]
     ];
 

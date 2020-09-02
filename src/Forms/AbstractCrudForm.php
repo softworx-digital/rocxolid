@@ -14,14 +14,11 @@ use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
-use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Controllable as ControllableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
 // rocXolid field types
-use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
+use Softworx\RocXolid\Forms\Fields\Type as FieldType;
 // rocXolid http requests
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
@@ -55,8 +52,8 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
     protected $buttontoolbars = false;
 
     protected $buttongroups = [
-        ButtonGroup::DEFAULT_NAME => [
-            'type' => ButtonGroup::class,
+        FieldType\ButtonGroup::DEFAULT_NAME => [
+            'type' => FieldType\ButtonGroup::class,
             'options' => [
                 'wrapper' => false,
                 'attributes' => [
@@ -70,9 +67,9 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
     protected $buttons = [
         // submit - default group
         'submit' => [
-            'type' => ButtonSubmitActions::class,
+            'type' => FieldType\ButtonSubmitActions::class,
             'options' => [
-                'group' => ButtonGroup::DEFAULT_NAME,
+                'group' => FieldType\ButtonGroup::DEFAULT_NAME,
                 'label' => [
                     'title' => 'submit-back',
                 ],
@@ -231,6 +228,21 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         $fields = $this->filterFieldsDefinitionByPermissions($fields);
 
         return $fields;
+    }
+
+    /**
+     * Unset all fields that are not owned by the form
+     *
+     * @param array $fields
+     * @return \Softworx\RocXolid\Forms\Contracts\Form
+     */
+    protected function unsetForeignFieldsDefinition(array &$fields): Form
+    {
+        $fields = collect($fields)->filter(function ($definition, $field_name) {
+            return collect($this->fields)->keys()->contains($field_name);
+        })->toArray();
+
+        return $this;
     }
 
     protected function filterFieldsDefinitionByPermissions(array $fields): array

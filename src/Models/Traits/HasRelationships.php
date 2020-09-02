@@ -230,6 +230,14 @@ trait HasRelationships
         $attribute = $relation;
 
         if (array_key_exists($attribute, $data)) {
+
+            $i = 0;
+
+            foreach ($data[$attribute] as &$item) {
+                $item['position'] = $i;
+                $i++;
+            }
+
             $this->$relation()->sync($data[$attribute]);
         }
 

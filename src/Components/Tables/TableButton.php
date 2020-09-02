@@ -5,7 +5,6 @@ namespace Softworx\RocXolid\Components\Tables;
 use Softworx\RocXolid\Rendering\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
 use Softworx\RocXolid\Tables\Buttons\Contracts\Button as TableButtonContract;
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 use Softworx\RocXolid\Components\General\Button;
 
 // @todo: docblocks
@@ -31,6 +30,7 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this->button;
     }
 
+    // @todo: not cool
     public function setPreRenderProperties(...$elements): Renderable
     {
         $table = $elements[0];
