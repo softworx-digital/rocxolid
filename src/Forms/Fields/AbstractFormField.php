@@ -234,7 +234,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     // @todo: kinda hacky, don't like this approach
     public function getTitle(): string

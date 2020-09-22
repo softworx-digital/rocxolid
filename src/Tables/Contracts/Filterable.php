@@ -21,14 +21,14 @@ interface Filterable
      * Set filter request values to session.
      *
      * @param array $values Values to set.
-     * @return Softworx\RocXolid\Tables\Contracts\Filterable
+     * @return \Softworx\RocXolid\Tables\Contracts\Filterable
      */
     public function setFiltering(array $values): Filterable;
 
     /**
      * Clear table filtering.
      *
-     * @return Softworx\RocXolid\Tables\Contracts\Filterable
+     * @return \Softworx\RocXolid\Tables\Contracts\Filterable
      */
     public function clearFiltering(): Filterable;
 

@@ -22,7 +22,7 @@ interface Formable
     /**
      * Default param for form mappings.
      */
-    const FORM_PARAM = 'default';
+    const FORM_PARAM = 'general';
 
     /**
      * Set the form reference to data form pool.

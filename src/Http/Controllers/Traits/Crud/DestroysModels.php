@@ -135,7 +135,7 @@ trait DestroysModels
     /**
      * Decide whether to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
      *
-     * @return boolean
+     * @return bool
      */
     public function useAjaxDestroyConfirmation(): bool
     {

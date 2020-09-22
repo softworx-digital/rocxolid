@@ -21,6 +21,7 @@ class SwitchFlag extends AbstractColumn
             'class' => 'form-control'
         ],
         */
+        'width' => 100,
     ];
 
     protected function setAction(string $action): Column

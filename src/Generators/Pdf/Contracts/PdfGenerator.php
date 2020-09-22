@@ -49,7 +49,7 @@ interface PdfGenerator
     /**
      * Check if header is set.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasHeader(): bool;
 
@@ -71,7 +71,7 @@ interface PdfGenerator
     /**
      * Check if footer is set.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasFooter(): bool;
 

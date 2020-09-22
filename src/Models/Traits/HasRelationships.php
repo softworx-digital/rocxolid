@@ -234,7 +234,9 @@ trait HasRelationships
             $i = 0;
 
             foreach ($data[$attribute] as &$item) {
-                $item['position'] = $i;
+                if (is_array($item)) {
+                    $item['position'] = $i;
+                }
                 $i++;
             }
 

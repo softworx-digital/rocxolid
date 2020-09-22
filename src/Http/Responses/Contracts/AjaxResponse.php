@@ -16,6 +16,15 @@ use Softworx\RocXolid\Http\Responses\Contracts\Response;
 interface AjaxResponse extends Response
 {
     /**
+     * Set raw key-value data pair.
+     *
+     * @param string $key
+     * @param string|null $value
+     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     */
+    public function raw(string $key, ?string $value): AjaxResponse;
+
+    /**
      * Instruct the response to process an error on consumer side.
      *
      * @param \Illuminate\Support\Collection $errors

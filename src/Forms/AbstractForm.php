@@ -519,30 +519,23 @@ abstract class AbstractForm implements Form
 
     protected function setFieldsErrorsMessages(): Form
     {
-        $errors = [];
+        collect($this->getErrors()->getMessages())->each(function (array $messages, string $key) {
+            list($key, $name) = explode('.', $key, 2);
 
-        foreach ($this->getErrors()->getMessages() as $key => $message) {
-            Arr::set($errors, $key, $message);
-        }
-
-        $errors = collect($errors);
-
-        if ($errors->has(FormField::SINGLE_DATA_PARAM)) {
-            collect($errors->get(FormField::SINGLE_DATA_PARAM))
-                ->each(function ($messages, $name) {
+            switch ($key) {
+                case FormField::SINGLE_DATA_PARAM:
                     $this->getFormField($name)
-                        ->setErrorMessages($messages)
-                        ->updateComponent();
-                });
-        }
+                            ->setErrorMessages($messages)
+                            ->updateComponent();
+                    break;
+                case FormField::ARRAY_DATA_PARAM:
+                    // @todo: ugly
+                    $errors = [];
 
-        // @todo: "hotfixed"
-        // the pivot handling doesn't belong here since it's CRUDable part
-        if ($errors->has(FormField::ARRAY_DATA_PARAM)) {
-            collect($errors->get(FormField::ARRAY_DATA_PARAM))
-                ->each(function ($grouperrors, $name) {
-                    collect($grouperrors)
-                        ->each(function ($messages, $index) use ($name) {
+                    Arr::set($errors, $name, $messages);
+
+                    collect($errors)->each(function ($groupmessages, $name) {
+                        collect($groupmessages)->each(function ($messages, $index) use ($name) {
                             // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
                             // $name holds the value 'pivot'
                             if (is_numeric($index)) {
@@ -564,11 +557,14 @@ abstract class AbstractForm implements Form
                                     });
                             }
                         });
-                });
-        }
+                    });
+                    break;
+            }
+        });
 
         return $this;
     }
+
     // @todo - tieto zrejme upratat do nejakej support definition classy
     protected function getFieldGroupsDefinition()
     {

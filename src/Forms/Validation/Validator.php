@@ -175,11 +175,31 @@ class Validator extends IlluminateValidator
      */
     public function validateDecimal(string $attribute, $value, array $parameters): bool
     {
-        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
-            return preg_match(sprintf('/^(([0-9]+)(%s([0-9]+))?)$/', $user->address->country->currency_decimal_separator), $value);
-        }
+        $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
 
-        return is_numeric($value);
+        $grouping_separator = $nf->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+        // this is probably a bug in PHP - for eg. sk_SK locale, the grouping symbol is ord(194),
+        // not ord(32) - space
+        $grouping_separator = (ord($grouping_separator) === 194) ? chr(32) : $grouping_separator;
+
+        $int_pattern = sprintf(
+            '/^(0|(-?[1-9][0-9]{0,%s}(([0-9]*)|(%s[0-9]{%s})*)))$/',
+            $nf->getAttribute(\NumberFormatter::GROUPING_SIZE) - 1,
+            $grouping_separator,
+            $nf->getAttribute(\NumberFormatter::GROUPING_SIZE)
+        );
+
+        $frac_pattern = sprintf(
+            '/^[0-9]{%s,%s}$/',
+            $nf->getAttribute(\NumberFormatter::MIN_FRACTION_DIGITS),
+            $nf->getAttribute(\NumberFormatter::MAX_FRACTION_DIGITS)
+        );
+
+        $decimal_separator = $nf->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+
+        list($int, $frac) = explode($decimal_separator, $value . $decimal_separator);
+
+        return preg_match($int_pattern, $int) && preg_match($frac_pattern, $frac);
     }
 
     /**
@@ -224,6 +244,7 @@ class Validator extends IlluminateValidator
      */
     public function validateMaxDecimal(string $attribute, $value, array $parameters): bool
     {
+        // @todo: hotfixed
         $value = str_replace(',', '.', $value);
         $value = str_replace(' ', '', $value);
         $value = (float)$value;
@@ -256,7 +277,7 @@ class Validator extends IlluminateValidator
      */
     public function validateGtdecimal(string $attribute, $value, array $parameters): bool
     {
-        return $this->validateGt($attribute, $this->getNormalizedDecimalNumber($value), $parameters);
+        return $this->validateGt($attribute, $this->getParsedDecimalNumber($value), $parameters);
     }
 
     /**
@@ -283,7 +304,7 @@ class Validator extends IlluminateValidator
      */
     public function validateLatitude(string $attribute, $value, array $parameters): bool
     {
-        return preg_match('/^([-]?(([0-8]?[0-9])(\.(\d+))?)|(90(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+        return preg_match('/^([-]?(([0-8]?[0-9])(\.(\d+))?)|(90(\.0+)?))$/', $value);
     }
 
     /**
@@ -296,7 +317,7 @@ class Validator extends IlluminateValidator
      */
     public function validateLongitude(string $attribute, $value, array $parameters): bool
     {
-        return preg_match('/^([-]?((((1[0-7][0-9])|([0-9]?[0-9]))(\.(\d+))?)|180(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+        return preg_match('/^([-]?((((1[0-7][0-9])|([0-9]?[0-9]))(\.(\d+))?)|180(\.0+)?))$/', $value);
     }
 
     /**
@@ -513,18 +534,18 @@ class Validator extends IlluminateValidator
     }
 
     /**
-     * Normalize decimal number representation according to logged user locale.
+     * Parse decimal number representation according to app locale.
      *
      * @param string $value
      * @return string
      */
-    private function getNormalizedDecimalNumber(string $value): string
+    private function getParsedDecimalNumber(string $value): string
     {
-        // @todo: "hotfixed", find something more appropriate
-        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
-            $value = str_replace($user->address->country->currency_decimal_separator, '.', $value);
-        }
+        $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
 
-        return $value;
+        // $value = preg_replace($nf->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL), '.', $value);
+        // $value = preg_replace($nf->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL), '', $value);
+
+        return (string)$nf->parse($value);
     }
 }

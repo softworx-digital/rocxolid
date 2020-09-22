@@ -60,7 +60,7 @@ trait Valueable
      */
     public function setValue($value, int $index = 0): ValueableContract
     {
-        if ($this->isArray() && ($value instanceof Collection)) {
+        if (method_exists($this, 'isArray') && $this->isArray() && ($value instanceof Collection)) {
             $value->each(function ($v, $i) {
                 $this->setValue($v, $i);
             });

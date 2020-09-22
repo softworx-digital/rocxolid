@@ -17,9 +17,14 @@ use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
 class JsonAjaxResponse implements AjaxResponse
 {
     /**
-     * @var \Illuminate\Support\MessageBag $message_bag Key-value container holding the response data.
+     * @var \Illuminate\Support\MessageBag $message_bag Container holding instructed response data.
      */
     protected $message_bag;
+
+    /**
+     * @var \Illuminate\Support\Collection $raw Container holding raw response data.
+     */
+    protected $raw;
 
     /**
      * Constructor.
@@ -29,6 +34,17 @@ class JsonAjaxResponse implements AjaxResponse
     public function __construct(MessageBag $message_bag)
     {
         $this->message_bag = $message_bag;
+        $this->raw = collect();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function raw(string $key, ?string $value): AjaxResponse
+    {
+        $this->raw->put($key, $value);
+
+        return $this;
     }
 
     /**
@@ -249,6 +265,6 @@ class JsonAjaxResponse implements AjaxResponse
      */
     public function get(): array
     {
-        return $this->message_bag->jsonSerialize();
+        return $this->message_bag->jsonSerialize() + $this->raw->jsonSerialize();
     }
 }

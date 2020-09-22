@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Rendering\Traits;
 
 use Illuminate\View\View;
+use Illuminate\Support\Facades\View as ViewFacade;
 // rocXolid rendering contracts
 use Softworx\RocXolid\Rendering\Contracts\Renderable;
 
@@ -58,9 +59,13 @@ trait CanBeRendered
                    ? $this->getDefaultTemplateName()
                    : $view_name;
 
-        return $this->getRenderingService()->getView($this, $view_name, $assignments + [
+        $view = $this->getRenderingService()->getView($this, $view_name, $assignments + [
             'component' => $this
         ]);
+
+        $this->renderViewActions($view);
+
+        return $view;
     }
 
     /**
@@ -145,5 +150,16 @@ trait CanBeRendered
     public function getPackageViewCacheKey(string $view_name): string
     {
         return sprintf('%s-%s-%s', get_class($this), $this->getViewPackage(), $view_name);
+    }
+
+    /**
+     * Possibility to take some actions or adjust the view before rendering.
+     *
+     * @param \Illuminate\View\View $view
+     * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
+     */
+    protected function renderViewActions(View &$view): Renderable
+    {
+        return $this;
     }
 }

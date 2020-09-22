@@ -83,7 +83,7 @@ interface Optionable
      * Verify if the option is set and is not null.
      *
      * @param string $option Option name - key to verify.
-     * @return boolean
+     * @return bool
      */
     public function hasNotNullOption(string $option): bool;
 

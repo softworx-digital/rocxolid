@@ -41,7 +41,7 @@ class FormBuilder implements FormBuilderContract
      * Constructor.
      *
      * @param \Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder $form_field_builder
-     * @param Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory $form_field_factory
+     * @param \Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory $form_field_factory
      */
     public function __construct(
         FormFieldBuilder $form_field_builder,
