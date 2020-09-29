@@ -182,12 +182,16 @@ class Validator extends IlluminateValidator
         // not ord(32) - space
         $grouping_separator = (ord($grouping_separator) === 194) ? chr(32) : $grouping_separator;
 
+        /*
         $int_pattern = sprintf(
             '/^(0|(-?[1-9][0-9]{0,%s}(([0-9]*)|(%s[0-9]{%s})*)))$/',
             $nf->getAttribute(\NumberFormatter::GROUPING_SIZE) - 1,
             $grouping_separator,
             $nf->getAttribute(\NumberFormatter::GROUPING_SIZE)
         );
+        */
+
+        $int_pattern = '/^(0|(-?[1-9][0-9]*))$/';
 
         $frac_pattern = sprintf(
             '/^[0-9]{%s,%s}$/',

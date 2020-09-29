@@ -145,6 +145,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                                     ));
                                 }
 
+                                // @todo: do this only for decimal values
                                 $field
                                     ->setValue($this->getModel()->decimalize($relation->get()->pluck(sprintf(
                                         '%s.%s',
