@@ -34,10 +34,28 @@ interface Trigger
     /**
      * Retrieve translated trigger title.
      *
-     * @param \Softworx\RocXolid\Contracts\TranslationPackageProvider\TranslationPackageProvider $controller
+     * @param \Softworx\RocXolid\Contracts\TranslationPackageProvider $controller
      * @return string
      */
     public function getTranslatedTitle(TranslationPackageProvider $controller): string;
+
+    /**
+     * Validate form data in trigger assignment rules.
+     *
+     * @param \Illuminate\Support\Collection $data
+     * @param string $attribute
+     * @return bool
+     */
+    public function validateAssignmentData(Collection $data, string $attribute): bool;
+
+    /**
+     * Obtain error message for validation process.
+     *
+     * @param \Softworx\RocXolid\Contracts\TranslationPackageProvider $controller
+     * @param \Illuminate\Support\Collection $data
+     * @return string
+     */
+    public function assignmentValidationErrorMessage(TranslationPackageProvider $controller, Collection $data): string;
 
     /**
      * Priamry method to handle trigger's business logic.

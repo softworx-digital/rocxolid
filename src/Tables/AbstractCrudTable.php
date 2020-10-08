@@ -2,14 +2,11 @@
 
 namespace Softworx\RocXolid\Tables;
 
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 // rocXolid utils
 use Softworx\RocXolid\Helpers\View as ViewHelper;
-use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid general traits
 use Softworx\RocXolid\Traits\Controllable;
 use Softworx\RocXolid\Traits\MethodOptionable;

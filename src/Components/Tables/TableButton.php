@@ -41,11 +41,27 @@ class TableButton extends Button implements ComponentTableButtonable
             if ($this->getOption('ajax', false)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'data-ajax-url' => $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', []))
+                        'data-ajax-url' => $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', []))
                     ]
                 ]);
             } else {
-                $this->setOption('url', $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])));
+                $this->setOption('url', $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
+            }
+        } elseif ($this->hasOption('related-action')) {
+
+            $related = $model->{$this->getOption('related-action.relation')}()->getRelated();
+            $params = [
+                sprintf('_data[%s]', $related->{$this->getOption('related-action.attribute')}()->getForeignKeyName()) => $model->getKey()
+            ] + $this->getOption('route-params', []);
+
+            if ($this->getOption('ajax', false)) {
+                $this->mergeOptions([
+                    'attributes' => [
+                        'data-ajax-url' => $related->getControllerRoute($this->getOption('related-action.action'), $params),
+                    ],
+                ]);
+            } else {
+                $this->setOption('url', $related->getControllerRoute($this->getOption('related-action.action'), $params));
             }
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));

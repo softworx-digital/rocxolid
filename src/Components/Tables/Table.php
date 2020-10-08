@@ -14,6 +14,9 @@ use Softworx\RocXolid\Components\Tables\TableFilter;
 use Softworx\RocXolid\Components\Tables\TableColumn;
 use Softworx\RocXolid\Components\Tables\TableButton;
 
+/**
+ * @todo: refactor
+ */
 class Table extends AbstractOptionableComponent implements Tableable
 {
     protected static $filter_component_class = TableFilter::class;

@@ -16,22 +16,20 @@ use Softworx\RocXolid\Forms\Contracts\FormField;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid model traits
-use Softworx\RocXolid\Models\Traits\HasOwner;
-use Softworx\RocXolid\Models\Traits\HasAttributes;
-use Softworx\RocXolid\Models\Traits\HasRelationships;
-use Softworx\RocXolid\Models\Traits\HasTitleColumn;
+use Softworx\RocXolid\Models\Traits;
 // rocXolid components
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * @todo: subject to refactoring
+ * @todo: attributes to HasAttributes
  */
 trait Crudable
 {
-    use HasOwner;
-    use HasAttributes;
-    use HasRelationships;
-    use HasTitleColumn;
+    use Traits\HasOwner;
+    use Traits\HasAttributes;
+    use Traits\HasRelationships;
+    use Traits\HasTitleColumn;
     use OnActions\RepositoryActions;
 
     // @todo: revise

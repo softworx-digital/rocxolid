@@ -34,6 +34,21 @@ abstract class AbstractTrigger implements Trigger, Controllable, TranslationDisc
     /**
      * {@inheritDoc}
      */
+    abstract public function fire(...$arguments): Trigger;
+
+    /**
+     * {@inheritDoc}
+     */
+    abstract public function validateAssignmentData(Collection $data, string $attribute): bool;
+
+    /**
+     * {@inheritDoc}
+     */
+    abstract public function assignmentValidationErrorMessage(TranslationPackageProvider $controller, Collection $data): string;
+
+    /**
+     * {@inheritDoc}
+     */
     public function isAssignedToProvider(string $provider_type): bool
     {
         return $this->getAssignedProviders($provider_type)->isNotEmpty();

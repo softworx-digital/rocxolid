@@ -16,26 +16,34 @@ interface Downloadable
     /**
      * Return instance file content.
      *
-     * @param string $param
+     * @param string|null $param
      * @return string
      */
-    public function content(string $param = null): string;
+    public function content(?string $param = null): string;
+
+    /**
+     * Check if stored file is valid.
+     *
+     * @param string|null $param
+     * @return bool
+     */
+    public function isFileValid(?string $param = null): bool;
 
     /**
      * Retrieve instance file storage path relative to the storage directory.
      *
-     * @param string $param
+     * @param string|null $param
      * @return string
      */
-    public function getStorageRelativePath(string $param = null): string;
+    public function getStorageRelativePath(?string $param = null): string;
 
     /**
      * Retrieve instance file storage path.
      *
-     * @param string $param
+     * @param string|null $param
      * @return string
      */
-    public function getStoragePath(string $param = null): string;
+    public function getStoragePath(?string $param = null): string;
 
     /**
      * Retrieve URL to download
