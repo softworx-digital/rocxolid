@@ -8,6 +8,7 @@ use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
 // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 // use Vsch\TranslationManager\Translator;
 
+
 /**
  * rocXolid package service provider.
  *
