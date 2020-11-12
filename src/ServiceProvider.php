@@ -12,7 +12,6 @@ use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
 
 
 
-
 /**
  * rocXolid package service provider.
  *
