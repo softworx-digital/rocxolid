@@ -26,4 +26,20 @@ interface TriggersProvider
      * @return \Illuminate\Support\Collection
      */
     public function provideTriggers(): Collection;
+
+    /**
+     * Check if the provider contains required trigger types.
+     *
+     * @param string $required_trigger_type
+     * @return boolean
+     */
+    public function containsTriggerTypes(Collection $required_trigger_types): bool;
+
+    /**
+     * Check if all assigned triggers are fireable.
+     *
+     * @param ...$arguments
+     * @return boolean
+     */
+    public function allTriggersFireable(...$arguments): bool;
 }

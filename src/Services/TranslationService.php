@@ -30,7 +30,7 @@ class TranslationService implements TranslationServiceContract
         );
 
         $general_language_key = $this->getTranslationKey(
-            'rocXolid:admin',
+            'rocXolid:admin', // @todo: find some other way
             'general',
             $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );

@@ -82,7 +82,8 @@ trait CreatesModels
             throw new \RuntimeException(sprintf('Model [%s] cannot be created', (new \ReflectionClass($this->getRepository()->getModel()))->getName()));
         }
 
-        $form = $this->getForm($request);
+        // @todo: incorporate to form refactoring
+        $form = $this->getForm($request)->adjustBeforeSubmit($request);
 
         return $form->submit()->isValid()
             ? $this->onStoreFormValid($request, $form)

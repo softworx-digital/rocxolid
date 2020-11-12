@@ -136,9 +136,12 @@ abstract class AbstractController extends IlluminateController implements Respon
      */
     protected function guessTranslationParam(): ?string
     {
-        $param = last(explode('\\', (new \ReflectionClass($this))->getNamespaceName()));
+        // $param = last(explode('\\', (new \ReflectionClass($this))->getNamespaceName()));
+        $param = Str::afterLast((new \ReflectionClass($this))->getNamespaceName(), 'Controllers\\');
 
-        return Str::kebab($param);
+        return collect(explode('\\', $param))->transform(function (string $param) {
+            return Str::kebab($param);
+        })->join('.');
     }
 
     /**

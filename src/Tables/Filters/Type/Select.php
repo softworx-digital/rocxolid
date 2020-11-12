@@ -30,6 +30,14 @@ class Select extends AbstractFilter
         return $query->where($this->getColumnName($query), $this->getValue());
     }
 
+    public function setCollection(Collection $collection): Filter
+    {
+        $this->collection = $collection;
+
+        return $this;
+    }
+
+    /*
     public function setOptionValues(array $option_values): Filter
     {
         foreach ($option_values as $value => &$title) {
@@ -40,11 +48,13 @@ class Select extends AbstractFilter
 
         return $this;
     }
+    */
 
     public function getCollection(): Collection
     {
         $collection = $this->collection;
-        $collection->prepend($this->getOption($this->translate('component.label.title')), '');
+        // $collection->prepend($this->getOption($this->translate('component.label.title')), '');
+        $collection->prepend($this->getOption('component.label.title'), '');
 
         return $collection;
     }

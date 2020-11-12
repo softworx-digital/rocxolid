@@ -7,11 +7,14 @@ use Illuminate\Support\Collection;
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
 // rocXolid trigger contracts
 use Softworx\RocXolid\Triggers\Contracts\Trigger;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\TriggersProvider;
 // rocXolid triggers
 use Softworx\RocXolid\Triggers\AbstractTrigger;
 
 /**
  * No-action trigger.
+ * Serves as a sample.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -19,6 +22,14 @@ use Softworx\RocXolid\Triggers\AbstractTrigger;
  */
 class None extends AbstractTrigger
 {
+    /**
+     * {@inheritDoc}
+     */
+    public function isFireable(TriggersProvider $provider, ...$arguments): bool
+    {
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      */

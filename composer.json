@@ -19,7 +19,7 @@
         "ext-gd" : "*",
         "ext-openssl" : "*",
         "ext-tidy" : "*",
-        "laravel/framework": "^5.8|^6.0",
+        "laravel/framework": "^6.0|^8.0",
         "laravelcollective/html": "^5.8|^6.0",
         "doctrine/annotations": "1.6.1",
         "doctrine/dbal": "^2.9",

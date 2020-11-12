@@ -179,22 +179,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         }
     }
 
-    public function adjustCreate(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    public function adjustCreateBeforeSubmit(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    public function adjustUpdate(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    public function adjustUpdateBeforeSubmit(CrudRequest $request)
+    public function adjustBeforeSubmit(CrudRequest $request)
     {
         return $this;
     }

@@ -5,6 +5,8 @@ namespace Softworx\RocXolid\Triggers\Contracts;
 use Illuminate\Support\Collection;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\TranslationPackageProvider;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\TriggersProvider;
 
 /**
  * Interface for triggers - isolation of business logic that can be dynamically assigned.
@@ -58,10 +60,19 @@ interface Trigger
     public function assignmentValidationErrorMessage(TranslationPackageProvider $controller, Collection $data): string;
 
     /**
+     * Check if the trigger can be fired.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\TriggersProvider $provider
+     * @param mixed ...$arguments
+     * @return bool
+     */
+    public function isFireable(TriggersProvider $provider, ...$arguments): bool;
+
+    /**
      * Priamry method to handle trigger's business logic.
      *
      * @param mixed ...$arguments
-     * @return \Softworx\RocXolid\Triggers\Contracts;\Trigger
+     * @return \Softworx\RocXolid\Triggers\Contracts\Trigger
      */
     public function fire(...$arguments): Trigger;
 }

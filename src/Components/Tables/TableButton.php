@@ -6,6 +6,7 @@ use Softworx\RocXolid\Rendering\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
 use Softworx\RocXolid\Tables\Buttons\Contracts\Button as TableButtonContract;
 use Softworx\RocXolid\Components\General\Button;
+use Softworx\RocXolid\Traits\Loggable;
 
 // @todo: docblocks
 class TableButton extends Button implements ComponentTableButtonable
@@ -48,8 +49,17 @@ class TableButton extends Button implements ComponentTableButtonable
                 $this->setOption('url', $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
             }
         } elseif ($this->hasOption('related-action')) {
+            // $related = $model->{$this->getOption('related-action.relation')};
+            // $related = $related ?? $model->{$this->getOption('related-action.relation')}()->getRelated();
 
-            $related = $model->{$this->getOption('related-action.relation')}()->getRelated();
+            if ($this->hasOption('related-action.relation')) {
+                $related = $model->{$this->getOption('related-action.relation')}()->getRelated();
+            } elseif ($this->hasOption('related-action.getter')) {
+                $related = $model->{$this->getOption('related-action.getter')}();
+            } else {
+                throw new \InvalidArgumentException(sprintf('Table button [related-action] option requires either [relation] or related model [getter] definition for [%s]', get_class($this)));
+            }
+
             $params = [
                 sprintf('_data[%s]', $related->{$this->getOption('related-action.attribute')}()->getForeignKeyName()) => $model->getKey()
             ] + $this->getOption('route-params', []);
@@ -62,6 +72,33 @@ class TableButton extends Button implements ComponentTableButtonable
                 ]);
             } else {
                 $this->setOption('url', $related->getControllerRoute($this->getOption('related-action.action'), $params));
+            }
+
+        } elseif ($this->hasOption('foreign-action')) {
+            if ($this->hasOption('foreign-action.getter')) {
+                $related = $model->{$this->getOption('foreign-action.getter')}();
+            } else {
+                throw new \InvalidArgumentException(sprintf('Table button [foreign-action] option requires [getter] definition for [%s]', get_class($this)));
+            }
+
+            if ($this->hasOption('foreign-action.parent')) {
+                $params = [
+                    sprintf('_data[%s]', $model->{$this->getOption('foreign-action.parent')}()->getForeignKey()) => $model->{$this->getOption('foreign-action.parent')}()->getKey()
+                ] + $this->getOption('route-params', []);
+            } else {
+                $params = [
+                    sprintf('_data[%s]', $model->getForeignKey()) => $model->getKey()
+                ] + $this->getOption('route-params', []);
+            }
+
+            if ($this->getOption('ajax', false)) {
+                $this->mergeOptions([
+                    'attributes' => [
+                        'data-ajax-url' => $related->getControllerRoute($this->getOption('foreign-action.action'), $params),
+                    ],
+                ]);
+            } else {
+                $this->setOption('url', $related->getControllerRoute($this->getOption('foreign-action.action'), $params));
             }
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));

@@ -5,10 +5,7 @@ namespace Softworx\RocXolid\Models\Traits;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 // relations
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\AbstractCrudController;
 // rocXolid form contracts
@@ -33,6 +30,7 @@ trait Crudable
     use OnActions\RepositoryActions;
 
     // @todo: revise
+    // this is needed because laravel limits the URL param name and authorization creates it upon class name
     public static function getAuthorizationParameter(): ?string
     {
         return null;
@@ -75,6 +73,7 @@ trait Crudable
         return array_unique(array_merge($this->getFillable(), $this->getHidden(), $this->getSystemAttributes()));
     }
 
+    // @todo: revise
     public function getRowClass()
     {
         return null;
@@ -253,7 +252,7 @@ trait Crudable
     {
         $relation = $this->{$relation_name}();
 
-        if ($relation instanceof MorphTo) {
+        if ($relation instanceof Relations\MorphTo) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
@@ -263,7 +262,7 @@ trait Crudable
             ] : [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
             ]);
-        } elseif ($relation instanceof MorphToMany) {
+        } elseif ($relation instanceof Relations\MorphToMany) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
@@ -273,12 +272,19 @@ trait Crudable
             ] : [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
             ]);
-        } elseif ($relation instanceof BelongsTo) {
+        } elseif ($relation instanceof Relations\BelongsTo) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
             ] + ($model ? [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
+            ] : []);
+        } elseif ($relation instanceof Relations\HasOneThrough) {
+            return [
+                sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
+                sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
+            ] + ($model ? [
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getSecondLocalKeyName()) => $model->getKey()
             ] : []);
         }/* elseif ($relation instanceof HasMany) { // @todo: finish support of this relation type
             return [

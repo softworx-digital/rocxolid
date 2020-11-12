@@ -3,6 +3,8 @@
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
+// rocXolid models
+use Softworx\RocXolid\Models\AbstractCrudModel;
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid form contracts
@@ -41,7 +43,7 @@ class CollectionSelect extends AbstractFormField
         if ($option instanceof Collection) {
             $this->collection = $option;
         } else {
-            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $model = ($option['model'] instanceof AbstractCrudModel) ? $option['model'] : new $option['model'];
             $query = $model::query();
             // $query = $model::withoutGlobalScope(app(OwnedScope::class));
 
@@ -51,7 +53,28 @@ class CollectionSelect extends AbstractFormField
                 }
             }
 
-            $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
+            if (isset($option['column'])) {
+                $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
+            } elseif (isset($option['method'])) {
+                if (method_exists($option['model'], $option['method'])) {
+                    $this->collection = $query->get()->mapWithKeys(function (AbstractCrudModel $model) use ($option) {
+                        return [ $model->getKey() => $model->{$option['method']}() ];
+                    });
+                } else {
+                    throw new \InvalidArgumentException(sprintf(
+                        'Invalid method [%s] used for model [%s] collection in population of field [%s]',
+                        $option['method'],
+                        $option['model'],
+                        $this->getFieldName()
+                    ));
+                }
+            } else {
+                throw new \InvalidArgumentException(sprintf(
+                    'No column or method used for model [%s] collection in population of field [%s]',
+                    $option['model'],
+                    $this->getFieldName()
+                ));
+            }
         }
 
         return $this;

@@ -34,6 +34,11 @@ abstract class AbstractTrigger implements Trigger, Controllable, TranslationDisc
     /**
      * {@inheritDoc}
      */
+    abstract public function isFireable(TriggersProvider $provider, ...$arguments): bool;
+
+    /**
+     * {@inheritDoc}
+     */
     abstract public function fire(...$arguments): Trigger;
 
     /**

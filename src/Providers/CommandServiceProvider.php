@@ -3,7 +3,8 @@
 namespace Softworx\RocXolid\Providers;
 
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use Illuminate\Console\Command;
+// rocXolid commands
+use Softworx\RocXolid\Console\Commands;
 
 /**
  * rocXolid CLI commands service provider.
@@ -40,6 +41,8 @@ class CommandServiceProvider extends IlluminateServiceProvider
             $this->registerCommand(sprintf(config('rocXolid.<package>.command-binding-pattern'), $command), $handler);
         }
         */
+
+        $this->commands(Commands\ClearLogs::class);
 
         return $this;
     }
