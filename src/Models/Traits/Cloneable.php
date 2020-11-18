@@ -133,11 +133,25 @@ trait Cloneable
         return $this;
     }
 
+    /**
+     * Take some actions after the model has been cloned.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\Cloneable $clone
+     * @return \Softworx\RocXolid\Models\Contracts\Cloneable
+     */
     protected function afterCloning(CloneableContract $clone): CloneableContract
     {
         return $this;
     }
 
+    /**
+     * Take some actions after the model is created by being cloned.
+     *
+     * @param \Illuminate\Support\Collection $clone_log
+     * @param array $fill
+     * @param array $with_relations
+     * @return \Softworx\RocXolid\Models\Contracts\Cloneable
+     */
     protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
     {
         return $this;

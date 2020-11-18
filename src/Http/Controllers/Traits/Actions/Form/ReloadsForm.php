@@ -26,7 +26,8 @@ trait ReloadsForm
     {
         $model = $model ?? $this->getRepository()->getModel();
         // create form
-        $form = $this->getForm($request, $model)->setFieldsRequestInput($request->input());
+        $form = $this->getForm($request, $model);
+        $form->setFieldsRequestInput($form->adjustRequestInput($request->input())); // @todo: hotfixed
         // create component
         $form_component = $this->getFormComponent($form);
 

@@ -566,6 +566,12 @@ abstract class AbstractForm implements Form
     }
 
     // @todo - tieto zrejme upratat do nejakej support definition classy
+    // @todo: hotfixed
+    public function adjustRequestInput(array $input): array
+    {
+        return $input;
+    }
+
     protected function getFieldGroupsDefinition()
     {
         return $this->adjustFieldGroupsDefinition($this->fieldgroups);

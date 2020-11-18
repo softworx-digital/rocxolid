@@ -19,6 +19,11 @@ class TableButton extends Button implements ComponentTableButtonable
 
         $this->setOptions($this->button->getOption('component'));
 
+        // @todo: kinda "hotfixed", you can do better
+        if ($view_package = $this->getOption('view-package', false)) {
+            $this->setViewPackage($view_package);
+        }
+
         return $this;
     }
 
@@ -42,11 +47,21 @@ class TableButton extends Button implements ComponentTableButtonable
             if ($this->getOption('ajax', false)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'data-ajax-url' => $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', []))
-                    ]
+                        'data-ajax-url' => $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])),
+                    ],
                 ]);
             } else {
                 $this->setOption('url', $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
+            }
+        } elseif ($this->hasOption('method-action')) {
+            if ($this->getOption('ajax', false)) {
+                $this->mergeOptions([
+                    'attributes' => [
+                        'data-ajax-url' => $model->{$this->getOption('method-action.method')}(),
+                    ],
+                ]);
+            } else {
+                $this->setOption('url', $model->{$this->getOption('method-action.method')}());
             }
         } elseif ($this->hasOption('related-action')) {
             // $related = $model->{$this->getOption('related-action.relation')};

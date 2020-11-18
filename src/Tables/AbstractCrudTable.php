@@ -13,7 +13,7 @@ use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\Requestable;
 // rocXolid table button types
-use Softworx\RocXolid\Tables\Buttons\Type\ButtonAnchor;
+use Softworx\RocXolid\Tables\Buttons\Type as ButtonType;
 
 /**
  * Model instances data table.
@@ -63,7 +63,7 @@ abstract class AbstractCrudTable implements Table
      */
     protected $buttons = [
         'show' => [
-            'type' => ButtonAnchor::class,
+            'type' => ButtonType\ButtonAnchor::class,
             'options' => [
                 'label' => [
                     'icon' => 'fa fa-window-maximize',
@@ -77,7 +77,7 @@ abstract class AbstractCrudTable implements Table
             ],
         ],
         'show-modal' => [
-            'type' => ButtonAnchor::class,
+            'type' => ButtonType\ButtonAnchor::class,
             'options' => [
                 'ajax' => true,
                 'label' => [
@@ -92,7 +92,7 @@ abstract class AbstractCrudTable implements Table
             ],
         ],
         'edit' => [
-            'type' => ButtonAnchor::class,
+            'type' => ButtonType\ButtonAnchor::class,
             'options' => [
                 'label' => [
                     'icon' => 'fa fa-pencil',
@@ -131,7 +131,7 @@ abstract class AbstractCrudTable implements Table
             ],
         ],*/
         'delete-ajax' => [
-            'type' => ButtonAnchor::class,
+            'type' => ButtonType\ButtonAnchor::class,
             'options' => [
                 'ajax' => true,
                 'label' => [

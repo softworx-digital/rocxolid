@@ -34,4 +34,11 @@ interface Paginationable
      * @return int
      */
     public function getCurrentPage(): int;
+
+    /**
+     * Reset pagination.
+     *
+     * @return \Softworx\RocXolid\Tables\Contracts\Paginationable
+     */
+    public function resetPagination(): Paginationable;
 }

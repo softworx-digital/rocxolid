@@ -37,11 +37,9 @@ trait Paginationable
     }
 
     /**
-     * Reset pagination.
-     *
-     * @return \Softworx\RocXolid\Tables\Contracts\Paginationable
+     * {@inheritDoc}
      */
-    protected function resetPagination(): PaginationableContract
+    public function resetPagination(): PaginationableContract
     {
         $this->getRequest()->session()->forget($this->getSessionKey(static::PAGE_SESSION_PARAM));
 
