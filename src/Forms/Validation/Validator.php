@@ -201,7 +201,7 @@ class Validator extends IlluminateValidator
 
         $decimal_separator = $nf->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
 
-        list($int, $frac) = explode($decimal_separator, $value . $decimal_separator);
+        list($int, $frac) = array_pad(explode($decimal_separator, $value, 2), 2, 0);
 
         return preg_match($int_pattern, $int) && preg_match($frac_pattern, $frac);
     }
