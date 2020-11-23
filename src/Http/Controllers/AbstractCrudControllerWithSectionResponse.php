@@ -48,8 +48,7 @@ abstract class AbstractCrudControllerWithSectionResponse extends AbstractCrudCon
      */
     protected function successAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
     {
-        if (!$request->has('_section'))
-        {
+        if (!$request->has('_section')) {
             throw new \RuntimeException('Request is missing [_section] param'); // @todo: put in request validation
         }
 

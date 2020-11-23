@@ -499,9 +499,9 @@ abstract class AbstractForm implements Form
 
                                 // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($value)
-                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                    ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
-                                            ->each(function($pivot_field_value, $name) use ($pivot_field_index, $pivot_for) {
+                                            ->each(function ($pivot_field_value, $name) use ($pivot_field_index, $pivot_for) {
                                                 if ($this->hasFormField($name)) {
                                                     $this->getFormField($name)
                                                         ->setValue($pivot_field_value, $pivot_field_index)
@@ -547,9 +547,9 @@ abstract class AbstractForm implements Form
 
                                 // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($messages)
-                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                    ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
-                                            ->each(function($pivot_field_messages, $name) use ($pivot_field_index, $pivot_for) {
+                                            ->each(function ($pivot_field_messages, $name) use ($pivot_field_index, $pivot_for) {
                                                 $this->getFormField($name)
                                                     ->setErrorMessages($pivot_field_messages, $pivot_field_index)
                                                     ->updateComponent($pivot_field_index);

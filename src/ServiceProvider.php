@@ -5,6 +5,7 @@ namespace Softworx\RocXolid;
 use Cache;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
+
 // @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 // use Vsch\TranslationManager\Translator;
 

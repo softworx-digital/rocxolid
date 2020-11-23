@@ -51,8 +51,8 @@ class MPdfGenerator extends AbstractPdfGenerator
      */
     public function generate(Contracts\PdfDataProvider $provider): string
     {
-// dump($this->getContent());
-// echo $this->getContent(); exit;
+        // dump($this->getContent());
+        // echo $this->getContent(); exit;
         $this->generator->WriteHTML($this->getContent());
 
         /*

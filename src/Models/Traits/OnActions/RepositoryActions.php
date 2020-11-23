@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
-
 /**
  * @todo: subject to refactoring
  */

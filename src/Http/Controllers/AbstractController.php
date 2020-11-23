@@ -74,7 +74,7 @@ abstract class AbstractController extends IlluminateController implements Respon
      */
     protected function bindServices(): AbstractController
     {
-        $this->getServices()->each(function($service_type) {
+        $this->getServices()->each(function ($service_type) {
             $service = app($service_type);
 
             $method = lcfirst((new \ReflectionClass($service))->getShortName());
@@ -87,7 +87,7 @@ abstract class AbstractController extends IlluminateController implements Respon
                 $service->setConsumer($this);
             }
 
-            $this->service_accessors[$method] = function() use ($service) {
+            $this->service_accessors[$method] = function () use ($service) {
                 return $service;
             };
         });

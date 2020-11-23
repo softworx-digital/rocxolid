@@ -151,7 +151,6 @@ class Owned implements Scope
         $relation
             ->performParentJoins($builder)
             ->where($relation->getQualifiedForeignKeyName(), $user->getKey());
-
     }
 
     private function handleOwnerMorphOneOrManyScope(MorphOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)

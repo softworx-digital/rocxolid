@@ -13,5 +13,4 @@ use Softworx\RocXolid\Components\AbstractComponent;
  */
 class Tab extends AbstractComponent
 {
-
 }

@@ -29,8 +29,7 @@ trait ElementMappable
         $method = $request->route()->getActionMethod();
         $property = sprintf('%s_mapping', $element_signature);
 
-        if ($request->filled('_param'))
-        {
+        if ($request->filled('_param')) {
             if (in_array($request->_param, $this->$property)) {
                 return $request->_param;
             } else {
@@ -43,8 +42,7 @@ trait ElementMappable
             }
         }
 
-        if ($request->filled('_section'))
-        {
+        if ($request->filled('_section')) {
             $method = sprintf('%s.%s', $method, $request->_section);
 
             if (isset($this->$property[$method])) {
@@ -53,7 +51,8 @@ trait ElementMappable
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid _section [%s].[%s] sent in request for %s [%s]',
                     $request->route()->getActionMethod(),
-                    $request->_section, $element_signature,
+                    $request->_section,
+                    $element_signature,
                     get_class($this)
                 ));
             }

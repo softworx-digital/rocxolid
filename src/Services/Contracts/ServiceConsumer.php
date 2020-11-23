@@ -11,5 +11,4 @@ namespace Softworx\RocXolid\Services\Contracts;
  */
 interface ServiceConsumer
 {
-
 }

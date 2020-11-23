@@ -93,8 +93,7 @@ trait BelongsToThrough
         Collection $foreign_key_lookup,
         ?string $local_key,
         ?string $prefix
-    ): BelongsToThroughRelation
-    {
+    ): BelongsToThroughRelation {
         return new BelongsToThroughRelation($query, $parent, $through_parents, $foreign_key_lookup, $local_key, $prefix);
     }
 }

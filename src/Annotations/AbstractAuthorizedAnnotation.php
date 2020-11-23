@@ -27,7 +27,8 @@ abstract class AbstractAuthorizedAnnotation
         return $this->scopes;
     }
 
-    protected function fixJSON(string $json) {
+    protected function fixJSON(string $json)
+    {
         $regex = <<<'REGEX'
 ~
     "[^"\\]*(?:\\.|[^"\\]*)*"

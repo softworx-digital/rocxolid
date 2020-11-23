@@ -193,7 +193,7 @@ class RenderingService implements Contracts\RenderingService
 
         $hierarchy = collect();
 
-        do  {
+        do {
             $hierarchy->push([
                 'type' => $reflection->getName(),
                 'dir' => $this->getClassNameViewDirectory($reflection),

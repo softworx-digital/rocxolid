@@ -99,7 +99,7 @@ trait HasRelationships
     // @todo: maybe use resource registrar
     public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
-        $data->each(function($value, $attribute) use ($data) {
+        $data->each(function ($value, $attribute) use ($data) {
             // eg. model_type
             if (substr($attribute, -5) === '_type') {
                 // eg. model_id
@@ -230,7 +230,6 @@ trait HasRelationships
         $attribute = $relation;
 
         if (array_key_exists($attribute, $data)) {
-
             $i = 0;
 
             foreach ($data[$attribute] as &$item) {

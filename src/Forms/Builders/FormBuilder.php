@@ -45,8 +45,8 @@ class FormBuilder implements FormBuilderContract
      */
     public function __construct(
         FormFieldBuilder $form_field_builder,
-        FormFieldFactory $form_field_factory)
-    {
+        FormFieldFactory $form_field_factory
+    ) {
         $this->form_field_builder = $form_field_builder;
         $this->form_field_factory = $form_field_factory;
     }

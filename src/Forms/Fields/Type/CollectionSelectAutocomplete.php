@@ -89,15 +89,17 @@ class CollectionSelectAutocomplete extends CollectionSelect
             $this->collection = $this->collection_model
                 ->where(sprintf('%s.id', $this->collection_model->getTable()), $value)
                 // ->take(static::LIMIT)
-                ->pluck(sprintf(
+                ->pluck(
+                    sprintf(
                     '%s.%s',
                     $this->collection_model->getTable(),
                     $this->collection_model_column
                 ),
-                sprintf(
+                    sprintf(
                     '%s.id',
                     $this->collection_model->getTable()
-                ));
+                )
+                );
         }
 
         if (!is_null($this->collection_model_method) && method_exists($this->collection_model, $this->collection_model_method)) {

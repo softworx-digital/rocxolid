@@ -27,7 +27,7 @@ interface Translatable extends TranslationProvider
     * @param string $key
     * @return array
     */
-   public function translations(string $key): array;
+    public function translations(string $key): array;
 
     /**
      * Return the key to be used for translation.

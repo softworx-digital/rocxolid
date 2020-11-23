@@ -50,9 +50,9 @@ trait Filterable
      */
     protected function applyFilters(EloquentBuilder &$query): FilterableContract
     {
-        $this->getFilters()->filter(function($filter) {
+        $this->getFilters()->filter(function ($filter) {
             return $filter->isAppliable();
-        })->each(function($filter) use ($query) {
+        })->each(function ($filter) use ($query) {
             $query = $filter->apply($query);
         });
 

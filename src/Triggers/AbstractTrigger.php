@@ -64,11 +64,11 @@ abstract class AbstractTrigger implements Trigger, Controllable, TranslationDisc
      */
     public function getAssignedProviders(string $provider_type): Collection
     {
-         return $provider_type::all()->filter(function (TriggersProvider $provider) {
-             return $provider->provideTriggers()->filter(function (Trigger $trigger) {
+        return $provider_type::all()->filter(function (TriggersProvider $provider) {
+            return $provider->provideTriggers()->filter(function (Trigger $trigger) {
                 return ($trigger instanceof $this);
-             })->isNotEmpty();
-         });
+            })->isNotEmpty();
+        });
     }
 
     /**

@@ -115,7 +115,6 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                 || (($relation instanceof HasOneOrMany) && ($user->can('update', [ $this->getModel(), $attribute ])))
                 || (($relation instanceof BelongsTo) && ($user->can('update', [ $this->getModel(), $attribute ])))
                 || (($relation instanceof BelongsToMany) && ($user->can('assign', [ $this->getModel(), $attribute ])))) {
-
                 if ($this->hasFormField($attribute)) {
                     $this
                         ->getFormField($attribute)
@@ -289,7 +288,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         }
 
         return collect($buttons)->filter(function ($definition, $button_name) use ($user) {
-// @todo
+            // @todo
             return true;
         })->toArray();
     }

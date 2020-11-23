@@ -88,7 +88,6 @@ class TableButton extends Button implements ComponentTableButtonable
             } else {
                 $this->setOption('url', $related->getControllerRoute($this->getOption('related-action.action'), $params));
             }
-
         } elseif ($this->hasOption('foreign-action')) {
             if ($this->hasOption('foreign-action.getter')) {
                 $related = $model->{$this->getOption('foreign-action.getter')}();

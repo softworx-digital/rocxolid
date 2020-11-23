@@ -53,8 +53,8 @@ class TableBuilder implements TableBuilderContract
     public function __construct(
         TableFilterBuilder $table_filter_builder,
         TableColumnBuilder $table_column_builder,
-        TableButtonBuilder $table_button_builder)
-    {
+        TableButtonBuilder $table_button_builder
+    ) {
         $this->table_filter_builder = $table_filter_builder;
         $this->table_column_builder = $table_column_builder;
         $this->table_button_builder = $table_button_builder;
