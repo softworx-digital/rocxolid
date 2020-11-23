@@ -38,6 +38,7 @@ class Select extends AbstractFilter
     }
 
     /*
+    commented out because of translations
     public function setOptionValues(array $option_values): Filter
     {
         foreach ($option_values as $value => &$title) {
