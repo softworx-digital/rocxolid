@@ -22,7 +22,7 @@ trait ReadsModels
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="view",scopes="['policy.scope.all','policy.scope.owned']")
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
-    public function show(CrudRequest $request, Crudable $model)//: View
+    public function show(CrudRequest $request, Crudable $model, ?string $tab = null)//: View
     {
         $model_viewer_component = $this->getModelViewerComponent($model);
 
@@ -36,7 +36,7 @@ trait ReadsModels
                 ->setModelViewerComponent($model_viewer_component)
                 ->render('model', [
                     'model_viewer_template' => 'show',
-                    'tab' => $request->query('tab', null),
+                    'tab' => $tab,
                 ]);
         }
     }

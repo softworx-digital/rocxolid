@@ -194,13 +194,18 @@ class RenderingService implements Contracts\RenderingService
         $hierarchy = collect();
 
         do {
+            // skip abstract components
+            if (!$reflection->isInstantiable()) {
+                continue;
+            }
+
             $hierarchy->push([
                 'type' => $reflection->getName(),
                 'dir' => $this->getClassNameViewDirectory($reflection),
             ]);
         } while (
             ($reflection = $reflection->getParentClass())
-            && $reflection->isInstantiable()
+            // && $reflection->isInstantiable() // don't break at abstract components
             && $reflection->implementsInterface(Renderable::class)
         );
 

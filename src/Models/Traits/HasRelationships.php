@@ -4,17 +4,7 @@ namespace Softworx\RocXolid\Models\Traits;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations;
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid model contracts
@@ -28,7 +18,7 @@ trait HasRelationships
     // @todo: kinda hardcoded
     public function isParentSingle()
     {
-        return ($this->parent->{$this->model_attribute}() instanceof MorphOne);
+        return ($this->parent->{$this->model_attribute}() instanceof Relations\MorphOne);
     }
 
     // @todo: kinda hardcoded
@@ -40,8 +30,8 @@ trait HasRelationships
     public function getReflectedRelationshipMethods()
     {
         $reflect = new \ReflectionClass($this);
-        $methods = collect($reflect->getMethods())->filter(function ($method) {
-            return is_subclass_of((string)$method->getReturnType(), \Illuminate\Database\Eloquent\Relations\Relation::class);
+        $methods = collect($reflect->getMethods())->filter(function (\ReflectionMethod $method) {
+            return is_subclass_of($method->getReturnType()->getName(), Relations\Relation::class);
         });
 
         return $methods;
@@ -82,7 +72,7 @@ trait HasRelationships
             try {
                 $return = $method->invoke($model);
 
-                if ($return instanceof Relation) {
+                if ($return instanceof Relations\Relation) {
                     $relationships->put($method->getName(), [
                         'type' => (new \ReflectionClass($return))->getShortName(),
                         'model' => (new \ReflectionClass($return->getRelated()))->getName()
@@ -181,11 +171,11 @@ trait HasRelationships
             if (method_exists($this, $fill_method)) {
                 $this->$fill_method($data);
             } else {
-                if ($this->$relation() instanceof BelongsTo) {
+                if ($this->$relation() instanceof Relations\BelongsTo) {
                     $this->fillBelongsTo($relation, $data);
-                } elseif ($this->$relation() instanceof HasMany) {
+                } elseif ($this->$relation() instanceof Relations\HasMany) {
                     $this->fillHasMany($relation, $data);
-                } elseif ($this->$relation() instanceof BelongsToMany) {
+                } elseif ($this->$relation() instanceof Relations\BelongsToMany) {
                     $this->fillBelongsToMany($relation, $data);
                 }
             }

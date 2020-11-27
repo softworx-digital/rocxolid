@@ -310,6 +310,7 @@ trait Crudable
      *
      * @param array $except
      * @param array $with
+     * @todo: replace by more sophisticated - getDataAttributes(array $only = null, array $except = []): Collection - method
      */
     public function getShowAttributes(array $except = [], array $with = []): array
     {

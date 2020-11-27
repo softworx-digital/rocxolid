@@ -37,7 +37,7 @@ interface Crudable extends Repositoryable, Dashboardable, Tableable, Formable
 
     public function update(CrudRequest $request, CrudableModel $model);//: Response;
 
-    public function show(CrudRequest $request, CrudableModel $model);
+    public function show(CrudRequest $request, CrudableModel $model, ?string $tab = null);
 
     public function destroyConfirm(CrudRequest $request, CrudableModel $model);
 
