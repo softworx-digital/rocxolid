@@ -10,6 +10,7 @@ use Carbon\Carbon;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo: quick'n'dirty
  */
 trait HasAttributes
 {
@@ -29,6 +30,10 @@ trait HasAttributes
             return $this->getDecimalAttributeViewValue($attribute);
         } elseif ($this->isEnumAttribute($attribute)) {
             return $this->getEnumAttributeViewValue($attribute);
+        } elseif ($this->isMonetaryAttribute($attribute)) {
+            return $this->getMonetaryAttributeViewValue($attribute);
+        } elseif ($this->isPercentualAttribute($attribute)) {
+            return $this->getPercentualAttributeViewValue($attribute);
         }
 
         return $this->$attribute;
@@ -65,7 +70,7 @@ trait HasAttributes
      */
     protected function getDateAttributeViewValue(string $attribute)
     {
-        return $this->$attribute ? Carbon::make($this->$attribute)->locale(app()->getLocale())->isoFormat('l') : null;
+        return filled($this->$attribute) ? Carbon::make($this->$attribute)->locale(app()->getLocale())->isoFormat('l') : null;
     }
 
     /**
@@ -87,7 +92,7 @@ trait HasAttributes
      */
     protected function getDateTimeAttributeViewValue(string $attribute)
     {
-        return $this->$attribute ? Carbon::make($this->$attribute)->locale(app()->getLocale())->isoFormat('llll') : null;
+        return filled($this->$attribute) ? Carbon::make($this->$attribute)->locale(app()->getLocale())->isoFormat('llll') : null;
     }
 
     /**
@@ -144,7 +149,7 @@ trait HasAttributes
      */
     protected function getEnumAttributeViewValue(string $attribute)
     {
-        return !is_null($this->$attribute) ? $this->getModelViewerComponent()->translate(sprintf('choice.%s.%s', $attribute, $this->$attribute)) : null;
+        return filled($this->$attribute) ? $this->getModelViewerComponent()->translate(sprintf('choice.%s.%s', $attribute, $this->$attribute)) : null;
     }
 
     // @todo: "hotfixed" to enable array fields to be filled correctly
@@ -161,5 +166,55 @@ trait HasAttributes
         return collect($values)->transform(function ($value) use ($nf) {
             return $nf->format($value);
         });
+    }
+
+    /**
+     * Check if attribute is of monetary type.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function isMonetaryAttribute(string $attribute): bool
+    {
+        return collect($this->monetaries)->contains($attribute);
+    }
+
+    /**
+     * Retrieve monetary type attribute value for a view.
+     *
+     * @param string $attribute
+     * @return mixed
+     * @todo: make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
+     */
+    protected function getMonetaryAttributeViewValue(string $attribute)
+    {
+        $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
+
+        return $formatter->formatCurrency($this->$attribute ?? 0, 'EUR');
+    }
+
+    /**
+     * Check if attribute is of percentual type.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function isPercentualAttribute(string $attribute): bool
+    {
+        return collect($this->percentuals)->contains($attribute);
+    }
+
+    /**
+     * Retrieve percentual type attribute value for a view.
+     *
+     * @param string $attribute
+     * @return mixed
+     * @todo: make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
+     */
+    protected function getPercentualAttributeViewValue(string $attribute)
+    {
+        $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::PERCENT);
+
+        return $formatter->format(filled($this->$attribute) ? $this->$attribute / 100 : 0);
     }
 }

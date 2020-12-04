@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Models;
 use Illuminate\Database\Eloquent\Model;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
+use Softworx\RocXolid\Models\Contracts\ApiRequestable;
 use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits;
@@ -20,9 +21,10 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: 
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
+abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestable, AutocompleteSearchable
 {
     use Traits\Crudable;
+    use Traits\ApiRequestable;
     use Traits\CanBeFieldItem;
     use BelongsToThrough;
     use HasUserAttributes;
@@ -118,4 +120,20 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
      * @var array
      */
     protected $enums = [];
+
+    /**
+     * Monetary attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $monetaries = [];
+
+    /**
+     * Percentual attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $percentuals = [];
 }

@@ -52,7 +52,8 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
         $attribute = $this->getTableColumn()->getName();
 
-        return $this->getOption('model')->$attribute;
+        // return $this->getOption('model')->$attribute;
+        return $this->getOption('model')->getAttributeViewValue($attribute);
     }
 
     public function getModelAttributeViewValue()

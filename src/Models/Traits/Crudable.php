@@ -23,10 +23,11 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
  */
 trait Crudable
 {
-    use Traits\HasOwner;
+    use Utils\HasTitle;
+    use Utils\HasOwner;
+    use Utils\ClassReflection;
     use Traits\HasAttributes;
     use Traits\HasRelationships;
-    use Traits\HasTitleColumn;
     use OnActions\RepositoryActions;
 
     // @todo: revise
@@ -148,7 +149,7 @@ trait Crudable
      *
      * @return string
      */
-    private function getCrudControllerType(): string
+    protected function getCrudControllerType(): string
     {
         if (property_exists($this, 'controller_type')) {
             return static::$controller_type;

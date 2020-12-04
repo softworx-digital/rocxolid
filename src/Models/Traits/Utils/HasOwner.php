@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Models\Traits;
+namespace Softworx\RocXolid\Models\Traits\Utils;
 
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Auth\Access\Authorizable;

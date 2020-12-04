@@ -1,8 +1,11 @@
 <?php
 
-namespace Softworx\RocXolid\Models\Traits;
+namespace Softworx\RocXolid\Models\Traits\Utils;
 
-trait HasTitleColumn
+/**
+ * @todo: subject to refactoring
+ */
+trait HasTitle
 {
     protected static $_title_column = 'name';
 

@@ -42,10 +42,11 @@ interface Tableable
      * Retrieve data table instance upon request.
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param string|null $param Table param.
      * @return \Softworx\RocXolid\Tables\Contracts\Table
      * @throws \InvalidArgumentException
      */
-    public function getTable(CrudRequest $request): Table;
+    public function getTable(CrudRequest $request, ?string $param = null): Table;
 
     /**
      * Check if the param is already bound.

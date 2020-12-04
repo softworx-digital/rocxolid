@@ -215,13 +215,14 @@ trait HasRelationships
         return $this;
     }
 
-    protected function fillBelongsToMany(string $relation, array $data): Crudable
+    protected function fillBelongsToMany(string $relation, array $data, bool $detach = true): Crudable
     {
         $attribute = $relation;
 
         if (array_key_exists($attribute, $data)) {
             $i = 0;
 
+            // @todo: quick'n'dirty
             foreach ($data[$attribute] as &$item) {
                 if (is_array($item)) {
                     $item['position'] = $i;
@@ -229,7 +230,7 @@ trait HasRelationships
                 $i++;
             }
 
-            $this->$relation()->sync($data[$attribute]);
+            $this->$relation()->sync($data[$attribute], $detach);
         }
 
         return $this;

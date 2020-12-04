@@ -176,6 +176,7 @@ class Validator extends IlluminateValidator
     public function validateDecimal(string $attribute, $value, array $parameters): bool
     {
         $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
+        $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 10);
 
         $grouping_separator = $nf->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
         // this is probably a bug in PHP - for eg. sk_SK locale, the grouping symbol is ord(194),

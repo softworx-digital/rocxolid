@@ -40,7 +40,7 @@ class Repository implements RepositoryContract
 
         $this->query_model = app($model_type);
 
-        return $this;
+        return $this->initQueryModel();
     }
 
     /**
@@ -106,6 +106,16 @@ class Repository implements RepositoryContract
         return $this
             ->initQuery()
             ->findOrFail($key, $columns);
+    }
+
+    /**
+     * Initialize query model. Add explicit scopes, etc.
+     *
+     * @return \Softworx\RocXolid\Repositories\Contracts\Repository
+     */
+    protected function initQueryModel(): RepositoryContract
+    {
+        return $this;
     }
 
     /**

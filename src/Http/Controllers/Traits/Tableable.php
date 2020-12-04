@@ -54,9 +54,9 @@ trait Tableable
     /**
      * {@inheritDoc}
      */
-    public function getTable(CrudRequest $request): Table
+    public function getTable(CrudRequest $request, ?string $param = null): Table
     {
-        $param = $this->getMappingParam($request, 'table', TableableContract::TABLE_PARAM);
+        $param = $param ?? $this->getMappingParam($request, 'table', TableableContract::TABLE_PARAM);
 
         if (!$this->hasTableAssigned($param)) {
             $this->setTable($this->tableService()->createTable($param), $param);
