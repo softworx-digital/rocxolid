@@ -63,7 +63,7 @@ trait CanBeRendered
             'component' => $this
         ]);
 
-        $this->renderViewActions($view);
+        $this->onViewRendering($view);
 
         return $view;
     }
@@ -158,7 +158,7 @@ trait CanBeRendered
      * @param \Illuminate\View\View $view
      * @return \Softworx\RocXolid\Rendering\Contracts\Renderable
      */
-    protected function renderViewActions(View &$view): Renderable
+    protected function onViewRendering(View &$view): Renderable
     {
         return $this;
     }

@@ -126,13 +126,16 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                             )))
                             ->updateParent();
 
+                    // @todo: quick'n'dirty
                     if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
                         $this
                             ->getFormField($attribute)
                             ->setPivotData($relation->get()->pluck('pivot'))
                             ->updateParent();
 
-                        collect($relation->getPivotColumns())->each(function ($pivot_attribute) use ($relation) {
+                        $pivot = $relation->newExistingPivot();
+
+                        collect($relation->getPivotColumns())->each(function (string $pivot_attribute) use ($relation, $pivot) {
                             if ($this->hasFormField($pivot_attribute)) {
                                 $field = $this->getFormField($pivot_attribute);
 
@@ -144,14 +147,17 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                                     ));
                                 }
 
-                                // @todo: do this only for decimal values
-                                $field
-                                    ->setValue($this->getModel()->decimalize($relation->get()->pluck(sprintf(
-                                        '%s.%s',
-                                        $relation->getPivotAccessor(),
-                                        $pivot_attribute
-                                    ))))
-                                    ->updateParent();
+                                $pivot_attribute_value = $relation->get()->pluck(sprintf('%s.%s', $relation->getPivotAccessor(), $pivot_attribute));
+                                // @todo: quick'n'dirty
+                                if ($pivot->isDecimalAttribute($pivot_attribute)) {
+                                    $field
+                                        ->setValue($this->getModel()->decimalize($pivot_attribute_value))
+                                        ->updateParent();
+                                } else {
+                                    $field
+                                        ->setValue($pivot_attribute_value)
+                                        ->updateParent();
+                                }
                             }
                         });
                     }

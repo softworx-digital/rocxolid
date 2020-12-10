@@ -108,6 +108,17 @@ trait OptionsSetter
         return $this;
     }
 
+    protected function setTab(string $tab): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'tab' => $tab
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setTitleTemplate(string $title_template): Form
     {
         $this->mergeOptions([

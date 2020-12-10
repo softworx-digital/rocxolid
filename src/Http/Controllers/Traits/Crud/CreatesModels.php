@@ -11,7 +11,7 @@ use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid components
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * Trait to create a resource.
@@ -30,10 +30,7 @@ trait CreatesModels
      */
     public function create(CrudRequest $request)//: View
     {
-        $model_viewer_component = $this->getModelViewerComponent(
-            $this->getRepository()->getModel(),
-            $this->getFormComponent($this->getForm($request))
-        );
+        $model_viewer_component = $this->getCreateModelViewerComponent($request, $this->getRepository()->getModel());
 
         return $request->ajax()
             ? $this->createAjax($request, $model_viewer_component)
@@ -46,7 +43,7 @@ trait CreatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
      */
-    protected function createAjax(CrudRequest $request, CrudModelViewerComponent $model_viewer_component)//: View
+    protected function createAjax(CrudRequest $request, CrudModelViewer $model_viewer_component)//: View
     {
         return $this->response
             ->modal($model_viewer_component->fetch('modal.create'))
@@ -59,7 +56,7 @@ trait CreatesModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
      */
-    protected function createNonAjax(CrudRequest $request, CrudModelViewerComponent $model_viewer_component)//: View
+    protected function createNonAjax(CrudRequest $request, CrudModelViewer $model_viewer_component)//: View
     {
         return $this
             ->getDashboard()
@@ -139,5 +136,22 @@ trait CreatesModels
     protected function onStoreFormInvalid(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
         return $this->errorResponse($request, $this->getRepository()->getModel(), $form, 'create');
+    }
+
+    /**
+     * Obtain model viewer to be used for create/store action.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string|null $tab
+     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
+     */
+    protected function getCreateModelViewerComponent(CrudRequest $request, CrudableModel $model, ?string $tab = null): CrudModelViewer
+    {
+        // $form = $this->getForm($request, $model, $tab);
+        $form = $this->getForm($request);
+        $form_component = $this->getFormComponent($form);
+
+        return $this->getModelViewerComponent($model, $form_component);
     }
 }

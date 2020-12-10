@@ -157,7 +157,7 @@ trait HasRelationships
     // @todo: subject to refactoring, don't like the current approach
     public function fillRelationships(Collection $data): Crudable
     {
-        $data = $data->toArray();
+        $data = $data->toArray(); // @todo: use collections
 
         $this->getRelationshipMethods()->each(function ($relation) use ($data) {
             // possibility to adjust the data and its structure before assignment
@@ -215,22 +215,24 @@ trait HasRelationships
         return $this;
     }
 
+    // @todo: switch to collections (arguments)
     protected function fillBelongsToMany(string $relation, array $data, bool $detach = true): Crudable
     {
         $attribute = $relation;
+        $data = collect($data);
 
-        if (array_key_exists($attribute, $data)) {
-            $i = 0;
+        if ($data->has($attribute)) {
+            $attribute_data = collect($data->get($attribute));
 
-            // @todo: quick'n'dirty
-            foreach ($data[$attribute] as &$item) {
-                if (is_array($item)) {
-                    $item['position'] = $i;
-                }
-                $i++;
+            if (filled($this->$relation()->getPivotColumns())) {
+                $i = 0;
+                $attribute_data->transform(function (array $pivot, int $id) use (&$i) {
+                    $pivot['position'] = $pivot['position'] ?? $i++;
+                    return $pivot;
+                });
             }
 
-            $this->$relation()->sync($data[$attribute], $detach);
+            $this->$relation()->sync($attribute_data, $detach);
         }
 
         return $this;

@@ -11,7 +11,7 @@ use Softworx\RocXolid\Forms\AbstractCrudForm;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 // rocXolid components
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * Update resource CRUD action.
@@ -31,10 +31,7 @@ trait UpdatesModels
      */
     public function edit(CrudRequest $request, CrudableModel $model)//: View
     {
-        $model_viewer_component = $this->getModelViewerComponent(
-            $model,
-            $this->getFormComponent($this->getForm($request, $model))
-        );
+        $model_viewer_component = $this->getUpdateModelViewerComponent($request, $model);
 
         return $request->ajax()
             ? $this->editAjax($request, $model, $model_viewer_component)
@@ -48,7 +45,7 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
      */
-    protected function editAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    protected function editAjax(CrudRequest $request, CrudableModel $model, CrudModelViewer $model_viewer_component)
     {
         return $this->response
             ->modal($model_viewer_component->fetch('modal.update'))
@@ -62,7 +59,7 @@ trait UpdatesModels
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
      */
-    protected function editNonAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    protected function editNonAjax(CrudRequest $request, CrudableModel $model, CrudModelViewer $model_viewer_component)
     {
         return $this
             ->getDashboard()
@@ -144,5 +141,21 @@ trait UpdatesModels
     protected function onUpdateFormInvalid(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
     {
         return $this->errorResponse($request, $model, $form, 'update');
+    }
+
+    /**
+     * Obtain model viewer to be used for edit/update action.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string|null $tab
+     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
+     */
+    protected function getUpdateModelViewerComponent(CrudRequest $request, CrudableModel $model, ?string $tab = null): CrudModelViewer
+    {
+        $form = $this->getForm($request, $model, $tab);
+        $form_component = $this->getFormComponent($form);
+
+        return $this->getModelViewerComponent($model, $form_component);
     }
 }

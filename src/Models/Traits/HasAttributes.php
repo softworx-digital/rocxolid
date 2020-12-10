@@ -3,6 +3,8 @@
 namespace Softworx\RocXolid\Models\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Trait to handle model attributes.
@@ -34,6 +36,8 @@ trait HasAttributes
             return $this->getMonetaryAttributeViewValue($attribute);
         } elseif ($this->isPercentualAttribute($attribute)) {
             return $this->getPercentualAttributeViewValue($attribute);
+        } elseif ($this->isRelationAttribute($attribute)) {
+            return $this->getRelationAttributeViewValue($attribute);
         }
 
         return $this->$attribute;
@@ -79,7 +83,7 @@ trait HasAttributes
      * @param string $attribute
      * @return bool
      */
-    protected function isDateTimeAttribute(string $attribute): bool
+    public function isDateTimeAttribute(string $attribute): bool
     {
         return collect($this->date_times)->contains($attribute);
     }
@@ -101,7 +105,7 @@ trait HasAttributes
      * @param string $attribute
      * @return bool
      */
-    protected function isDecimalAttribute(string $attribute): bool
+    public function isDecimalAttribute(string $attribute): bool
     {
         return collect($this->decimals)->contains($attribute);
     }
@@ -136,7 +140,7 @@ trait HasAttributes
      * @param string $attribute
      * @return bool
      */
-    protected function isEnumAttribute(string $attribute): bool
+    public function isEnumAttribute(string $attribute): bool
     {
         return collect($this->enums)->contains($attribute);
     }
@@ -174,7 +178,7 @@ trait HasAttributes
      * @param string $attribute
      * @return bool
      */
-    protected function isMonetaryAttribute(string $attribute): bool
+    public function isMonetaryAttribute(string $attribute): bool
     {
         return collect($this->monetaries)->contains($attribute);
     }
@@ -199,7 +203,7 @@ trait HasAttributes
      * @param string $attribute
      * @return bool
      */
-    protected function isPercentualAttribute(string $attribute): bool
+    public function isPercentualAttribute(string $attribute): bool
     {
         return collect($this->percentuals)->contains($attribute);
     }
@@ -216,5 +220,31 @@ trait HasAttributes
         $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::PERCENT);
 
         return $formatter->format(filled($this->$attribute) ? $this->$attribute / 100 : 0);
+    }
+
+    /**
+     * Check if attribute is of relation type.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    public function isRelationAttribute(string $attribute): bool
+    {
+        $attribute = Str::camel(Str::beforeLast($attribute, '_id'));
+
+        return filled($attribute) && method_exists($this, $attribute) && ($this->{$attribute}() instanceof Relation);
+    }
+
+    /**
+     * Retrieve relation type attribute value for a view.
+     *
+     * @param string $attribute
+     * @return string|null
+     */
+    protected function getRelationAttributeViewValue(string $attribute): ?string
+    {
+        $attribute = Str::camel(Str::beforeLast($attribute, '_id'));
+
+        return optional($this->$attribute)->getTitle();
     }
 }

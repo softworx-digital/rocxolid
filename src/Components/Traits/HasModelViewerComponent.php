@@ -2,8 +2,10 @@
 
 namespace Softworx\RocXolid\Components\Traits;
 
-use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
+// rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Componentable\ModelViewer as ModelViewerComponentable;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * Enables object to have a model viewer component assigned.
