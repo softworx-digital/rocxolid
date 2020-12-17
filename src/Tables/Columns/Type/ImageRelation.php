@@ -34,6 +34,18 @@ class ImageRelation extends AbstractColumn
 
     public function getRelationItems(Crudable $model): Collection
     {
+        // @todo: quick'n'dirty
+        if ($this->getOption('relation.crossed', false)) {
+            if ($model->{$this->getOption('relation.crossed.name')}()->exists()) {
+                return $model
+                    ->{$this->getOption('relation.crossed.name')}
+                    ->{$this->getOption('relation.name')}()
+                    ->where('is_model_primary', 1)->get();
+            } else {
+                return collect();
+            }
+        }
+
         if ($model->{$this->getOption('relation.name')}() instanceof MorphOne) {
             return $model->{$this->getOption('relation.name')}()->get();
         }

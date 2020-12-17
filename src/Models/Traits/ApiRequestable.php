@@ -17,7 +17,7 @@ trait ApiRequestable
     /**
      * {@inheritDoc}
      */
-    public function onShowResponse(CrudRequest $request): ApiRequestableContract
+    public function onShowResponse(CrudRequest $request)//: ApiRequestableContract
     {
         return $this;
     }

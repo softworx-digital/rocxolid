@@ -19,7 +19,7 @@ interface ApiRequestable
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
      * @return \Softworx\RocXolid\Models\Contracts\ApiRequestable
      */
-    public function onShowResponse(CrudRequest $request): ApiRequestable;
+    public function onShowResponse(CrudRequest $request);//: ApiRequestable;
 
     /**
      * Run specific actions on model before the model is returned to API after create.
