@@ -39,6 +39,7 @@ class Item extends AbstractComponent implements NavbarAccessible
         return !empty($this->items);
     }
 
+    // @todo: ugly
     public function hasSubItems()
     {
         foreach ($this->items as $item) {
