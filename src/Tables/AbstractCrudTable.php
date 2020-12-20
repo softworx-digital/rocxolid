@@ -66,7 +66,7 @@ abstract class AbstractCrudTable implements Table
             'type' => ButtonType\ButtonAnchor::class,
             'options' => [
                 'label' => [
-                    'icon' => 'fa fa-window-maximize',
+                    'icon' => 'fa fa-eye',
                 ],
                 'attributes' => [
                     'class' => 'btn btn-info btn-sm margin-right-no',
