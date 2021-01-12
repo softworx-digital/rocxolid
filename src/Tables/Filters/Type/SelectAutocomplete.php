@@ -10,10 +10,10 @@ use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 // rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
-class Select extends AbstractFilter
+class SelectAutocomplete extends AbstractFilter
 {
     protected $default_options = [
-        'type-template' => 'select',
+        'type-template' => 'select-autocomplete',
         // field wrapper
         'wrapper' => false,
         // field label
@@ -21,7 +21,7 @@ class Select extends AbstractFilter
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',
-            'data-live-search' => true,
+            'data-live-search' => 'true',
         ],
     ];
 

@@ -24,14 +24,14 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  */
 trait ProvidesErrorResponse
 {
-    // @todo: refactor to ease overrideability & add model reference if possible
-    // @todo: seprate ajax / non-ajax like success response
+    // @todo refactor to ease overrideability & add model reference if possible
+    // @todo seprate ajax / non-ajax like success response
     protected function errorResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form, string $action)
     {
         $form_component = $this->getFormComponent($form);
 
         if ($request->ajax()) {
-            // @todo: refactor - some validation, etc...
+            // @todo refactor - some validation, etc...
             if ($request->has('_form_field_group')) {
                 $form_field_group_component = $form_component->getFormFieldGroupsComponents()->get($request->input('_form_field_group'));
 
@@ -49,7 +49,7 @@ trait ProvidesErrorResponse
                     ->get();
             }
         } else {
-            // @todo: "hotfixed", you can do better
+            // @todo "hotfixed", you can do better
             if ($action == 'update') {
                 $action = 'edit';
             }

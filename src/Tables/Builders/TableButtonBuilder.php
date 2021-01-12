@@ -12,7 +12,7 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder as TableButto
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: identify builders' common methods and unify them in abstract class
+ * @todo identify builders' common methods and unify them in abstract class
  */
 class TableButtonBuilder implements TableButtonBuilderContract
 {

@@ -8,7 +8,7 @@ use Softworx\RocXolid\Tables\Buttons\Contracts\Button as TableButtonContract;
 use Softworx\RocXolid\Components\General\Button;
 use Softworx\RocXolid\Traits\Loggable;
 
-// @todo: docblocks
+// @todo docblocks
 class TableButton extends Button implements ComponentTableButtonable
 {
     protected $button;
@@ -19,7 +19,7 @@ class TableButton extends Button implements ComponentTableButtonable
 
         $this->setOptions($this->button->getOption('component'));
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($view_package = $this->getOption('view-package', false)) {
             $this->setViewPackage($view_package);
         }
@@ -36,7 +36,7 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this->button;
     }
 
-    // @todo: not cool
+    // @todo not cool
     public function setPreRenderProperties(...$elements): Renderable
     {
         $table = $elements[0];

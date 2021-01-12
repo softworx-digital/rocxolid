@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Repositories\Contracts;
 
-// @todo - update
+// @todo update
 interface Filter
 {
     const DATA_PARAM = '_filter';

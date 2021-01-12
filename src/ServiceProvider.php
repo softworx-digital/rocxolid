@@ -6,7 +6,7 @@ use Cache;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
 
-// @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
+// @todo not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 // use Vsch\TranslationManager\Translator;
 
 /**
@@ -126,7 +126,7 @@ class ServiceProvider extends AbstractServiceProvider
      */
     private function bindContracts(): AbstractServiceProvider
     {
-        // @todo: doesn't work for unknown reason
+        // @todo doesn't work for unknown reason
         $this->app->singleton(
             Illuminate\Contracts\Debug\ExceptionHandler::class,
             Exceptions\Handler::class

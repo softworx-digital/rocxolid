@@ -16,8 +16,8 @@ use Softworx\RocXolid\Forms\Contracts\Formable;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
-// @todo: revise & update if needed
-// @todo: add responses (after model argument addition to destroyResponse)
+// @todo revise & update if needed
+// @todo add responses (after model argument addition to destroyResponse)
 /**
  * Enables controller to handle all the CRUD operations and give appropriate response.
  *

@@ -27,20 +27,16 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Repositoryable;
     use Traits\Crudable;
     use Traits\Dashboardable;
-    use Traits\Tableable;
-    use Traits\Formable;
+    use Traits\Forms\HasForms;
+    use Traits\Tables\HasTables;
     use Traits\Components\TableComponentable;
     use Traits\Components\FormComponentable;
     use Traits\Components\ModelViewerComponentable;
-    use Traits\Actions\ItemsReorderderable; // @todo: add only where needed
+    use Traits\Actions\ReordersModels;
     use Traits\Actions\SwitchesEnability;
     use Traits\Actions\ClonesModels;
-    use Traits\Actions\Table\OrdersTable;
-    use Traits\Actions\Table\FiltersTable;
-    use Traits\Actions\Form\ReloadsForm;
-    use Traits\Actions\Form\ReloadsFormGroup;
-    use Traits\Actions\Form\ValidatesFormGroup;
-    use Traits\Actions\Form\RepositoryAutocompleteable; // @todo: consider different approach !!
+    // @todo temporary here
+    use Traits\Actions\RelationAutocompleteable;
 
     /**
      * Mapping of form type params to controller actions.
@@ -89,7 +85,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
      */
     public function __construct(AjaxResponse $response, Repository $repository)
     {
-        // @todo: !!! find some way to pass attribute to CrudPolicy::before() check
+        // @todo !!! find some way to pass attribute to CrudPolicy::before() check
         // causes problems this way
         $this->authorizeResource(static::getModelType(), static::getModelType()::getAuthorizationParameter());
 

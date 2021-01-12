@@ -174,7 +174,8 @@ abstract class AbstractTableElement implements Optionable, Translatable
     }
 
     /**
-     * Check if column is of array type.
+     * Check if element is of array type.
+     * @todo [RX-29] Awkward implementation; do not check underlying component option value.
      *
      * @return bool
      */

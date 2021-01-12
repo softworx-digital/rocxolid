@@ -23,15 +23,15 @@ use Softworx\RocXolid\Forms\Fields\Type as FieldType;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- * @todo: subject to refactoring
- * @todo: add automated support for relation fields (relation, model_attribute, model_type, model_id)
+ * @todo subject to refactoring
+ * @todo add automated support for relation fields (relation, model_attribute, model_type, model_id)
  */
 abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable
 {
     use ControllableTrait;
     use ModellableTrait;
 
-    // @todo: cannot be used as intended because of trait overrideability limitations, find some other approach
+    // @todo cannot be used as intended because of trait overrideability limitations, find some other approach
     /*
     use Traits\Crud\DefaultOptions;
     use Traits\Crud\DefaultButtonToolbars;
@@ -63,7 +63,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         ],
     ];
 
-    // @todo: filter buttons according to permissions
+    // @todo filter buttons according to permissions
     protected $buttons = [
         // submit - default group
         'submit' => [
@@ -126,7 +126,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                             )))
                             ->updateParent();
 
-                    // @todo: quick'n'dirty
+                    // @todo quick'n'dirty
                     if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
                         $this
                             ->getFormField($attribute)
@@ -148,7 +148,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                                 }
 
                                 $pivot_attribute_value = $relation->get()->pluck(sprintf('%s.%s', $relation->getPivotAccessor(), $pivot_attribute));
-                                // @todo: quick'n'dirty
+                                // @todo quick'n'dirty
                                 if ($pivot->isDecimalAttribute($pivot_attribute)) {
                                     $field
                                         ->setValue($this->getModel()->decimalize($pivot_attribute_value))
@@ -189,7 +189,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         return $this;
     }
 
-    // @todo - ked bude field builder upgradeovany cez factory (uz je, ale este nefactoruje objekty), tak rovno tvorba fieldov a nie len definicii
+    // @todo ked bude field builder upgradeovany cez factory (uz je, ale este nefactoruje objekty), tak rovno tvorba fieldov a nie len definicii
     // aj to asi nejako krajsie rozdelit - processovanie fieldov (definicii), lebo by sa este mali adjustovat
     protected function getFieldsDefinition(): array
     {
@@ -211,7 +211,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             }
         }
 
-        // @todo: "hotfixed", you can do better
+        // @todo "hotfixed", you can do better
         $fields = $this->fields;
 
         $fields = $this->adjustFieldsDefinition($fields);
@@ -262,7 +262,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         })->toArray();
     }
 
-    // @todo: "hotfixed", you can do better
+    // @todo "hotfixed", you can do better
     protected function adjustFieldsValidationDefinition($fields)
     {
         foreach ($fields as $field_name => &$field_definition) {
@@ -278,7 +278,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     protected function getButtonsDefinition(): array
     {
-        // @todo: "hotfixed", you can do better
+        // @todo "hotfixed", you can do better
         $buttons = $this->buttons;
 
         $buttons = $this->adjustButtonsDefinition($buttons);
@@ -340,7 +340,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         return $relationships;
     }
 
-    // @todo - toto zrejme niekam upratat
+    // @todo toto zrejme niekam upratat
     // skusit do novej classy a nastavit nech sa ta injectuje miesto laravelovskej Illuminate\Database\Connection
     protected function getConnection()
     {

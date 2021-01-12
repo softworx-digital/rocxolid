@@ -1,12 +1,12 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Tables;
 
 use Illuminate\Support\Collection;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid table contracts
-use Softworx\RocXolid\Tables\Contracts\Tableable as TableableContract;
+use Softworx\RocXolid\Tables\Contracts\Tableable;
 use Softworx\RocXolid\Tables\Contracts\Table;
 // rocXolid controller traits
 use Softworx\RocXolid\Http\Controllers\Traits\ElementMappable;
@@ -18,9 +18,11 @@ use Softworx\RocXolid\Http\Controllers\Traits\ElementMappable;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-trait Tableable
+trait HasTables
 {
     use ElementMappable;
+    use Actions\OrdersTable;
+    use Actions\FiltersTable;
 
     /**
      * Tables container.
@@ -32,10 +34,10 @@ trait Tableable
     /**
      * {@inheritDoc}
      */
-    public function setTable(Table $table, string $param = TableableContract::TABLE_PARAM): TableableContract
+    public function setTable(Table $table, string $param = Tableable::TABLE_PARAM): Tableable
     {
         if ($this->hasTableAssigned($param)) {
-            throw new \InvalidArgumentException(sprintf('Table with given parameter [%s] is already set to [%s]', $param, get_class($this)));
+            throw new \RuntimeException(sprintf('Table with given parameter [%s] is already set to [%s]', $param, get_class($this)));
         }
 
         $this->tables[$param] = $table;
@@ -56,7 +58,7 @@ trait Tableable
      */
     public function getTable(CrudRequest $request, ?string $param = null): Table
     {
-        $param = $param ?? $this->getMappingParam($request, 'table', TableableContract::TABLE_PARAM);
+        $param = $param ?? $this->getMappingParam($request, 'table', Tableable::TABLE_PARAM);
 
         if (!$this->hasTableAssigned($param)) {
             $this->setTable($this->tableService()->createTable($param), $param);
@@ -68,7 +70,7 @@ trait Tableable
     /**
      * {@inheritDoc}
      */
-    public function hasTableAssigned(string $param = TableableContract::TABLE_PARAM): bool
+    public function hasTableAssigned(string $param = Tableable::TABLE_PARAM): bool
     {
         return isset($this->tables[$param]);
     }

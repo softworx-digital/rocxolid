@@ -90,7 +90,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         'text_color'        => Colorpicker::class,
     ];
 
-    // @todo - zrejme inak - nie cez generovanie definicii, ale priamu tvorbu fieldov
+    // @todo zrejme inak - nie cez generovanie definicii, ale priamu tvorbu fieldov
     public function makeFieldDefinition(Column $column, $rules = []): array
     {
         $type = $this->getFieldTypeClass($column);
@@ -143,7 +143,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             ],
         ];
     }
-    // @todo - refactorovat a dat na instanceof v style MorphMany je HasOneOrMany
+    // @todo refactorovat a dat na instanceof v style MorphMany je HasOneOrMany
     // + typy vstupov
     public function makeRelationFieldDefinition($doctrine_connection, $attribute, Relation $relation, $rules = []): array
     {

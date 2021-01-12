@@ -194,7 +194,7 @@ abstract class AbstractCrudTable implements Table
         return sprintf('%s-%s-%s', md5(get_class($this)), $this->getParam(), $aspect);
     }
 
-    // @todo: better put this in some definition class
+    // @todo better put this in some definition class
     protected function getFiltersDefinition()
     {
         return $this->adjustFiltersDefinition($this->filters);
@@ -225,7 +225,7 @@ abstract class AbstractCrudTable implements Table
         return $buttons;
     }
 
-    // @todo: component building options - better put this in a trait
+    // @todo component building options - better put this in a trait
     public function processTableOptions(): Table
     {
         $this->mergeOptions([

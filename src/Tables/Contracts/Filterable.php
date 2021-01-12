@@ -48,12 +48,13 @@ interface Filterable
     public function getFilters(): Collection;
 
     /**
-     * Obtain value from session for given filter.
+     * Obtain values from session for given filter.
      *
      * @param \Softworx\RocXolid\Tables\Filters\Contracts\Filter $filter
-     * @return string|null
+     * @return mixed
+     * @todo change approach to clarify return value; currently a Collection, scalar or null can be returned
      */
-    public function getFilteredValue(Filter $filter): ?string;
+    public function getFilterValue(Filter $filter);
 
     /**
      * Get route to submit filter values.

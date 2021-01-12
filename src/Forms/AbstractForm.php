@@ -19,7 +19,7 @@ use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
 use Softworx\RocXolid\Forms\Traits\Buttonable as ButtonableTrait;
 
 /**
- * @todo: subject to refactoring
+ * @todo subject to refactoring
  */
 abstract class AbstractForm implements Form
 {
@@ -417,7 +417,7 @@ abstract class AbstractForm implements Form
         return $input;
     }
 
-    // @todo: "hotfixed"
+    // @todo "hotfixed"
     public function getInputFieldValue($field, $validate = false)
     {
         $param = sprintf('%s.%s', FormField::SINGLE_DATA_PARAM, $field);
@@ -474,7 +474,7 @@ abstract class AbstractForm implements Form
         }
         */
 
-        // @todo: "hotfixed"
+        // @todo "hotfixed"
         // the pivot handling doesn't belong here since it's CRUDable part
         if ($input->has(FormField::ARRAY_DATA_PARAM)) {
             collect($input->get(FormField::ARRAY_DATA_PARAM))
@@ -486,7 +486,7 @@ abstract class AbstractForm implements Form
 
                     collect($groupdata)
                         ->each(function ($value, $index) use ($name) {
-                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                            // @todo "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
                             // $name holds the value 'pivot'
                             if (is_numeric($index)) {
                                 if ($this->hasFormField($name)) {
@@ -497,7 +497,7 @@ abstract class AbstractForm implements Form
                             } else {
                                 $pivot_for = $index;
 
-                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                // @todo this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($value)
                                     ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
@@ -529,14 +529,14 @@ abstract class AbstractForm implements Form
                             ->updateComponent();
                     break;
                 case FormField::ARRAY_DATA_PARAM:
-                    // @todo: ugly
+                    // @todo ugly
                     $errors = [];
 
                     Arr::set($errors, $name, $messages);
 
                     collect($errors)->each(function ($groupmessages, $name) {
                         collect($groupmessages)->each(function ($messages, $index) use ($name) {
-                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                            // @todo "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
                             // $name holds the value 'pivot'
                             if (is_numeric($index)) {
                                 $this->getFormField($name)
@@ -545,7 +545,7 @@ abstract class AbstractForm implements Form
                             } else {
                                 $pivot_for = $index;
 
-                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                // @todo this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($messages)
                                     ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
@@ -565,8 +565,8 @@ abstract class AbstractForm implements Form
         return $this;
     }
 
-    // @todo - tieto zrejme upratat do nejakej support definition classy
-    // @todo: hotfixed
+    // @todo tieto zrejme upratat do nejakej support definition classy
+    // @todo hotfixed
     public function adjustRequestInput(array $input): array
     {
         return $input;

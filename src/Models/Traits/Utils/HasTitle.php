@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Models\Traits\Utils;
 
 /**
- * @todo: subject to refactoring
+ * @todo subject to refactoring
  */
 trait HasTitle
 {

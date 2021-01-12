@@ -73,7 +73,7 @@ class TableBuilder implements TableBuilderContract
             ->setTableDependencies($table, $container)
             ->setTableOptions($table, $custom_options);
 
-        // @todo: delegate to subbuilders, not table itself
+        // @todo delegate to subbuilders, not table itself
         $table
             ->buildFilters()
             ->buildColumns()
@@ -118,7 +118,7 @@ class TableBuilder implements TableBuilderContract
             ->setTableColumnBuilder($this->table_column_builder)
             ->setTableButtonBuilder($this->table_button_builder)
             ->setRequest(app(TableRequest::class))
-            ->setController($controller); // @todo: container would be nicer...?
+            ->setController($controller); // @todo container would be nicer...?
 
         return $this;
     }

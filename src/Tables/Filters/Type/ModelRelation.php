@@ -17,11 +17,11 @@ class ModelRelation extends AbstractFilter
         // field wrapper
         'wrapper' => false,
         // field label
-        'label' => false,
+        // 'label' => false,
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',
-            'data-live-search' => true,
+            'data-live-search' => 'true',
         ],
     ];
 
@@ -70,7 +70,7 @@ class ModelRelation extends AbstractFilter
     public function getCollection(): Collection
     {
         $collection = $this->collection;
-        $collection->prepend($this->getOption('component.label.title'), '');
+        // $collection->prepend($this->getOption('component.label.title'), '');
 
         return $collection;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Forms\Actions;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -27,7 +27,7 @@ trait ReloadsForm
         $model = $model ?? $this->getRepository()->getModel();
         // create form
         $form = $this->getForm($request, $model);
-        $form->setFieldsRequestInput($form->adjustRequestInput($request->input())); // @todo: hotfixed
+        $form->setFieldsRequestInput($form->adjustRequestInput($request->input())); // @todo hotfixed
         // create component
         $form_component = $this->getFormComponent($form);
 

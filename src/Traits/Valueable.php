@@ -57,6 +57,7 @@ trait Valueable
 
     /**
      * {@inheritdoc}
+     * @todo refactor?
      */
     public function setValue($value, int $index = 0): ValueableContract
     {

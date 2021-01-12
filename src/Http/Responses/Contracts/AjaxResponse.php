@@ -187,6 +187,6 @@ interface AjaxResponse extends Response
      */
     public function get(): array;
 
-    // @todo: Form binding...?
+    // @todo Form binding...?
     //public function bindForm($selector);
 }

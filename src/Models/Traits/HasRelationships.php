@@ -11,17 +11,17 @@ use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
- * @todo: revise
+ * @todo revise
  */
 trait HasRelationships
 {
-    // @todo: kinda hardcoded
+    // @todo kinda hardcoded
     public function isParentSingle()
     {
         return ($this->parent->{$this->model_attribute}() instanceof Relations\MorphOne);
     }
 
-    // @todo: kinda hardcoded
+    // @todo kinda hardcoded
     public function isParentPrimary()
     {
         return $this->is_model_primary;
@@ -85,8 +85,8 @@ trait HasRelationships
         return $relationships;
     }
 
-    // @todo: ugly ! and combine with HasRelationships::resolvePolymorphType()
-    // @todo: maybe use resource registrar
+    // @todo ugly ! and combine with HasRelationships::resolvePolymorphType()
+    // @todo maybe use resource registrar
     public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
         $data->each(function ($value, $attribute) use ($data) {
@@ -124,7 +124,7 @@ trait HasRelationships
         return $this;
     }
 
-    // @todo: ugly
+    // @todo ugly
     public function resolvePolymorphType(Collection $data): string
     {
         foreach ($data as $attribute => $value) {
@@ -154,10 +154,10 @@ trait HasRelationships
         return false;
     }
 
-    // @todo: subject to refactoring, don't like the current approach
+    // @todo subject to refactoring, don't like the current approach
     public function fillRelationships(Collection $data): Crudable
     {
-        $data = $data->toArray(); // @todo: use collections
+        $data = $data->toArray(); // @todo use collections
 
         $this->getRelationshipMethods()->each(function ($relation) use ($data) {
             // possibility to adjust the data and its structure before assignment
@@ -189,7 +189,7 @@ trait HasRelationships
         $attribute = sprintf('%s_id', $relation);
 
         if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-            // @todo: kinda "hotfixed"
+            // @todo kinda "hotfixed"
             $associate = $this->$relation()->getRelated()->findOrFail($data[$attribute]);
 
             $this->$relation()->associate($associate);
@@ -215,7 +215,7 @@ trait HasRelationships
         return $this;
     }
 
-    // @todo: switch to collections (arguments)
+    // @todo switch to collections (arguments)
     protected function fillBelongsToMany(string $relation, array $data, bool $detach = true): Crudable
     {
         $attribute = $relation;

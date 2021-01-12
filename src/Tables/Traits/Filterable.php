@@ -20,7 +20,7 @@ trait Filterable
      * Filters container.
      *
      * @var \Illuminate\Support\Collection
-     * @todo: rename table property to 'filters_definition' or similar and this to 'filters'
+     * @todo rename table property to 'filters_definition' or similar and this to 'filters'
      */
     private $filters_container;
 
@@ -32,15 +32,10 @@ trait Filterable
         $this->resetPagination();
 
         $values = collect($values)->filter(function ($value, $name) {
-            if ($this->hasFilter($name)) {
-                $this->getFilter($name)->setValue($value);
-
-                return true;
-            }
-
-            return false;
+            return $this->hasFilter($name)
+                && $this->getFilter($name)->setValue($value);
         });
-
+logger($values);
         $this->getRequest()->session()->put($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM), $values);
 
         return $this;
@@ -77,7 +72,7 @@ trait Filterable
     /**
      * {@inheritDoc}
      */
-    public function getFilteredValue(Filter $filter): ?string
+    public function getFilterValue(Filter $filter)
     {
         $session_values = $this->getRequest()->session()->get($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
 

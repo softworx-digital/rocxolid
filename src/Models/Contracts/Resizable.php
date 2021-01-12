@@ -46,7 +46,7 @@ interface Resizable
      *
      * @param string|null $size
      * @return \InterventionImage
-     * @todo: make the return type an interface
+     * @todo make the return type an interface
      */
     public function getPhysicalImage(?string $size = null);
 }

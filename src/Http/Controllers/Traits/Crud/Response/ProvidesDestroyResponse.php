@@ -37,7 +37,7 @@ trait ProvidesDestroyResponse
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @return \Illuminate\Http\Response
-     * @todo: action result notification
+     * @todo action result notification
      */
     protected function destroyNonAjaxResponse(CrudRequest $request, Crudable $model)//: Response
     {
@@ -50,7 +50,7 @@ trait ProvidesDestroyResponse
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @return array
-     * @todo: action result notification
+     * @todo action result notification
      */
     protected function destroyAjaxResponse(CrudRequest $request, Crudable $model): array
     {

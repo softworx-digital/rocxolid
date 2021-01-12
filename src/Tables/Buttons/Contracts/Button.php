@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Tables\Buttons\Contracts;
 
-// @todo: define
+// @todo define
 interface Button
 {
 }

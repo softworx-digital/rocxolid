@@ -7,7 +7,7 @@ use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
 
-// @todo: doc
+// @todo doc
 class TableColumn extends AbstractOptionableComponent implements ComponentTableColumnable
 {
     const ARRAY_TEMPLATE_NAME = 'array';
@@ -20,7 +20,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
         $this->setOptions($this->table_column->getOption('component'));
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($view_package = $this->getOption('view-package', false)) {
             $this->setViewPackage($view_package);
         }

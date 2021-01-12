@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 
-// @todo: cleanup
+// @todo cleanup
 class FormRequest extends IlluminateFormRequest
 {
     /**
@@ -12,7 +12,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         // only allow creates if the user is logged in
         //return \Auth::check();
@@ -24,14 +24,14 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // 'name' => 'required|min:3|max:255'
         ];
     }
 
-    public function getFieldsValidation($fields)
+    public function getFieldsValidation($fields): array
     {
         $validation = [
             'attributes' => [],

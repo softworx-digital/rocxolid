@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
 
-// @todo: finish
+// @todo finish
 interface Tableable
 {
     public function setTable(Table $repository): Tableable;

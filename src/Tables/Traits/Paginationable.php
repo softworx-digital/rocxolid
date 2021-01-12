@@ -15,7 +15,7 @@ trait Paginationable
 {
     /**
      * {@inheritDoc}
-     * @todo: configurable for specific table
+     * @todo configurable for specific table
      */
     public function getPerPage(): int
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Forms;
 
 use Illuminate\Support\Collection;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid form contracts
-use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
+use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Forms\Contracts\Form;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
@@ -20,9 +20,13 @@ use Softworx\RocXolid\Http\Controllers\Traits\ElementMappable;
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-trait Formable
+trait HasForms
 {
     use ElementMappable;
+    use Actions\ReloadsForm;
+    use Actions\ReloadsFormGroup;
+    use Actions\ValidatesFormGroup;
+    use Actions\RepositoryAutocompleteable; // @todo consider different approach !!
 
     /**
      * Forms container.
@@ -34,7 +38,7 @@ trait Formable
     /**
      * {@inheritDoc}
      */
-    public function setForm(Form $form, string $param = FormableContract::FORM_PARAM): FormableContract
+    public function setForm(Form $form, string $param = Formable::FORM_PARAM): Formable
     {
         if ($this->hasFormAssigned($param)) {
             throw new \InvalidArgumentException(sprintf('Form with given parameter [%s] is already set to [%s]', $param, get_class($this)));
@@ -55,11 +59,11 @@ trait Formable
 
     /**
      * {@inheritDoc}
-     * @todo: refactor, do not set form here
+     * @todo refactor, do not set form here
      */
     public function getForm(CrudRequest $request, ?Crudable $model = null, ?string $param = null): Form
     {
-        $param = $param ?? $this->getMappingParam($request, 'form', FormableContract::FORM_PARAM);
+        $param = $param ?? $this->getMappingParam($request, 'form', Formable::FORM_PARAM);
         $model = $model ?? $this->getRepository()->getModel();
 
         if (!$this->hasFormAssigned($param)) {
@@ -72,7 +76,7 @@ trait Formable
     /**
      * {@inheritDoc}
      */
-    public function hasFormAssigned(string $param = FormableContract::FORM_PARAM): bool
+    public function hasFormAssigned(string $param = Formable::FORM_PARAM): bool
     {
         return isset($this->forms[$param]);
     }

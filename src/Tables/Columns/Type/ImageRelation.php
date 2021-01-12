@@ -34,7 +34,7 @@ class ImageRelation extends AbstractColumn
 
     public function getRelationItems(Crudable $model): Collection
     {
-        // @todo: quick'n'dirty
+        // @todo quick'n'dirty
         if ($this->getOption('relation.crossed', false)) {
             if ($model->{$this->getOption('relation.crossed.name')}()->exists()) {
                 return $model

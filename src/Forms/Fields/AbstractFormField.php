@@ -23,7 +23,7 @@ use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
 // rocXolid form field traits
 use Softworx\RocXolid\Forms\Fields\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
 
-// @todo: refactor
+// @todo refactor
 abstract class AbstractFormField implements FormField, Valueable, PivotValueable, Optionable, ErrorMessageable, Translatable
 {
     use ValueableTrait;
@@ -31,7 +31,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     use MethodOptionableTrait;
     use ErrorMessageableTrait;
     use ComponentOptionsSetterTrait;
-    use TranslatableTrait; // @todo: needed?
+    use TranslatableTrait; // @todo needed?
 
     /**
      * Name of the field.
@@ -236,7 +236,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     /**
      * {@inheritDoc}
      */
-    // @todo: kinda hacky, don't like this approach
+    // @todo kinda hacky, don't like this approach
     public function getTitle(): string
     {
         if ($this->hasOption('component.label.title-translated')) {
@@ -246,10 +246,10 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this->getForm()->getController()->translate(sprintf('field.%s', $this->getOption('component.label.title', $this->getName())));
     }
 
-    // @todo: kinda hacky, don't like this approach
+    // @todo kinda hacky, don't like this approach
     public function updateParent()
     {
-        // @todo - zavolat parent update + spravne setnuty parent ?
+        // @todo zavolat parent update + spravne setnuty parent ?
         // to ale chce, aby aj field mal spravne setnutu referenciu na parenta, co zatial nema, zatial je to len form
         if ($group_name = $this->getOption('component.group', false)) {
             if ($this->form->getFormFieldGroup($group_name)->getOption('component.array', false)) {
@@ -260,7 +260,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this;
     }
 
-    // @todo: "hotfixed", you can do better
+    // @todo "hotfixed", you can do better
     public function updateComponent(int $index = 0)
     {
         if ($this->hasErrorMessages($index)) {
@@ -336,7 +336,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $value;
     }
 
-    // @todo: refactoring & unit testing candidate
+    // @todo refactoring & unit testing candidate
     public function isFieldValue($value, $index = 0): bool
     {
         return !is_null($this->getFieldValue($index)) && !is_null($value) && ((string)$this->getFieldValue($index) === (string)$value);
@@ -346,11 +346,11 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     {
         $model = $this->getForm()->getModel();
 
-        // @todo: temporary hotfix for BelongsToMany fields
+        // @todo temporary hotfix for BelongsToMany fields
         if ($this->isArray() && method_exists($model, $this->name) && ($model->{$this->name}() instanceof BelongsToMany)) {
             $values = $this->getValues();
 
-            // @todo: awkward
+            // @todo awkward
             $relation = $model->{$this->name}();
             $related = $relation->getRelated();
             $pivot_fields = $this->getForm()->getPivotFormFields($relation);
@@ -418,7 +418,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return route($route_name);
     }
 
-    // @todo - toto do separatnej parser classy / viac class, ktore to budu handlovat - pozriet ako sa riesia validation messages
+    // @todo toto do separatnej parser classy / viac class, ktore to budu handlovat - pozriet ako sa riesia validation messages
     // Forms\Fields\Support\... - navrhnut strukturu
     // resp cele nejako inak - domysliet
     /*

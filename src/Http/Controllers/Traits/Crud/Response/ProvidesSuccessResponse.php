@@ -53,7 +53,7 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @return \Illuminate\Http\Response
-     * @todo: action result notification
+     * @todo action result notification
      */
     protected function successNonAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form)//: Response
     {
@@ -61,8 +61,8 @@ trait ProvidesSuccessResponse
         // $action = $request->route()->getActionMethod();
 
         return redirect($this->successReponseRoute($request, $model, $form))
-            ->with($form->getSessionParam('errors'), $form->getErrors()) // @todo: needed?
-            ->with($form->getSessionParam('input'), $request->input()); // @todo: needed?
+            ->with($form->getSessionParam('errors'), $form->getErrors()) // @todo needed?
+            ->with($form->getSessionParam('input'), $request->input()); // @todo needed?
     }
 
     /**
@@ -72,7 +72,7 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @return array
-     * @todo: action result notification text upon action
+     * @todo action result notification text upon action
      */
     protected function successAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
     {

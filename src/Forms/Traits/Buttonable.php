@@ -71,7 +71,7 @@ trait Buttonable
 
     public function hasButtons(): bool
     {
-        // @todo: temporary fix, caused troubles for modal forms
+        // @todo temporary fix, caused troubles for modal forms
         return true;
         // return $this->getButtons()->isEmpty();
     }

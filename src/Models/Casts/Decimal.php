@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Models\Casts;
 
-// @todo: appliable for Laravel 7, currently this class is not used
+// @todo appliable for Laravel 7, currently this class is not used
 // use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
 /**

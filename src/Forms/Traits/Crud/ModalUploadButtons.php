@@ -12,7 +12,7 @@ use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: not used yet
+ * @todo not used yet
  */
 trait ModalUploadButtons
 {

@@ -13,7 +13,7 @@ use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: use collections
+ * @todo use collections
  */
 trait Optionable
 {
@@ -87,7 +87,7 @@ trait Optionable
     public function mergeOptions(array $options): OptionableContract
     {
         //$this->options = $this->getOptions()->merge($new_options); // doesn't deep merge
-        $this->options = collect(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo: problem possible if object at the end
+        $this->options = collect(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo problem possible if object at the end
 
         return $this;
     }

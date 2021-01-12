@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: quick'n'dirty
+ * @todo quick'n'dirty
  */
 trait HasAttributes
 {
@@ -156,7 +156,7 @@ trait HasAttributes
         return filled($this->$attribute) ? $this->getModelViewerComponent()->translate(sprintf('choice.%s.%s', $attribute, $this->$attribute)) : null;
     }
 
-    // @todo: "hotfixed" to enable array fields to be filled correctly
+    // @todo "hotfixed" to enable array fields to be filled correctly
     public function decimalize($values)
     {
         $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
@@ -188,7 +188,7 @@ trait HasAttributes
      *
      * @param string $attribute
      * @return mixed
-     * @todo: make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
+     * @todo make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
      */
     protected function getMonetaryAttributeViewValue(string $attribute)
     {
@@ -213,7 +213,7 @@ trait HasAttributes
      *
      * @param string $attribute
      * @return mixed
-     * @todo: make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
+     * @todo make not tied to hard-coded locale & currency, find a convenient (yet reliable) way
      */
     protected function getPercentualAttributeViewValue(string $attribute)
     {

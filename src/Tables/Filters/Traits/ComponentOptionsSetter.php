@@ -4,6 +4,9 @@ namespace Softworx\RocXolid\Tables\Filters\Traits;
 
 use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
+/**
+ * @todo refactor
+ */
 trait ComponentOptionsSetter
 {
     protected function setViewPackage($view_package): Filter

@@ -11,7 +11,7 @@ use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: make more abstract
+ * @todo make more abstract
  */
 interface TableButtonBuilder
 {

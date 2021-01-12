@@ -16,7 +16,7 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableButtonBuilder;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: consider different approach
+ * @todo consider different approach
  */
 trait Buildable
 {

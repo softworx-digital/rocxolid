@@ -9,23 +9,12 @@ use Softworx\RocXolid\Tables\Contracts\Table as TableContract;
 use Softworx\RocXolid\Components\Contracts\Tableable;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
-// rocXolid table components
-use Softworx\RocXolid\Components\Tables\TableFilter;
-use Softworx\RocXolid\Components\Tables\TableColumn;
-use Softworx\RocXolid\Components\Tables\TableButton;
 
 /**
- * @todo: refactor
+ * @todo [RX-28] refactor
  */
 class Table extends AbstractOptionableComponent implements Tableable
 {
-    protected static $filter_component_class = TableFilter::class;
-
-    // @todo: not used - update other component creation to this
-    // protected static $column_component_class = TableColumn::class;
-
-    protected static $button_component_class = TableButton::class;
-
     protected $table;
 
     protected $filter_components = null;
@@ -97,7 +86,7 @@ class Table extends AbstractOptionableComponent implements Tableable
         foreach ($this->getTable()->getFilters() as $filter) {
             $this->filter_components->put(
                 $filter->getName(),
-                $this->buildSubComponent(static::$filter_component_class)->setTableFilter($filter)
+                $this->buildSubComponent($filter->getComponentClass())->setTableFilter($filter)
             );
         }
 
@@ -116,7 +105,6 @@ class Table extends AbstractOptionableComponent implements Tableable
         foreach ($this->getTable()->getColumns() as $column) {
             $this->column_components->put(
                 $column->getName(),
-                // $this->buildSubComponent(static::$column_component_class)->setTableColumn($column)
                 $this->buildSubComponent($column->getComponentClass())->setTableColumn($column)
             );
         }
@@ -136,7 +124,7 @@ class Table extends AbstractOptionableComponent implements Tableable
         foreach ($this->getTable()->getButtons() as $button) {
             $this->button_components->put(
                 $button->getName(),
-                $this->buildSubComponent(static::$button_component_class)->setButton($button)
+                $this->buildSubComponent($button->getComponentClass())->setButton($button)
             );
         }
 

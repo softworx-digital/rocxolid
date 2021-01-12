@@ -100,7 +100,7 @@ class PermissionScannerService
                 try {
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedAction::class);
                 } catch (\Throwable $e) {
-                    // @todo: nicer handling
+                    // @todo nicer handling
                     // dump(__FILE__, $method, $e->getMessage());
                     // dd($e);
                     throw $e;
@@ -155,7 +155,7 @@ class PermissionScannerService
 
                     return !is_null($method->annotation) && $this->isValidPermissionRelationMethod($reflection, $method);
                 } catch (\Throwable $e) {
-                    // @todo: nicer handling
+                    // @todo nicer handling
                     // dd(__FILE__, $method, $e->getMessage());
                     // dd($e);
                     throw $e;

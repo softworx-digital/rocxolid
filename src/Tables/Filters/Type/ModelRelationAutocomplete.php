@@ -1,20 +1,35 @@
 <?php
 
-namespace Softworx\RocXolid\Forms\Fields\Type;
+namespace Softworx\RocXolid\Tables\Filters\Type;
 
-use DB;
 use Illuminate\Support\Collection;
-// rocXolid model scopes
-use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
-// rocXolid filters
-use Softworx\RocXolid\Filters\StartsWith;
-// rocXolid form field types
-use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Filterable;
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
+// rocXolid table filters
+use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
-// @todo refactor
-class CollectionSelectAutocomplete extends CollectionSelect
+class ModelRelationAutocomplete extends AbstractFilter
 {
     const LIMIT = 10;
+
+    protected $default_options = [
+        'type-template' => 'model-relation',
+        // field wrapper
+        'wrapper' => false,
+        // field label
+        // 'label' => false,
+        // field HTML attributes
+        'attributes' => [
+            'class' => 'form-control autocomplete',
+            'data-live-search' => 'true',
+        ],
+    ];
+
+    protected $join = [];
+
+    protected $join_table = false;
 
     protected $collection_model = null;
 
@@ -26,26 +41,22 @@ class CollectionSelectAutocomplete extends CollectionSelect
 
     protected $collection_loaded = false;
 
-    protected $default_options = [
-        'type-template' => 'collection-select-autocomplete',
-        // field wrapper
-        'wrapper' => false,
-        // component helper classes
-        'helper-classes' => [
-            'error-class' => 'has-error',
-            'success-class' => 'has-success',
-        ],
-        // field label
-        'label' => false,
-        // field HTML attributes
-        'attributes' => [
-            'placeholder' => null,
-            'class' => 'form-control autocomplete',
-            'data-live-search' => 'true',
-        ],
-    ];
+    public function apply(EloquentBuilder $query): EloquentBuilder
+    {
+        if ($this->join) {
+            $table_column = sprintf('%s.id', $query->getModel()->getTable());
+            $join_table_own_column = sprintf('%s.%s', $this->join['table'], $this->join['own_column']);
+            $join_table_column = sprintf('%s.%s', $this->join['table'], $this->join['join_column']);
 
-    public function setCollection($option)
+            return $query
+                ->join($this->join['table'], $table_column, '=', $join_table_own_column)
+                ->where($join_table_column, $this->getValue());
+        } else {
+            return $query->where($this->getColumnName($query), $this->getValue());
+        }
+    }
+
+    public function setCollection($option): Filter
     {
         if ($option instanceof Collection) {
             $this->collection = $option;
@@ -60,6 +71,23 @@ class CollectionSelectAutocomplete extends CollectionSelect
                 $this->collection_filters = $option['filters'];
             }
         }
+        /*
+        if ($option instanceof Collection) {
+            $this->collection = $option;
+        } else {
+            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $query = $model::query();
+
+            if (isset($option['filters'])) {
+                foreach ($option['filters'] as $filter) {
+                    $query = (new $filter['class']())->apply($query, $filter['data']);
+                }
+            }
+
+            $this->collection_model = $model;
+            $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
+        }
+        */
 
         return $this;
     }
@@ -123,9 +151,9 @@ class CollectionSelectAutocomplete extends CollectionSelect
         return false;
     }
 
-    public function addFilter($filter)
+    public function setJoin($option): Filter
     {
-        $this->collection_filters[] = $filter;
+        $this->join = $option;
 
         return $this;
     }

@@ -26,7 +26,7 @@ trait IsContained
         return $this;
     }
 
-    // @todo - toto hotfix sem, inac spravit zrejme viac tried - lepsiu arch pageelement x container x containee kombinacii
+    // @todo toto hotfix sem, inac spravit zrejme viac tried - lepsiu arch pageelement x container x containee kombinacii
     public function containeePagesWhereVisible(): Collection
     {
         $pages = collect();

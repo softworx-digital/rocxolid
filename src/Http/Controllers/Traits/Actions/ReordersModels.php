@@ -13,9 +13,9 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: refactor, maybe delegate to a service
+ * @todo refactor, maybe delegate to a service
  */
-trait ItemsReorderderable
+trait ReordersModels
 {
     /**
      * Process incoming request.

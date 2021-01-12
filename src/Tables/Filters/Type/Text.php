@@ -15,7 +15,7 @@ class Text extends AbstractFilter
         // field wrapper
         'wrapper' => false,
         // field label
-        'label' => false,
+        // 'label' => false,
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control'

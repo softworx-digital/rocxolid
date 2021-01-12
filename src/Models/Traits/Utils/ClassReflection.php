@@ -3,7 +3,7 @@
 namespace Softworx\RocXolid\Models\Traits\Utils;
 
 /**
- * @todo: subject to refactoring / revision
+ * @todo subject to refactoring / revision
  */
 trait ClassReflection
 {
@@ -30,7 +30,7 @@ trait ClassReflection
     }
 
     /*
-    @todo: incomplete, it's purpose is to get rid of similar constructions and use nicer approach
+    @todo incomplete, it's purpose is to get rid of similar constructions and use nicer approach
     $fields['model_type']['options']['collection'] = $this->getModel()->getAvailableAttributables()->mapWithKeys(function (Attributable $model) {
         return [ $model->className() => $model->getClassNameTranslation() ];
     });

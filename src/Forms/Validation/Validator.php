@@ -15,7 +15,7 @@ use Softworx\RocXolid\Rendering\Services\RenderingService;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: separate to traits accordiing to validation types
+ * @todo separate to traits accordiing to validation types
  */
 class Validator extends IlluminateValidator
 {
@@ -235,7 +235,7 @@ class Validator extends IlluminateValidator
      */
     public function replaceMinDecimal(string $message, string $attribute, string $rule, array $parameters): string
     {
-        // @todo: hotfixed formatting
+        // @todo hotfixed formatting
         return str_replace(':min_decimal', number_format($parameters[0], 2, ',', ''), $message);
     }
 
@@ -249,7 +249,7 @@ class Validator extends IlluminateValidator
      */
     public function validateMaxDecimal(string $attribute, $value, array $parameters): bool
     {
-        // @todo: hotfixed
+        // @todo hotfixed
         $value = str_replace(',', '.', $value);
         $value = str_replace(' ', '', $value);
         $value = (float)$value;
@@ -268,7 +268,7 @@ class Validator extends IlluminateValidator
      */
     public function replaceMaxDecimal(string $message, string $attribute, string $rule, array $parameters): string
     {
-        // @todo: hotfixed formatting
+        // @todo hotfixed formatting
         return str_replace(':max_decimal', number_format($parameters[0], 2, ',', ''), $message);
     }
 
@@ -327,7 +327,7 @@ class Validator extends IlluminateValidator
 
     /**
      * Replace all place-holders for the after_or_equal rule.
-     * @todo: "hotfixed" - improve overall date handling according to localization
+     * @todo "hotfixed" - improve overall date handling according to localization
      *
      * @param string $message
      * @param string $attribute
@@ -342,7 +342,7 @@ class Validator extends IlluminateValidator
 
     /**
      * Replace all place-holders for the before_or_equal rule.
-     * @todo: "hotfixed" - improve overall date handling according to localization
+     * @todo "hotfixed" - improve overall date handling according to localization
      *
      * @param string $message
      * @param string $attribute
@@ -357,7 +357,7 @@ class Validator extends IlluminateValidator
 
     /**
      * Validate that a value is syntactically correct blade template.
-     * @todo: so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
+     * @todo so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
      *
      * @param string $attribute
      * @param mixed $value

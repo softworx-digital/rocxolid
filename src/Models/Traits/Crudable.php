@@ -18,8 +18,8 @@ use Softworx\RocXolid\Models\Traits;
 use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
- * @todo: subject to refactoring
- * @todo: attributes to HasAttributes
+ * @todo subject to refactoring
+ * @todo attributes to HasAttributes
  */
 trait Crudable
 {
@@ -30,7 +30,7 @@ trait Crudable
     use Traits\HasRelationships;
     use OnActions\RepositoryActions;
 
-    // @todo: revise
+    // @todo revise
     // this is needed because laravel limits the URL param name and authorization creates it upon class name
     public static function getAuthorizationParameter(): ?string
     {
@@ -58,7 +58,7 @@ trait Crudable
         return collect([ $this->getModelName(), $this->getKey() ])->filter()->join(':');
     }
 
-    // @todo: revise
+    // @todo revise
     public function getExtraAttributes()
     {
         return $this->extra;
@@ -74,7 +74,7 @@ trait Crudable
         return array_unique(array_merge($this->getFillable(), $this->getHidden(), $this->getSystemAttributes()));
     }
 
-    // @todo: revise
+    // @todo revise
     public function getRowClass()
     {
         return null;
@@ -287,7 +287,7 @@ trait Crudable
             ] + ($model ? [
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getSecondLocalKeyName()) => $model->getKey()
             ] : []);
-        }/* elseif ($relation instanceof HasMany) { // @todo: finish support of this relation type
+        }/* elseif ($relation instanceof HasMany) { // @todo finish support of this relation type
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
@@ -311,13 +311,13 @@ trait Crudable
      *
      * @param array $except
      * @param array $with
-     * @todo: replace by more sophisticated - getDataAttributes(array $only = null, array $except = []): Collection - method
+     * @todo replace by more sophisticated - getDataAttributes(array $only = null, array $except = []): Collection - method
      */
     public function getShowAttributes(array $except = [], array $with = []): array
     {
         $attributes = $this->getAttributes();
         $attributes = array_diff_key($attributes, array_flip(array_merge($this->getSystemAttributes(), $this->getHidden())), array_flip($except)) + $with;
-        // @todo: you can do better than checking substring
+        // @todo you can do better than checking substring
         $attributes = array_filter($attributes, function ($attribute) {
             return (substr($attribute, -3) != '_id');
         }, ARRAY_FILTER_USE_KEY);
@@ -333,7 +333,7 @@ trait Crudable
      */
     public function isBooleanAttribute(string $attribute): bool
     {
-        // @todo: you can do (maybe) better than checking substring
+        // @todo you can do (maybe) better than checking substring
         return (substr($attribute, 0, 3) === 'is_');
     }
 
@@ -345,7 +345,7 @@ trait Crudable
      */
     public function isJsonAttribute(string $attribute): bool
     {
-        // @todo: you can do (maybe) better than checking substring
+        // @todo you can do (maybe) better than checking substring
         return (substr($attribute, -5) === '_json');
     }
 
@@ -357,7 +357,7 @@ trait Crudable
      */
     public function isColorAttribute(string $attribute): bool
     {
-        // @todo: you can do (maybe) better than checking substring
+        // @todo you can do (maybe) better than checking substring
         return (substr($attribute, -5) === 'color');
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Table;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Tables\Actions;
 
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- * Action to set resource data table ordering.
+ * Action trait to handle resource data table ordering requests.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -20,7 +20,6 @@ trait OrdersTable
      * @param string $param Table parameter.
      * @param string $order_by_column Ordering column.
      * @param string $order_by_direction Ordering direction.
-     * @return void
      */
     public function tableOrderBy(CrudRequest $request, string $param, string $order_by_column, string $order_by_direction)//: View
     {

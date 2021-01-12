@@ -19,6 +19,6 @@ interface Response
      *
      * @return string
      */
-    // @todo: "hotfixed" for AjaxResponse compatibility
+    // @todo "hotfixed" for AjaxResponse compatibility
     // public function get(): string;
 }

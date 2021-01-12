@@ -12,7 +12,8 @@ use Softworx\RocXolid\Components\Contracts\Formable as ComponentFormableContract
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 
 /**
- *
+ * @todo [RX-23] refactor
+ * @todo [RX-26] Use subcomponent classes from their representatives, @see Softworx\RocXolid\Components\Tables\Table for reference
  */
 class Form extends AbstractOptionableComponent implements ComponentFormableContract
 {

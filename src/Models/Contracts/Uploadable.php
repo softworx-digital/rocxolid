@@ -10,7 +10,7 @@ use Illuminate\Http\UploadedFile;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: split to storeable and uploadable (extends storeable)?
+ * @todo split to storeable and uploadable (extends storeable)?
  */
 interface Uploadable
 {

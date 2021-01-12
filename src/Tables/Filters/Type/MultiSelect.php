@@ -10,10 +10,10 @@ use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 // rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
-class Select extends AbstractFilter
+class MultiSelect extends AbstractFilter
 {
     protected $default_options = [
-        'type-template' => 'select',
+        'type-template' => 'select-multiple',
         // field wrapper
         'wrapper' => false,
         // field label
@@ -21,13 +21,22 @@ class Select extends AbstractFilter
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',
+            'multiple' => true,
             'data-live-search' => true,
         ],
     ];
 
     public function apply(EloquentBuilder $query): EloquentBuilder
     {
-        return $query->where($this->getColumnName($query), $this->getValue());
+        return $query->whereIn($this->getColumnName($query), $this->getValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFieldName(): string
+    {
+        return sprintf('%s[%s][]', self::DATA_PARAM, $this->getName());
     }
 
     public function setCollection(Collection $collection): Filter

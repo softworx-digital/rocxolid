@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
 /**
- * Trait to enable dynamic options setting with class mathod.
+ * Trait to enable dynamic options setting with class method.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid

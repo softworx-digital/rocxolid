@@ -12,7 +12,7 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableColumnBuilder as TableColum
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: identify builders' common methods and unify them in abstract class
+ * @todo identify builders' common methods and unify them in abstract class
  */
 class TableColumnBuilder implements TableColumnBuilderContract
 {

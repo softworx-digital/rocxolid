@@ -12,7 +12,7 @@ use Softworx\RocXolid\Models\Traits;
 // rocXolid relations
 use Softworx\RocXolid\Models\Relations\Traits\BelongsToThrough;
 // rocXolid user management traits
-use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: this doesn't belong here, another approach without dependency on UserManagement?
+use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo this doesn't belong here, another approach without dependency on UserManagement?
 
 /**
  * rocXolid base CRUDable model class.
@@ -28,7 +28,7 @@ abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestab
     use Traits\CanBeFieldItem;
     use BelongsToThrough;
     use HasUserAttributes;
-    use Traits\AutocompleteSearchable; // @todo: wtf?? revise
+    use Traits\AutocompleteSearchable; // @todo wtf?? revise
 
     /**
      * Attribute to use for parent's position.

@@ -29,7 +29,7 @@ class Owned implements Scope
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param \Illuminate\Database\Eloquent\Model $model
      * @return void
-     * @todo: subject to refactoring
+     * @todo subject to refactoring
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -45,7 +45,7 @@ class Owned implements Scope
             return;
         }
 
-        // scoping users first // @todo: kinda "hotfixed", find some nicer approach
+        // scoping users first // @todo kinda "hotfixed", find some nicer approach
         if ($model instanceof $user) {
             $this->handleUserScope($builder, $model, $user);
         // a true model-user ownership

@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
- * @todo: subject to refactoring
+ * @todo subject to refactoring
  */
 trait RepositoryActions
 {

@@ -44,7 +44,7 @@ interface Tableable
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param string|null $param Table param.
      * @return \Softworx\RocXolid\Tables\Contracts\Table
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function getTable(CrudRequest $request, ?string $param = null): Table;
 

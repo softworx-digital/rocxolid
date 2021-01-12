@@ -15,7 +15,7 @@ use Softworx\RocXolid\Tables\Builders\Contracts\TableFilterBuilder as TableFilte
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: identify builders' common methods and unify them in abstract class
+ * @todo identify builders' common methods and unify them in abstract class
  */
 class TableFilterBuilder implements TableFilterBuilderContract
 {
@@ -45,10 +45,10 @@ class TableFilterBuilder implements TableFilterBuilderContract
      */
     public function makeFilter(Table $table, string $type, string $name, array $options = []): Filter
     {
-        $field = (new $type($table, $name, $type, $options));
-        $field->setValue($table->getFilteredValue($field));
+        $filter = (new $type($table, $name, $type, $options));
+        $filter->setValue($table->getFilterValue($filter));
 
-        return $field;
+        return $filter;
     }
 
     protected function processDefinition(Table $table, array $definition, Collection &$items, ?string $name_prefix = null): TableFilterBuilderContract

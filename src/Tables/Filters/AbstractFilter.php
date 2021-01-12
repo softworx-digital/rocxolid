@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable;
 // rocXolid traits
-use Softworx\RocXolid\Traits\Valueable as ValueableTrait;
+use Softworx\RocXolid\Traits;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 // rocXolid table elements
@@ -25,7 +25,7 @@ use Softworx\RocXolid\Components\Tables\TableFilter;
  */
 abstract class AbstractFilter extends AbstractTableElement implements Valueable, Filter
 {
-    use ValueableTrait;
+    use Traits\Valueable;
     use ComponentOptionsSetter;
 
     /**

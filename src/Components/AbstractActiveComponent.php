@@ -16,7 +16,7 @@ abstract class AbstractActiveComponent extends AbstractComponent implements Cont
     use RoutableTrait;
 
     /*
-     * @todo: this doesn't quite work for related component models, eg. for images
+     * @todo this doesn't quite work for related component models, eg. for images
      *
     protected function makeDomId(...$params): string
     {

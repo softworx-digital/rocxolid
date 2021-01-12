@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Components\Contracts;
 
 use Softworx\RocXolid\Tables\Buttons\Contracts\Button;
 
-// @todo: docblocks
+// @todo docblocks
 interface TableButtonable
 {
     public function setButton(Button $button): TableButtonable;

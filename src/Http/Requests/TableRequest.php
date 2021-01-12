@@ -30,7 +30,7 @@ class TableRequest extends CrudRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             Filter::DATA_PARAM => 'sometimes|array'

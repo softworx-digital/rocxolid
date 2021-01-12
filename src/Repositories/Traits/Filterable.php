@@ -5,8 +5,9 @@ namespace Softworx\RocXolid\Repositories\Traits;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 // rocXolid repository contracts
-use Softworx\RocXolid\Repositories\Contracts\Filter;
 use Softworx\RocXolid\Repositories\Contracts\Filterable as FilterableContract;
+// rocXolid table filters
+use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 /**
  * Trait to enable model data filtering.
@@ -50,10 +51,10 @@ trait Filterable
      */
     protected function applyFilters(EloquentBuilder &$query): FilterableContract
     {
-        $this->getFilters()->filter(function ($filter) {
-            return $filter->isAppliable();
-        })->each(function ($filter) use ($query) {
-            $query = $filter->apply($query);
+        $this->getFilters()->each(function (Filter $filter) use ($query) {
+            if ($filter->isAppliable()) {
+                $query = $filter->apply($query);
+            }
         });
 
         return $this;

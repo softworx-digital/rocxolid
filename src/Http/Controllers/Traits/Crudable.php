@@ -19,7 +19,7 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
-    // @todo: response methods - inject model viewer, do not 'create' it
+    // @todo response methods - inject model viewer, do not 'create' it
     use Crud\Response\ProvidesSuccessResponse;
     use Crud\Response\ProvidesSuccessCreateResponse;
     use Crud\Response\ProvidesSuccessUpdateResponse;

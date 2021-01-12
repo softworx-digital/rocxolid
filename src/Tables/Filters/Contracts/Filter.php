@@ -13,7 +13,7 @@ use Softworx\RocXolid\Tables\Contracts\Table;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: revise & complete
+ * @todo revise & complete
  */
 interface Filter extends RepositoryFilterProvider
 {

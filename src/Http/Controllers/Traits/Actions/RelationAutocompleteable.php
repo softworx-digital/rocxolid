@@ -1,6 +1,6 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Form;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Actions;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
@@ -17,9 +17,9 @@ use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: totally refactor this feature
+ * @todo totally refactor this feature
  */
-trait RepositoryAutocompleteable
+trait RelationAutocompleteable
 {
     /**
      * Process the incoming autocomplete-field request.
@@ -27,13 +27,27 @@ trait RepositoryAutocompleteable
      *
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
-     * @todo: use scopes rather than filter
-     * @todo: parameter naming convention ('f' is ugly)
+     * @todo use scopes rather than filter
+     * @todo parameter naming convention ('f' is ugly)
      */
-    public function repositoryAutocomplete(CrudRequest $request, ?Crudable $model = null)//: View
+    public function relationAutocomplete(CrudRequest $request, string $relation)//: View
     {
+        $response[] = [
+            'value' => 1,
+            'text' => 'test',
+        ];
+
+        $response[] = [
+            'value' => 2,
+            'text' => 'test 2',
+        ];
+
+        return response()->json($response);
+
+dd($relation);
+
         $model = $model ?? $this->getRepository()->getModel();
-        // @todo: the repository calls the controller to get the model, which can be different from
+        // @todo the repository calls the controller to get the model, which can be different from
         // what is needed (eg. user registration controller vs. city_id)
         $model->setQueryString($request->get('q', null));
         // create form
@@ -44,7 +58,7 @@ trait RepositoryAutocompleteable
                 'class' => StartsWith::class,
                 'data' => $model
             ]);
-        // @todo: use collection
+        // @todo use collection
         $response = [];
 
         foreach ($field->getCollection() as $value => $text) {

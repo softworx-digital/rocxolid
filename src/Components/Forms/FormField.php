@@ -18,12 +18,12 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
 
         $this->setOptions($this->form_field->getOption('component'));
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($view_package = $this->getOption('view-package', false)) {
             $this->setViewPackage($view_package);
         }
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($placeholder = $this->getOption('attributes.placeholder', false)) {
             if (!is_numeric($placeholder)) {
                 $this->mergeOptions([
@@ -34,7 +34,7 @@ class FormField extends AbstractOptionableComponent implements ComponentFormFiel
             }
         }
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($title = $this->getOption('attributes.title', false)) {
             if (!is_numeric($title)) {
                 $this->mergeOptions([

@@ -1,11 +1,11 @@
 <?php
 
-namespace Softworx\RocXolid\Http\Controllers\Traits\Actions\Table;
+namespace Softworx\RocXolid\Http\Controllers\Traits\Tables\Actions;
 
 use Softworx\RocXolid\Http\Requests\TableRequest;
 
 /**
- * Action to set resource data table filtering.
+ * Action trait to handle resource data table filtering requests.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -18,7 +18,6 @@ trait FiltersTable
      *
      * @param \Softworx\RocXolid\Http\Requests\TableRequest $request
      * @param string $param Table parameter.
-     * @return void
      */
     public function tableFilter(TableRequest $request, string $param)//: View
     {
@@ -45,7 +44,6 @@ trait FiltersTable
      *
      * @param \Softworx\RocXolid\Http\Requests\TableRequest $request
      * @param string $param Table parameter.
-     * @return void
      */
     public function clearFilter(TableRequest $request, string $param)//: View
     {

@@ -65,7 +65,7 @@ class FormBuilder implements FormBuilderContract
             ->setFormOptions($form, $custom_options)
             ->setFormData($form, $data);
 
-        // @todo: delegate to subbuilders, not form itself
+        // @todo delegate to subbuilders, not form itself
         $form
             ->buildFields()
             ->init();

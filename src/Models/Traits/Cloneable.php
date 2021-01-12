@@ -15,11 +15,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Softworx\RocXolid\Models\Contracts\Cloneable as CloneableContract;
 use Softworx\RocXolid\Models\Contracts\Container;
 use Softworx\RocXolid\Models\Contracts\Containee;
-// @todo: quick n dirty
+// @todo quick n dirty
 use Softworx\RocXolid\CMS\Models\HtmlWrapper;
 
 /**
- * @todo: subject to refactoring
+ * @todo subject to refactoring
  */
 trait Cloneable
 {

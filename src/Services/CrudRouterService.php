@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Route;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo: refator & consider routes registration responsibility delegation to controllers
- * @todo: or create custom ResourceRegistrar (extends Illuminate\Routing\ResourceRegistrar)
+ * @todo refator & consider routes registration responsibility delegation to controllers
+ * @todo or create custom ResourceRegistrar (extends Illuminate\Routing\ResourceRegistrar)
  */
 class CrudRouterService
 {
@@ -55,6 +55,11 @@ class CrudRouterService
         Route::post($this->name . '/table/{param}/filter', [
             'as' => 'crud.' . $this->name . '.table-filter',
             'uses' => $this->controller . '@tableFilter',
+        ]);
+
+        Route::post($this->name . '/relation/{relation}/autocomplete/', [
+            'as' => 'crud.' . $this->name . '.relation-autocomplete',
+            'uses' => $this->controller . '@relationAutocomplete',
         ]);
 
         Route::post($this->name . sprintf('/repository/autocomplete/{%s?}', $this->param), [
@@ -153,7 +158,7 @@ class CrudRouterService
         Route::resource($this->name, $this->controller, $options_with_default_route_names);
     }
 
-    // @todo: purpose & correctness?
+    // @todo purpose & correctness?
     public function with($injectables): CrudRouterService
     {
         if (is_string($injectables)) {
@@ -169,7 +174,7 @@ class CrudRouterService
         return $this->registerExtraRoutes();
     }
 
-    // @todo: purpose & correctness?
+    // @todo purpose & correctness?
     private function registerExtraRoutes(): CrudRouterService
     {
         foreach ($this->extra_routes as $route) {
@@ -183,7 +188,7 @@ class CrudRouterService
         return $this;
     }
 
-    // @todo: purpose & correctness?
+    // @todo purpose & correctness?
     public function __call($method, $parameters = null)
     {
         if (method_exists($this, $method)) {
