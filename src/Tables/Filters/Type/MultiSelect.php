@@ -16,8 +16,8 @@ class MultiSelect extends AbstractFilter
         'type-template' => 'select-multiple',
         // field wrapper
         'wrapper' => false,
-        // field label
-        // 'label' => false,
+        // reset button
+        'reset-button' => true,
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',

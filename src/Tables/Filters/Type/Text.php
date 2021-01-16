@@ -14,8 +14,8 @@ class Text extends AbstractFilter
         'type-template' => 'text',
         // field wrapper
         'wrapper' => false,
-        // field label
-        // 'label' => false,
+        // reset button
+        'reset-button' => true,
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control'

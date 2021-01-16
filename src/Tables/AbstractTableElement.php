@@ -6,8 +6,7 @@ namespace Softworx\RocXolid\Tables;
 use Softworx\RocXolid\Contracts\Optionable;
 use Softworx\RocXolid\Contracts\Translatable;
 // rocXolid traits
-use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
-use Softworx\RocXolid\Traits\MethodOptionable;
+use Softworx\RocXolid\Traits;
 // rocXolid table contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
 
@@ -20,8 +19,8 @@ use Softworx\RocXolid\Tables\Contracts\Table;
  * */
 abstract class AbstractTableElement implements Optionable, Translatable
 {
-    use TranslatableTrait;
-    use MethodOptionable;
+    use Traits\Translatable;
+    use Traits\MethodOptionable;
 
     /**
      * Parent table reference.

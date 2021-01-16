@@ -31,6 +31,7 @@ abstract class AbstractCrudTable implements Table
     use Traits\Buildable;
     use Traits\Columnable;
     use Traits\Buttonable;
+    use Traits\Scopeable;
     use Traits\Orderable;
     use Traits\Filterable;
     use Traits\Paginationable;
@@ -174,6 +175,7 @@ abstract class AbstractCrudTable implements Table
             $this->data = $this
                 ->getController()
                     ->getRepository()
+                        // ->setScopes($this->getScopes())
                         ->setOrderBy($this->getOrderByColumn(), $this->getOrderByDirection())
                         ->setFilters($this->getFilters())
                         ->paginate($this->getCurrentPage(), $this->getPerPage())

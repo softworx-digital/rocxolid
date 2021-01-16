@@ -6,7 +6,7 @@ use Softworx\RocXolid\Helpers\View as ViewHelper;
 use Softworx\RocXolid\Forms\Contracts\Form;
 
 /**
- *
+ * @todo refactor
  */
 trait OptionsSetter
 {
@@ -30,7 +30,10 @@ trait OptionsSetter
     public function processFormOptions(): Form
     {
         if (!empty($this->options)) {
-            $this->setOptions($this->options);
+            // @todo hotfixed
+            $options = is_array($this->options) ? collect($this->options) : $this->options;
+
+            $this->setOptions($options->whereNotNull()->toArray());
         }
 
         $this->mergeOptions([

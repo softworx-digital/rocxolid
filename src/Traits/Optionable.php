@@ -13,7 +13,7 @@ use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo use collections
+ * @todo refactor; use collections
  */
 trait Optionable
 {

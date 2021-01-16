@@ -16,6 +16,8 @@ class DateTime extends AbstractFilter
     protected $default_options = [
         'type-template' => 'date-time',
         'format' => 'j.n.Y H:i:s',
+        // reset button
+        'reset-button' => true,
         /*
         // field wrapper
         'wrapper' => false,

@@ -48,6 +48,14 @@ interface Filterable
     public function getFilters(): Collection;
 
     /**
+     * Retrieve single filter by its name.
+     *
+     * @param string $filter_name Filter name to retrieve filter.
+     * @return \Softworx\RocXolid\Tables\Filters\Contracts\Filter
+     */
+    public function getFilter(string $filter_name): Filter;
+
+    /**
      * Obtain values from session for given filter.
      *
      * @param \Softworx\RocXolid\Tables\Filters\Contracts\Filter $filter

@@ -126,8 +126,8 @@ class FormBuilder implements FormBuilderContract
     {
         $form
             ->adjustFormOptions()
-            ->processFormOptions()
-            ->setCustomOptions($custom_options);
+            ->setCustomOptions($custom_options)
+            ->processFormOptions();
 
         return $this;
     }

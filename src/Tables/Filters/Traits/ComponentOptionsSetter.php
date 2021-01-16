@@ -5,7 +5,7 @@ namespace Softworx\RocXolid\Tables\Filters\Traits;
 use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 
 /**
- * @todo refactor
+ * @todo refactor (add type hints & doc)
  */
 trait ComponentOptionsSetter
 {
@@ -51,7 +51,12 @@ trait ComponentOptionsSetter
 
     protected function setLabel($label): Filter
     {
-        return $this->setComponentOptions('label', [ 'title' => $label['title'] ]);
+        return $this->setComponentOptions('label', $label);
+    }
+
+    protected function setResetButton(bool $reset_button): Filter
+    {
+        return $this->setComponentOptions('reset-button', $reset_button);
     }
 
     protected function setDisabled(): Filter

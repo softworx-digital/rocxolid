@@ -1,22 +1,28 @@
 <?php
 
-namespace Softworx\RocXolid\Tables\Filters\Type;
+namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder;
-// rocXolid query filters
+// rocXolid model scopes
+use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
+// rocXolid filters
 use Softworx\RocXolid\Filters\StartsWith;
-// rocXolid table contracts
-use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
-// rocXolid table filters
-use Softworx\RocXolid\Tables\Filters\AbstractFilter;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\FormField;
+// rocXolid form fields
+use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
-class ModelRelationAutocomplete extends AbstractFilter
+/**
+ * @todo this works well for direct standard forms (eg. address > address form)
+ * does not work in general for ex. User directly uses fields of Address form (and the city field is of this type)
+ * Conflicts in Controllers (User Controller is used over needed Address Controller)
+ */
+class ModelRelationSelectAutocomplete extends AbstractFormField
 {
     const LIMIT = 10;
 
     protected $default_options = [
-        'type-template' => 'model-relation',
+        'type-template' => 'model-relation-select',
         // autocompletion settings
         'autocomplete' => [
             'filters' => [
@@ -27,10 +33,16 @@ class ModelRelationAutocomplete extends AbstractFilter
         'relation' => null,
         // field wrapper
         'wrapper' => false,
-        // reset button
-        'reset-button' => true,
+        // component helper classes
+        'helper-classes' => [
+            'error-class' => 'has-error',
+            'success-class' => 'has-success',
+        ],
+        // field label
+        'label' => false,
         // field HTML attributes
         'attributes' => [
+            // 'placeholder' => null,
             'class' => 'form-control autocomplete',
             'data-live-search' => 'true',
         ],
@@ -44,54 +56,30 @@ class ModelRelationAutocomplete extends AbstractFilter
 
     protected $autocomplete_columns;
 
-    public function apply(Builder $query): Builder
-    {
-        return $query->where($this->getColumnName($query), $this->getValue());
-        /*
-        if ($this->join) {
-            $table_column = sprintf('%s.id', $query->getModel()->getTable());
-            $join_table_own_column = sprintf('%s.%s', $this->join['table'], $this->join['own_column']);
-            $join_table_column = sprintf('%s.%s', $this->join['table'], $this->join['join_column']);
-
-            return $query
-                ->join($this->join['table'], $table_column, '=', $join_table_own_column)
-                ->where($join_table_column, $this->getValue());
-        } else {
-            return $query->where($this->getColumnName($query), $this->getValue());
-        }
-        */
-    }
-
     public function autocomplete(string $search): Collection
     {
         !$this->autocomplete_columns ?: $this->queried_model->setSearchColumns($this->autocomplete_columns);
 
         $query = $this->queried_model->query();
-        $query->join(
-            $this->model_relation->getParent()->getTable(),
-            $this->model_relation->getQualifiedOwnerKeyName(), '=', $this->model_relation->getQualifiedForeignKeyName()
-        );
 
         collect($this->autocomplete_filters)->each(function (string $type) use ($query, $search) {
             app($type)->apply($query, $this->queried_model, $search);
         });
 
         return $query
-            ->select($this->queried_model->qualifyColumn('*'))
-            ->distinct()
             ->take(static::LIMIT)
             ->get();
     }
 
-    public function setRelation(string $relation): Filter
+    public function setRelation(string $relation): FormField
     {
-        $this->model_relation = $this->getTable()->getController()->getRepository()->getModel()->{$relation}();
+        $this->model_relation = $this->getForm()->getModel()->{$relation}();
         $this->queried_model = $this->model_relation->getRelated();
 
         return $this;
     }
 
-    public function setAutocomplete(array $settings): Filter
+    public function setAutocomplete(array $settings): FormField
     {
         return $this
             ->setAutocompleteColumns($settings['columns'] ?? null)
@@ -102,6 +90,11 @@ class ModelRelationAutocomplete extends AbstractFilter
     public function getCollection(): Collection
     {
         if ($this->hasValue() && ($model = $this->model_relation->getRelated()->find($this->getValue()))) {
+            // @todo don't know why getValue() returns collection (sometimes?)
+            if ($model instanceof Collection) {
+                $model = $model->first();
+            }
+
             return collect([
                 $model->getKey() => $model->getTitle()
             ]);
@@ -110,14 +103,14 @@ class ModelRelationAutocomplete extends AbstractFilter
         return collect();
     }
 
-    private function setAutocompleteColumns(?array $columns): Filter
+    private function setAutocompleteColumns(?array $columns): FormField
     {
         $this->autocomplete_columns = $columns;
 
         return $this;
     }
 
-    private function setAutocompleteFilters(?array $filters): Filter
+    private function setAutocompleteFilters(?array $filters): FormField
     {
         $this->autocomplete_filters = $filters;
 
@@ -126,9 +119,9 @@ class ModelRelationAutocomplete extends AbstractFilter
 
     private function getAutocompleteUrl(): string
     {
-        return $this->getTable()->getController()->getRoute('tableFilterAutocomplete', [
-            'param' => $this->getTable()->getParam(),
-            'filter' => $this->getName(),
+        return $this->getForm()->getModel()->getControllerRoute('formFieldAutocomplete', [
+            'param' => $this->getForm()->getParam(),
+            'field' => $this->getName(),
         ]);
     }
 }

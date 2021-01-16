@@ -16,8 +16,8 @@ class ModelRelation extends AbstractFilter
         'type-template' => 'model-relation',
         // field wrapper
         'wrapper' => false,
-        // field label
-        // 'label' => false,
+        // reset button
+        'reset-button' => true,
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',

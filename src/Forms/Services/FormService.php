@@ -46,11 +46,11 @@ class FormService implements FormServiceContract
     /**
      * {@inheritDoc}
      */
-    public function createForm(Crudable $model, string $param, ?string $type = null): Form
+    public function createForm(Crudable $model, string $param, ?string $type = null, array $custom_options = [], array $data = []): Form
     {
         $type = $type ?? $this->consumer->getFormMappingType($param);
 
-        return $this->form_builder->buildForm($this->consumer, $model, $type, $param);
+        return $this->form_builder->buildForm($this->consumer, $model, $type, $param, $custom_options, $data);
     }
 
     /**

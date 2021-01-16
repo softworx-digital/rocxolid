@@ -26,7 +26,7 @@ trait HasForms
     use Actions\ReloadsForm;
     use Actions\ReloadsFormGroup;
     use Actions\ValidatesFormGroup;
-    use Actions\RepositoryAutocompleteable; // @todo consider different approach !!
+    use Actions\AutocompletesFormField;
 
     /**
      * Forms container.
@@ -67,10 +67,23 @@ trait HasForms
         $model = $model ?? $this->getRepository()->getModel();
 
         if (!$this->hasFormAssigned($param)) {
-            $this->setForm($this->formService()->createForm($model, $param), $param);
+            $form = $this->makeForm($request, $model, $param);
+
+            $this->setForm($form, $param);
         }
 
         return $this->forms[$param];
+    }
+
+    /**
+     * @todo temporary
+     */
+    public function makeForm(CrudRequest $request, ?Crudable $model = null, ?string $param = null, array $custom_options = [], array $data = []): Form
+    {
+        $param = $param ?? $this->getMappingParam($request, 'form', Formable::FORM_PARAM);
+        $model = $model ?? $this->getRepository()->getModel();
+
+        return $this->formService()->createForm($model, $param, null, $custom_options, $data);
     }
 
     /**

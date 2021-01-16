@@ -57,14 +57,14 @@ class CrudRouterService
             'uses' => $this->controller . '@tableFilter',
         ]);
 
-        Route::post($this->name . '/relation/{relation}/autocomplete/', [
-            'as' => 'crud.' . $this->name . '.relation-autocomplete',
-            'uses' => $this->controller . '@relationAutocomplete',
+        Route::post($this->name . '/table/{param}/autocomplete/{filter}', [
+            'as' => 'crud.' . $this->name . '.filter-autocomplete',
+            'uses' => $this->controller . '@tableFilterAutocomplete',
         ]);
 
-        Route::post($this->name . sprintf('/repository/autocomplete/{%s?}', $this->param), [
-            'as' => 'crud.' . $this->name . '.repository-autocomplete',
-            'uses' => $this->controller . '@repositoryAutocomplete',
+        Route::post($this->name . '/form/{param}/autocomplete/{field}', [
+            'as' => 'crud.' . $this->name . '.field-autocomplete',
+            'uses' => $this->controller . '@formFieldAutocomplete',
         ]);
 
         Route::post($this->name . sprintf('/form/reload/{%s?}', $this->param), [

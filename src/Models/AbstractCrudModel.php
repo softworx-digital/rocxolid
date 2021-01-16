@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 use Softworx\RocXolid\Models\Contracts\ApiRequestable;
-use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
+use Softworx\RocXolid\Models\Contracts\Searchable;
 // rocXolid model traits
 use Softworx\RocXolid\Models\Traits;
 // rocXolid relations
@@ -21,14 +21,14 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo t
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestable, AutocompleteSearchable
+abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestable, Searchable
 {
     use Traits\Crudable;
     use Traits\ApiRequestable;
     use Traits\CanBeFieldItem;
+    use Traits\CanBeSearched;
     use BelongsToThrough;
     use HasUserAttributes;
-    use Traits\AutocompleteSearchable; // @todo wtf?? revise
 
     /**
      * Attribute to use for parent's position.

@@ -35,8 +35,6 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     use Traits\Actions\ReordersModels;
     use Traits\Actions\SwitchesEnability;
     use Traits\Actions\ClonesModels;
-    // @todo temporary here
-    use Traits\Actions\RelationAutocompleteable;
 
     /**
      * Mapping of form type params to controller actions.

@@ -35,7 +35,7 @@ trait Filterable
             return $this->hasFilter($name)
                 && $this->getFilter($name)->setValue($value);
         });
-logger($values);
+
         $this->getRequest()->session()->put($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM), $values);
 
         return $this;
@@ -72,6 +72,18 @@ logger($values);
     /**
      * {@inheritDoc}
      */
+    public function getFilter(string $filter_name): Filter
+    {
+        if ($this->getFilters()->has($filter_name)) {
+            return $this->getFilters()->get($filter_name);
+        }
+
+        throw new \InvalidArgumentException(sprintf('Invalid filter (name) [%s] requested in [%s]', $filter_name, get_class($this)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getFilterValue(Filter $filter)
     {
         $session_values = $this->getRequest()->session()->get($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
@@ -100,21 +112,6 @@ logger($values);
         $this->getFilters()->put($filter->getName(), $filter);
 
         return $this;
-    }
-
-    /**
-     * Retrieve single filter by its name.
-     *
-     * @param string $filter_name Filter name to retrieve filter for.
-     * @return \Softworx\RocXolid\Tables\Filters\Contracts\Filter
-     */
-    protected function getFilter(string $filter_name): Filter
-    {
-        if ($this->getFilters()->has($filter_name)) {
-            return $this->getFilters()->get($filter_name);
-        }
-
-        throw new \InvalidArgumentException(sprintf('Invalid filter (name) [%s] requested in [%s]', $filter_name, get_class($this)));
     }
 
     /**

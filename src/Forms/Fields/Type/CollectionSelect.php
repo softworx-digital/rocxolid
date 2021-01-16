@@ -12,6 +12,9 @@ use Softworx\RocXolid\Forms\Contracts\FormField;
 // rocXolid form fields
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
+/**
+ * @todo refactor
+ */
 class CollectionSelect extends AbstractFormField
 {
     protected $show_null_option = false;

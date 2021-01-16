@@ -23,6 +23,7 @@ trait HasTables
     use ElementMappable;
     use Actions\OrdersTable;
     use Actions\FiltersTable;
+    use Actions\AutocompletesTableFilter;
 
     /**
      * Tables container.

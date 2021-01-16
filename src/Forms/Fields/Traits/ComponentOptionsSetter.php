@@ -5,6 +5,9 @@ namespace Softworx\RocXolid\Forms\Fields\Traits;
 use Illuminate\Support\Str;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 
+/**
+ * @todo refactor (add type hints & doc)
+ */
 trait ComponentOptionsSetter
 {
     protected function setViewPackage($view_package): FormField
@@ -76,9 +79,15 @@ trait ComponentOptionsSetter
 
     protected function setHelperClasses($classes): FormField
     {
-        $this->setComponentOptions('helper-classes', $classes);
+        return $this->setComponentOptions('helper-classes', $classes);
+    }
 
-        return $this;
+    protected function setChangeAction(string $action): FormField
+    {
+        // @todo this works only for actions not requiring other params
+        return $this->setComponentOptions('attributes', [
+            'data-change-action' => $this->getForm()->getController()->getRoute($action, $this->getForm()->getModel())
+        ]);
     }
 
     protected function setDomData($data): FormField
@@ -92,7 +101,7 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('attributes', $dom_data);
     }
 
-    protected function setComponentOptions($what, $value)
+    protected function setComponentOptions($what, $value): FormField
     {
         $method = sprintf('adjust%sComponentOption', Str::studly($what));
 
