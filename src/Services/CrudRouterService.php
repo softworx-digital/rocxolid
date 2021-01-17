@@ -74,6 +74,10 @@ class CrudRouterService
             }
         });
 
+        if (is_null($prev_model) && (get_class($model->getCrudController()) === get_class($controller))) {
+            return null;
+        }
+
         $prev_model = $prev_model ?? $repository->getModel();
 
         if ($prev_model->is($model)) {
