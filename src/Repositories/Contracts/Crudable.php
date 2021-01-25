@@ -65,4 +65,14 @@ interface Crudable extends Repository
      * @return \Softworx\RocXolid\Models\Contracts\Crudable
      */
     public function forceDeleteModel(CrudableModel $model): CrudableModel;
+
+    /**
+     * Clone model instance with provided additional data.
+     * Clones direct model data and relations.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Illuminate\Support\Collection $data
+     * @return \Softworx\RocXolid\Models\Contracts\Crudable
+     */
+    public function cloneModel(CrudableModel $model, Collection $data): CrudableModel;
 }

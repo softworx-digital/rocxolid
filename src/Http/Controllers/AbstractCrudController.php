@@ -50,6 +50,8 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         'store' => 'create',
         'edit' => 'update',
         'update' => 'update',
+        'duplicate' => 'duplicate',
+        'clone' => 'duplicate',
     ];
 
     /**

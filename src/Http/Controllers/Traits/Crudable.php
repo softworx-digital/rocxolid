@@ -19,11 +19,8 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
-    // @todo response methods - inject model viewer, do not 'create' it
+    // @todo response methods - inject model viewer, do not 'create' it (same for CRUD traits subusing Response traits)
     use Crud\Response\ProvidesSuccessResponse;
-    use Crud\Response\ProvidesSuccessCreateResponse;
-    use Crud\Response\ProvidesSuccessUpdateResponse;
-    use Crud\Response\ProvidesDestroyResponse;
     use Crud\Response\ProvidesErrorResponse;
 
     // protected static $model_type; // should be defined in specific controller class
@@ -36,11 +33,7 @@ trait Crudable
      */
     public static function getModelType(): string
     {
-        if (isset(static::$model_type)) {
-            return static::$model_type;
-        }
-
-        return self::guessModelType();
+        return static::$model_type ?? self::guessModelType();
     }
 
     /**

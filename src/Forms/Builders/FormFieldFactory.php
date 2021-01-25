@@ -19,28 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid field types
-use Softworx\RocXolid\Forms\Fields\Type\BooleanRadio;
-use Softworx\RocXolid\Forms\Fields\Type\Button;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonAnchor;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonToolbar;
-use Softworx\RocXolid\Forms\Fields\Type\Checkbox;
-use Softworx\RocXolid\Forms\Fields\Type\CheckboxToggle;
-use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
-use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
-use Softworx\RocXolid\Forms\Fields\Type\Colorpicker;
-use Softworx\RocXolid\Forms\Fields\Type\Datepicker;
-use Softworx\RocXolid\Forms\Fields\Type\Timepicker;
-use Softworx\RocXolid\Forms\Fields\Type\DateTimepicker;
-use Softworx\RocXolid\Forms\Fields\Type\FormFieldGroup;
-use Softworx\RocXolid\Forms\Fields\Type\FormFieldGroupAddable;
-use Softworx\RocXolid\Forms\Fields\Type\Input;
-use Softworx\RocXolid\Forms\Fields\Type\Radio;
-use Softworx\RocXolid\Forms\Fields\Type\Select;
-use Softworx\RocXolid\Forms\Fields\Type\Switchery;
-use Softworx\RocXolid\Forms\Fields\Type\Textarea;
-use Softworx\RocXolid\Forms\Fields\Type\WysiwygTextarea;
+use Softworx\RocXolid\Forms\Fields\Type as FieldType;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\EventDispatchable;
 use Softworx\RocXolid\Forms\Contracts\Form;
@@ -49,7 +28,7 @@ use Softworx\RocXolid\Forms\Contracts\FormFieldable;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory as FormFieldFactoryContract;
 
 /**
- *
+ * @todo complete refactoring needed
  */
 class FormFieldFactory implements FormFieldFactoryContract
 {
@@ -59,26 +38,26 @@ class FormFieldFactory implements FormFieldFactoryContract
      * @var array
      */
     protected static $fields_mapping = [
-        Type::SMALLINT      => Input::class,
-        Type::INTEGER       => Input::class,
-        Type::BIGINT        => Input::class,
-        Type::DECIMAL       => Input::class,
-        Type::FLOAT         => Input::class,
-        Type::STRING        => Input::class,
-        Type::TEXT          => Textarea::class,
-        Type::GUID          => Input::class,
-        Type::BINARY        => Input::class,
-        Type::BLOB          => Input::class,
-        Type::BOOLEAN       => CheckboxToggle::class,
-        Type::DATE          => Datepicker::class,
-        Type::DATETIME      => DateTimepicker::class,
-        Type::DATETIMETZ    => DateTimepicker::class,
-        Type::TIME          => Timepicker::class,
-        Type::TARRAY        => Input::class,
-        Type::SIMPLE_ARRAY  => Input::class,
-        Type::JSON_ARRAY    => Input::class,
-        Type::JSON          => Input::class,
-        Type::OBJECT        => Input::class,
+        Type::SMALLINT      => FieldType\Input::class,
+        Type::INTEGER       => FieldType\Input::class,
+        Type::BIGINT        => FieldType\Input::class,
+        Type::DECIMAL       => FieldType\Input::class,
+        Type::FLOAT         => FieldType\Input::class,
+        Type::STRING        => FieldType\Input::class,
+        Type::TEXT          => FieldType\Textarea::class,
+        Type::GUID          => FieldType\Input::class,
+        Type::BINARY        => FieldType\Input::class,
+        Type::BLOB          => FieldType\Input::class,
+        Type::BOOLEAN       => FieldType\CheckboxToggle::class,
+        Type::DATE          => FieldType\Datepicker::class,
+        Type::DATETIME      => FieldType\DateTimepicker::class,
+        Type::DATETIMETZ    => FieldType\DateTimepicker::class,
+        Type::TIME          => FieldType\Timepicker::class,
+        Type::TARRAY        => FieldType\Input::class,
+        Type::SIMPLE_ARRAY  => FieldType\Input::class,
+        Type::JSON_ARRAY    => FieldType\Input::class,
+        Type::JSON          => FieldType\Input::class,
+        Type::OBJECT        => FieldType\Input::class,
     ];
     /**
      * Special mappings for certain column names.
@@ -86,8 +65,8 @@ class FormFieldFactory implements FormFieldFactoryContract
      * @var array
      */
     protected static $fields_name_mapping = [
-        'color'             => Colorpicker::class,
-        'text_color'        => Colorpicker::class,
+        'color'             => FieldType\Colorpicker::class,
+        'text_color'        => FieldType\Colorpicker::class,
     ];
 
     // @todo zrejme inak - nie cez generovanie definicii, ale priamu tvorbu fieldov
@@ -151,7 +130,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             $related = $relation->getRelated();
 
             return [
-                'type' => CollectionSelect::class,
+                'type' => FieldType\CollectionSelect::class,
                 'options' => [
                     'label' => [
                         'title' => $attribute,
@@ -171,7 +150,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             $related = $relation->getRelated();
 
             return [
-                'type' => CollectionCheckbox::class,
+                'type' => FieldType\CollectionCheckbox::class,
                 'options' => [
                     'label' => [
                         'title' => $attribute,
@@ -191,7 +170,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             $related = $relation->getRelated();
 
             return [
-                'type' => CollectionCheckbox::class,
+                'type' => FieldType\CollectionCheckbox::class,
                 'options' => [
                     'label' => [
                         'title' => $attribute,
@@ -213,7 +192,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             $column = $doctrine_connection->getDoctrineColumn($relation->getParent()->getTable(), $relation->getForeignKeyName());
 
             return [
-                'type' => CollectionSelect::class,
+                'type' => FieldType\CollectionSelect::class,
                 'options' => [
                     'label' => [
                         'title' => $attribute,
@@ -236,7 +215,7 @@ class FormFieldFactory implements FormFieldFactoryContract
             $related = $relation->getRelated();
 
             return [
-                'type' => CollectionCheckbox::class,
+                'type' => FieldType\CollectionCheckbox::class,
                 'options' => [
                     'label' => [
                         'title' => $attribute,
@@ -276,7 +255,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         if ($relation instanceof MorphToMany) {
             $related = $relation->getRelated();
 
-            $field = new CollectionCheckbox();
+            $field = app(FieldType\CollectionCheckbox::class);
             $field->setCollection($related->pluck('name', 'id'));
 
             $field->setOptions([

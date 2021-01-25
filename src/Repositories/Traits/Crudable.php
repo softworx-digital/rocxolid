@@ -20,6 +20,7 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
+    use Crud\ClonesModels;
 
     /**
      * Fill model with given data.

@@ -22,6 +22,8 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
  */
 trait UpdatesModels
 {
+    use Response\ProvidesSuccessUpdateResponse;
+
     /**
      * Display the specified resource update form.
      *

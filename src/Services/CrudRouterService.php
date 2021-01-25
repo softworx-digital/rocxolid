@@ -42,7 +42,7 @@ class CrudRouterService
         return $route ? $route->bind($request) : null;
     }
 
-    public static function backLink(Model $model): ?array
+    public static function backLink(?Model $model = null): ?array
     {
         $url = request()->headers->get('referer');
 
@@ -74,13 +74,13 @@ class CrudRouterService
             }
         });
 
-        if (is_null($prev_model) && (get_class($model->getCrudController()) === get_class($controller))) {
+        if (is_null($prev_model) && ($model) && (get_class($model->getCrudController()) === get_class($controller))) {
             return null;
         }
 
         $prev_model = $prev_model ?? $repository->getModel();
 
-        if ($prev_model->is($model)) {
+        if ($model && $prev_model->is($model)) {
             return null;
         }
 
@@ -157,8 +157,8 @@ class CrudRouterService
         ]);
 
         RouteFacade::get($this->name . sprintf('/clone/{%s}', $this->param), [
-            'as' => 'crud.' . $this->name . '.clone-confirm',
-            'uses' => $this->controller . '@cloneConfirm',
+            'as' => 'crud.' . $this->name . '.duplicate',
+            'uses' => $this->controller . '@duplicate',
         ]);
 
         RouteFacade::post($this->name . sprintf('/clone/{%s}', $this->param), [
@@ -209,8 +209,8 @@ class CrudRouterService
                 'edit'      => 'crud.' . $this->name . '.edit',
                 'update'    => 'crud.' . $this->name . '.update',
                 'show'      => 'crud.' . $this->name . '.show',
-                'clone'     => 'crud.' . $this->name . '.clone',
-                'destroy'   => 'crud.' . $this->name . '.destroy',
+                'clone'     => 'crud.' . $this->name . '.clone', // @todo check relevance
+                'destroy'   => 'crud.' . $this->name . '.destroy', // @todo check relevance
             ],
         ], $this->options);
 

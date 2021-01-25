@@ -22,6 +22,8 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
  */
 trait CreatesModels
 {
+    use Response\ProvidesSuccessCreateResponse;
+
     /**
      * Display the specified resource create form.
      *

@@ -232,7 +232,15 @@ trait HasAttributes
     {
         $attribute = Str::camel(Str::beforeLast($attribute, '_id'));
 
-        return filled($attribute) && method_exists($this, $attribute) && ($this->{$attribute}() instanceof Relation);
+        // @todo this makes troubles for methods that have nothing to do with attributes
+        // eg. Role has 'guard' attribute and the code calls $role::guard() method which is used for totally unrelated functionality
+        // hotfixed by try & catch
+        try {
+            return filled($attribute) && method_exists($this, $attribute) && ($this->{$attribute}() instanceof Relation);
+        } catch (\Throwable $e) {
+            logger()->error($e);
+            return false;
+        }
     }
 
     /**

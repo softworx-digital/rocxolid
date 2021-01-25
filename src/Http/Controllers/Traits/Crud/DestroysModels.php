@@ -22,6 +22,8 @@ use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewer
  */
 trait DestroysModels
 {
+    use Response\ProvidesDestroyResponse;
+
     /**
      * Flag if to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
      *

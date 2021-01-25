@@ -5,6 +5,7 @@ namespace Softworx\RocXolid\Models\Traits;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
 // relations
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,16 +13,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 // rocXolid contracts
-use Softworx\RocXolid\Models\Contracts\Cloneable as CloneableContract;
+use Softworx\RocXolid\Models\Contracts\Cloneable;
 use Softworx\RocXolid\Models\Contracts\Container;
 use Softworx\RocXolid\Models\Contracts\Containee;
 // @todo quick n dirty
 use Softworx\RocXolid\CMS\Models\HtmlWrapper;
 
 /**
- * @todo subject to refactoring
+ * @todo subject to refactoring, integrate to Softworx\RocXolid\Repositories\Traits\Crud\ClonesModels
  */
-trait Cloneable
+trait CanBeCloned
 {
     /**
      * Model relationship methods that can be possibly cloned.
@@ -30,7 +31,18 @@ trait Cloneable
      */
     //protected $clone_relationships = [];
 
-    public function clone(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
+    /**
+     * Business rules to prevent model instances to be cloned.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return bool
+     */
+    public function canBeCloned(Request $request): bool
+    {
+        return true;
+    }
+
+    public function clone(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
     {
         $class = (new \ReflectionClass($this))->getName();
 
@@ -91,7 +103,7 @@ trait Cloneable
     protected function cloneContainees($clone, $clone_log, $fill, $with_relations)
     {
         $this->getAllContainees()->each(function ($containee, $index) use ($clone, $clone_log, $fill, $with_relations) {
-            if (($containee instanceof CloneableContract) && $containee->getContaineePivotData()->is_owned) {
+            if (($containee instanceof Cloneable) && $containee->getContaineePivotData()->is_owned) {
                 $containee_clone = $containee->clone($clone_log, $fill, $with_relations);
 
                 $clone->attachContainee($containee->getContaineePivotData()->container_relation, $containee_clone);
@@ -139,7 +151,7 @@ trait Cloneable
      * @param \Softworx\RocXolid\Models\Contracts\Cloneable $clone
      * @return \Softworx\RocXolid\Models\Contracts\Cloneable
      */
-    protected function afterCloning(CloneableContract $clone): CloneableContract
+    protected function afterCloning(Cloneable $clone): Cloneable
     {
         return $this;
     }
@@ -152,17 +164,17 @@ trait Cloneable
      * @param array $with_relations
      * @return \Softworx\RocXolid\Models\Contracts\Cloneable
      */
-    protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
+    protected function fillClonedBeforeSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
     {
         return $this;
     }
 
-    protected function fillClonedAfterSave(Collection &$clone_log, array $fill = [], array $with_relations = []): CloneableContract
+    protected function fillClonedAfterSave(Collection &$clone_log, array $fill = [], array $with_relations = []): Cloneable
     {
         return $this;
     }
 
-    protected function buildRelationsAfter(Collection $clone_log): CloneableContract
+    protected function buildRelationsAfter(Collection $clone_log): Cloneable
     {
         return $this;
     }

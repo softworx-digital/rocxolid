@@ -72,7 +72,7 @@ trait ProvidesSuccessResponse
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      * @return array
-     * @todo action result notification text upon action
+     * @todo text result notification upon action
      */
     protected function successAjaxResponse(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
     {
