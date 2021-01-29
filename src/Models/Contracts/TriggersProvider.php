@@ -31,7 +31,7 @@ interface TriggersProvider
      * Check if the provider contains required trigger types.
      *
      * @param string $required_trigger_type
-     * @return boolean
+     * @return bool
      */
     public function containsTriggerTypes(Collection $required_trigger_types): bool;
 
@@ -39,7 +39,7 @@ interface TriggersProvider
      * Check if all assigned triggers are fireable.
      *
      * @param ...$arguments
-     * @return boolean
+     * @return bool
      */
     public function allTriggersFireable(...$arguments): bool;
 }
