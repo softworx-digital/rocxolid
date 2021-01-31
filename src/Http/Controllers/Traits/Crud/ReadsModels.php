@@ -29,6 +29,8 @@ trait ReadsModels
      */
     public function show(CrudRequest $request, Crudable $model, ?string $tab = null)//: View
     {
+        $this->initModel($model);
+
         $model_viewer_component = $this->getShowModelViewerComponent($request, $model, $tab);
 
         if ($request->ajax()) {

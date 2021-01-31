@@ -34,6 +34,7 @@ trait ModelViewerComponentable
     public function getModelViewerComponent(?Crudable $model = null, ?CrudForm $form_component = null): CrudModelViewer
     {
         $model = $model ?? $this->getRepository()->getModel();
+        $this->initModel($model);
 
         $model_viewer_component = static::$model_viewer_type::build($this, $this)
             ->setModel($model)

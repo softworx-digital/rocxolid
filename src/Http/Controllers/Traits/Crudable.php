@@ -26,6 +26,17 @@ trait Crudable
     // protected static $model_type; // should be defined in specific controller class
 
     /**
+     * Initiate model instance to be used with controller.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Softworx\RocXolid\Models\Contracts\Crudable
+     */
+    public function initModel(CrudableModel $model): CrudableModel
+    {
+        return $model;
+    }
+
+    /**
      * Provide the model type the controller works with.
      * Each controller is assigned only one model type.
      *

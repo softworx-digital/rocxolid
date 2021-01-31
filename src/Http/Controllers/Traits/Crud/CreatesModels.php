@@ -32,7 +32,11 @@ trait CreatesModels
      */
     public function create(CrudRequest $request)//: View
     {
-        $model_viewer_component = $this->getCreateModelViewerComponent($request, $this->getRepository()->getModel());
+        $model = $this->getRepository()->getModel();
+
+        $this->initModel($model);
+
+        $model_viewer_component = $this->getCreateModelViewerComponent($request, $model);
 
         return $request->ajax()
             ? $this->createAjax($request, $model_viewer_component)

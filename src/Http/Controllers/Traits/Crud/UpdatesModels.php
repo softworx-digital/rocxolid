@@ -33,7 +33,7 @@ trait UpdatesModels
      */
     public function edit(CrudRequest $request, CrudableModel $model)//: View
     {
-        $model_viewer_component = $this->getUpdateModelViewerComponent($request, $model);
+        $model_viewer_component = $this->getUpdateModelViewerComponent($request, $this->initModel($model));
 
         return $request->ajax()
             ? $this->editAjax($request, $model, $model_viewer_component)
@@ -80,6 +80,8 @@ trait UpdatesModels
      */
     public function update(CrudRequest $request, CrudableModel $model)//: Response
     {
+        $this->initModel($model);
+
         // last time to check if something prevents the model to be updated
         if (!$model->canBeUpdated($request)) {
             throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be updated', (new \ReflectionClass($model))->getName(), $model->getKey()));

@@ -12,6 +12,7 @@ use Softworx\RocXolid\Contracts\Valueable as ValueableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo return types (php8)
  */
 trait Valueable
 {
@@ -78,6 +79,14 @@ trait Valueable
     public function getValue($default = null)
     {
         return $this->getIndexValue(0, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValue($value, $strict = false): bool
+    {
+        return $strict ? ($this->getValue() === $value) : ($this->getValue() == $value);
     }
 
     /**

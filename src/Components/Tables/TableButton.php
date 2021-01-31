@@ -47,11 +47,15 @@ class TableButton extends Button implements ComponentTableButtonable
             if ($this->getOption('ajax', false)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'data-ajax-url' => $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])),
+                        // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                        // 'data-ajax-url' => $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])),
+                        'data-ajax-url' => $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])),
                     ],
                 ]);
             } else {
-                $this->setOption('url', $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
+                // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                // $this->setOption('url', $model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
+                $this->setOption('url', $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])));
             }
         } elseif ($this->hasOption('method-action')) {
             if ($this->getOption('ajax', false)) {
@@ -82,11 +86,15 @@ class TableButton extends Button implements ComponentTableButtonable
             if ($this->getOption('ajax', false)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'data-ajax-url' => $related->getControllerRoute($this->getOption('related-action.action'), $params),
+                        // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                        // 'data-ajax-url' => $related->getControllerRoute($this->getOption('related-action.action'), $params),
+                        'data-ajax-url' => $controller->getRoute($this->getOption('related-action.action'), $model, $params),
                     ],
                 ]);
             } else {
-                $this->setOption('url', $related->getControllerRoute($this->getOption('related-action.action'), $params));
+                // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                // $this->setOption('url', $related->getControllerRoute($this->getOption('related-action.action'), $params));
+                $this->setOption('url', $controller->getRoute($this->getOption('related-action.action'), $model, $params));
             }
         } elseif ($this->hasOption('foreign-action')) {
             if ($this->hasOption('foreign-action.getter')) {
@@ -108,11 +116,15 @@ class TableButton extends Button implements ComponentTableButtonable
             if ($this->getOption('ajax', false)) {
                 $this->mergeOptions([
                     'attributes' => [
-                        'data-ajax-url' => $related->getControllerRoute($this->getOption('foreign-action.action'), $params),
+                        // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                        // 'data-ajax-url' => $related->getControllerRoute($this->getOption('foreign-action.action'), $params),
+                        'data-ajax-url' => $controller->getRoute($this->getOption('foreign-action.action'), $model, $params),
                     ],
                 ]);
             } else {
-                $this->setOption('url', $related->getControllerRoute($this->getOption('foreign-action.action'), $params));
+                // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+                // $this->setOption('url', $related->getControllerRoute($this->getOption('foreign-action.action'), $params));
+                $this->setOption('url', $controller->getRoute($this->getOption('foreign-action.action'), $model, $params));
             }
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));

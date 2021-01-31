@@ -118,6 +118,7 @@ abstract class AbstractController extends IlluminateController implements Respon
         $action = sprintf('\%s@%s', get_class($this), $route_action);
         $action_params = [];
 
+        // @todo nicer (collection with replaceRecursive)
         array_walk($params, function ($param) use (&$action_params) {
             if (is_array($param)) {
                 $action_params += $param;

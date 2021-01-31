@@ -101,8 +101,8 @@ class PermissionScannerService
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedAction::class);
                 } catch (\Throwable $e) {
                     // @todo nicer handling
-                    // dump(__FILE__, $method, $e->getMessage());
-                    // dd($e);
+                    // dump(__METHOD__, __FILE__, $method, $e->getMessage());
+                    // dd(__METHOD__, $e);
                     throw $e;
                 }
                 return !is_null($method->annotation);
@@ -156,8 +156,8 @@ class PermissionScannerService
                     return !is_null($method->annotation) && $this->isValidPermissionRelationMethod($reflection, $method);
                 } catch (\Throwable $e) {
                     // @todo nicer handling
-                    // dd(__FILE__, $method, $e->getMessage());
-                    // dd($e);
+                    // dd(__METHOD__, __FILE__, $method, $e->getMessage());
+                    // dd(__METHOD__, $e);
                     throw $e;
                 }
             })->each(function ($method) use ($permissions, $model, $package) {

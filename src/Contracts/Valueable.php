@@ -57,6 +57,15 @@ interface Valueable
     public function getValue($default = null);
 
     /**
+     * Check value against given value.
+     *
+     * @param mixed $value
+     * @param boolean $strict
+     * @return bool
+     */
+    public function isValue($value, $strict = false): bool;
+
+    /**
      * Get the value at given position.
      *
      * @param int $index Collection position to get the value at.

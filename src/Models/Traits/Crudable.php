@@ -165,7 +165,7 @@ trait Crudable
      */
     private function guessCrudControllerType(): string
     {
-        return sprintf('\%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
+        return sprintf('%s\%s', str_replace('Models', 'Http\Controllers', (new \ReflectionClass($this))->getName()), 'Controller');
     }
 
     /**
@@ -177,9 +177,9 @@ trait Crudable
      */
     public function getControllerRoute(string $method = 'show', array $params = []): string
     {
-        $action = sprintf('%s@%s', $this->getCrudControllerType(), $method);
+        $action = sprintf('\%s@%s', $this->getCrudControllerType(), $method);
 
-        return action($action, [ $this ] + $this->getDefaultControllerRouteParams($method) + $params);
+        return action($action, [ $this ] + $this->getControllerRouteDefaultParams($method) + $params);
     }
 
     /**
@@ -188,7 +188,7 @@ trait Crudable
      * @param string $method
      * @return array
      */
-    protected function getDefaultControllerRouteParams(string $method): array
+    protected function getControllerRouteDefaultParams(string $method): array
     {
         return [];
     }

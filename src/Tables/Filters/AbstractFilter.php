@@ -93,6 +93,6 @@ abstract class AbstractFilter extends AbstractTableElement implements Valueable,
      */
     protected function getColumnName(EloquentBuilder $query): string
     {
-        return sprintf('%s.%s', $query->getModel()->getTable(), $this->getName());
+        return $query->getModel()->qualifyColumn($this->getName());
     }
 }

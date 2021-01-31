@@ -8,10 +8,7 @@ use Softworx\RocXolid\Helpers\View as ViewHelper;
 // rocXolid contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
 // rocXolid general traits
-use Softworx\RocXolid\Traits\Controllable;
-use Softworx\RocXolid\Traits\MethodOptionable;
-use Softworx\RocXolid\Traits\Paramable;
-use Softworx\RocXolid\Traits\Requestable;
+use Softworx\RocXolid\Traits as rxTraits;
 // rocXolid table button types
 use Softworx\RocXolid\Tables\Buttons\Type as ButtonType;
 
@@ -24,10 +21,10 @@ use Softworx\RocXolid\Tables\Buttons\Type as ButtonType;
  */
 abstract class AbstractCrudTable implements Table
 {
-    use Paramable;
-    use Requestable;
-    use Controllable;
-    use MethodOptionable;
+    use rxTraits\Paramable;
+    use rxTraits\Requestable;
+    use rxTraits\Controllable;
+    use rxTraits\MethodOptionable;
     use Traits\Buildable;
     use Traits\Columnable;
     use Traits\Buttonable;
