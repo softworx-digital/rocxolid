@@ -273,6 +273,23 @@ class Validator extends IlluminateValidator
     }
 
     /**
+     * Validate the size of an (localized) decimal attribute is greater than a minimun value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validatePositiveDecimal(string $attribute, $value, array $parameters): bool
+    {
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value > 0;
+    }
+
+    /**
      * Validate that a (localized) decimal number is greater than another attribute.
      *
      * @param string $attribute

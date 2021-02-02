@@ -31,4 +31,22 @@ class StartsWith
             });
         });
     }
+
+    /**
+     * Apply filter with disjunction.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Softworx\RocXolid\Models\Contracts\Searchable $model
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @todo hotfixed needed feature by adding following method
+     */
+    public function applyDisjunct(Builder $query, Searchable $model, string $search): Builder
+    {
+        return $query->orWhere(function (Builder $query) use ($model, $search) {
+            $model->getSearchColumns()->each(function (string $column) use ($query, $model, $search) {
+                $query->orWhere($model->qualifyColumn($column), 'like', sprintf('%s%%', $search));
+            });
+        });
+    }
 }

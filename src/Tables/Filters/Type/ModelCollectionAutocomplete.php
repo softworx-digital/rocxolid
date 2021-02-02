@@ -11,6 +11,7 @@ use Softworx\RocXolid\Tables\Filters\Contracts\Filter;
 // rocXolid table filters
 use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
+// @todo incomplete
 class ModelCollectionAutocomplete extends AbstractFilter
 {
     const LIMIT = 10;

@@ -55,6 +55,11 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('label', $label);
     }
 
+    protected function setPrefix($prefix): FormField
+    {
+        return $this->setComponentOptions('prefix', $prefix);
+    }
+
     protected function setUnits($units): FormField
     {
         return $this->setComponentOptions('units', $units);
