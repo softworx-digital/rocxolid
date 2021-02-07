@@ -93,6 +93,17 @@ trait Filterable
 
     /**
      * {@inheritDoc}
+     * @todo hotfixed
+     */
+    public function getFilterNameValue(string $filter_name)
+    {
+        $session_values = $this->getRequest()->session()->get($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
+
+        return $session_values ? $session_values->get($filter_name) : null;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getFilteringRoute(): string
     {

@@ -62,6 +62,20 @@ class Repository implements RepositoryContract
     /**
      * {@inheritDoc}
      */
+    public function getCollectionQuery(): Builder
+    {
+        $query = $this->initQuery();
+
+        $this
+            ->applyOrder($query)
+            ->applyFilters($query);
+
+        return $query;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function all(array $columns = ['*']): Collection
     {
         return $this
@@ -77,6 +91,16 @@ class Repository implements RepositoryContract
         return $this
             ->getCollectionQuery()
             ->count();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function sum(string $column): float
+    {
+        return $this
+            ->getCollectionQuery()
+            ->sum($column);
     }
 
     /**
@@ -134,22 +158,6 @@ class Repository implements RepositoryContract
         $this
             ->applyScopes($query)
             ->applyIntenalFilters($query);
-
-        return $query;
-    }
-
-    /**
-     * Initialize model query for retrieving collection of data.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    protected function getCollectionQuery(): Builder
-    {
-        $query = $this->initQuery();
-
-        $this
-            ->applyOrder($query)
-            ->applyFilters($query);
 
         return $query;
     }

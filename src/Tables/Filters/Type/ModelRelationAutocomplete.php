@@ -40,6 +40,8 @@ class ModelRelationAutocomplete extends AbstractFilter
 
     protected $queried_model;
 
+    protected $model_filters;
+
     protected $autocomplete_filters;
 
     protected $autocomplete_columns;
@@ -76,6 +78,11 @@ class ModelRelationAutocomplete extends AbstractFilter
             app($type)->apply($query, $this->queried_model, $search);
         });
 
+        collect($this->model_filters)->each(function ($definition) use ($query) {
+            extract($definition);
+            app($type)->apply($query, $this->queried_model, $data);
+        });
+
         return $query
             ->select($this->queried_model->qualifyColumn('*'))
             ->distinct()
@@ -87,6 +94,13 @@ class ModelRelationAutocomplete extends AbstractFilter
     {
         $this->model_relation = $this->getTable()->getController()->getRepository()->getModel()->{$relation}();
         $this->queried_model = $this->model_relation->getRelated();
+
+        return $this;
+    }
+
+    public function setModelFilters(array $model_filters): Filter
+    {
+        $this->model_filters = $model_filters;
 
         return $this;
     }

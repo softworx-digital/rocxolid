@@ -43,6 +43,13 @@ interface Repository extends Scopeable, Orderable, Filterable, Paginationable
     public function getQuery(): Builder;
 
     /**
+     * Initialize model query for retrieving collection of data.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getCollectionQuery(): Builder;
+
+    /**
      * Retrieve data set based on scopes, order, filter and paging.
      *
      * @param array $columns
@@ -56,6 +63,13 @@ interface Repository extends Scopeable, Orderable, Filterable, Paginationable
      * @return int
      */
     public function count(): int;
+
+    /**
+     * Retrieve data set's column sum based on scopes, order, filter and paging.
+     *
+     * @return int
+     */
+    public function sum(string $column): float;
 
     /**
      * Find model instance with applied scopes and internal filters.

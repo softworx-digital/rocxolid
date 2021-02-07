@@ -138,7 +138,7 @@ class PermissionScannerService
         $models->each(function ($model) use ($permissions) {
             $reflection = new \ReflectionClass($model);
 
-            if (Str::startsWith($reflection->getNamespaceName(), 'App\\')) {
+            if (Str::startsWith($reflection->getNamespaceName(), 'App')) {
                 $package = 'app';
             }
 

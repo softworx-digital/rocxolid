@@ -5,6 +5,8 @@ namespace Softworx\RocXolid\Tables;
 use Illuminate\Pagination\LengthAwarePaginator;
 // rocXolid utils
 use Softworx\RocXolid\Helpers\View as ViewHelper;
+// rocXolid repository contracts
+use Softworx\RocXolid\Repositories\Contracts\Repository;
 // rocXolid contracts
 use Softworx\RocXolid\Tables\Contracts\Table;
 // rocXolid general traits
@@ -169,17 +171,29 @@ abstract class AbstractCrudTable implements Table
     public function getData(): LengthAwarePaginator
     {
         if (!isset($this->data)) {
-            $this->data = $this
-                ->getController()
-                    ->getRepository()
-                        // ->setScopes($this->getScopes())
-                        ->setOrderBy($this->getOrderByColumn(), $this->getOrderByDirection())
-                        ->setFilters($this->getFilters())
-                        ->paginate($this->getCurrentPage(), $this->getPerPage())
-                        ->withPath($this->getPaginatorRoutePath());
+            $data = $this->initRepository()
+                ->paginate($this->getCurrentPage(), $this->getPerPage())
+                ->withPath($this->getPaginatorRoutePath());
+
+            $this->data = $data;
         }
 
         return $this->data;
+    }
+
+    /**
+     * Obtain repository set with ordering and filters.
+     *
+     * @return \Softworx\RocXolid\Repositories\Contracts\Repository
+     */
+    protected function initRepository(): Repository
+    {
+        $repository = $this->getController()->getRepository();
+
+        return $repository
+            // ->setScopes($this->getScopes())
+            ->setOrderBy($this->getOrderByColumn(), $this->getOrderByDirection())
+            ->setFilters($this->getFilters());
     }
 
     /**
