@@ -47,6 +47,11 @@ class ButtonAnchor extends AbstractButton
         return $this->setComponentOptions('method-action', $params);
     }
 
+    protected function setRelationAction(array $params): Button
+    {
+        return $this->setComponentOptions('relation-action', $params);
+    }
+
     protected function setRelatedAction(array $params): Button
     {
         return $this->setComponentOptions('related-action', $params);

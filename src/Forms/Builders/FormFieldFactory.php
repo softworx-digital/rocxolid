@@ -67,6 +67,7 @@ class FormFieldFactory implements FormFieldFactoryContract
     protected static $fields_name_mapping = [
         'color'             => FieldType\Colorpicker::class,
         'text_color'        => FieldType\Colorpicker::class,
+        'background_color'  => FieldType\Colorpicker::class,
     ];
 
     // @todo zrejme inak - nie cez generovanie definicii, ale priamu tvorbu fieldov
