@@ -41,6 +41,9 @@ class Owned implements Scope
             return;
         }
 
+        // needed, cause when joining tables, model columns may be replaced by joined table columns (eg. the model key)
+        $builder->select($model->qualifyColumn('*'));
+
         // scoping users first // @todo kinda "hotfixed", find some nicer approach
         if ($model instanceof $user) {
             $this->handleUserScope($builder, $model, $user);
@@ -85,9 +88,7 @@ class Owned implements Scope
      */
     private function handleUserScope(Builder $builder, Model $model, Authorizable $user)
     {
-        $column = sprintf('%s.%s', $model->getTable(), $model->getKeyName());
-
-        $builder->where($column, $user->getKey());
+        $builder->where($model->getQualifiedKeyName(), $user->getKey());
     }
 
     /**

@@ -56,6 +56,14 @@ interface Filterable
     public function getFilter(string $filter_name): Filter;
 
     /**
+     * Check if the filter is present.
+     *
+     * @param string $filter_name Filter name to check.
+     * @return bool
+     */
+    public function hasFilter(string $filter_name): bool;
+
+    /**
      * Obtain values from session for given filter.
      *
      * @param \Softworx\RocXolid\Tables\Filters\Contracts\Filter $filter

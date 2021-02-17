@@ -202,7 +202,7 @@ class PermissionScannerService
 
     private function isValidPermissionRelationMethod(\ReflectionClass $reflection, \ReflectionMethod $method): bool
     {
-        $method_return_type = $method->getReturnType()->getName();
+        $method_return_type = optional($method->getReturnType())->getName();
 
         if (blank($method_return_type)) {
             throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $reflection->getName(), $method->getName()));
@@ -243,7 +243,11 @@ class PermissionScannerService
 
     private function isValidPermissionRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = $method->getReturnType()->getName();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (in_array($method_return_type, [ HasOneOrMany::class, BelongsToMany::class ])) {
             return true;
@@ -262,7 +266,11 @@ class PermissionScannerService
 
     private function isValidPermissionBelongsToRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = $method->getReturnType()->getName();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (($method_return_type === BelongsTo::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
             return false;
@@ -277,7 +285,11 @@ class PermissionScannerService
 
     private function isValidPermissionBelongsToManyRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = $method->getReturnType()->getName();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (($method_return_type === BelongsToMany::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
             return false;

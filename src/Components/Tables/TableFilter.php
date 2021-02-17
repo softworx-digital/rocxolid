@@ -46,6 +46,11 @@ class TableFilter extends AbstractOptionableComponent implements ComponentTableF
             ]);
         }
 
+        // @todo kinda "hotfixed", you can do better
+        if ($view_package = $this->getOption('view-package', false)) {
+            $this->setViewPackage($view_package);
+        }
+
         return $this;
     }
 

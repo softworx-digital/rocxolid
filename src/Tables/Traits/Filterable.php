@@ -84,6 +84,14 @@ trait Filterable
     /**
      * {@inheritDoc}
      */
+    public function hasFilter(string $filter_name): bool
+    {
+        return $this->getFilters()->has($filter_name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getFilterValue(Filter $filter)
     {
         $session_values = $this->getRequest()->session()->get($this->getSessionKey(FilterableContract::FILTER_SESSION_PARAM));
@@ -123,16 +131,5 @@ trait Filterable
         $this->getFilters()->put($filter->getName(), $filter);
 
         return $this;
-    }
-
-    /**
-     * Check if the filter is present.
-     *
-     * @param string $filter_name Filter name to check.
-     * @return bool
-     */
-    protected function hasFilter(string $filter_name): bool
-    {
-        return $this->getFilters()->has($filter_name);
     }
 }
