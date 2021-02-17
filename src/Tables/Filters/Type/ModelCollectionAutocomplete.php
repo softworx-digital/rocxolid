@@ -24,8 +24,8 @@ class ModelCollectionAutocomplete extends AbstractFilter
                 StartsWith::class
             ],
         ],
-        // collection used for this field
-        'collection' => null,
+        // model type used for this field
+        'model-type' => null,
         // field wrapper
         'wrapper' => false,
         // reset button
@@ -68,10 +68,6 @@ class ModelCollectionAutocomplete extends AbstractFilter
         !$this->autocomplete_columns ?: $this->queried_model->setSearchColumns($this->autocomplete_columns);
 
         $query = $this->queried_model->query();
-        $query->join(
-            $this->model_relation->getParent()->getTable(),
-            $this->model_relation->getQualifiedOwnerKeyName(), '=', $this->model_relation->getQualifiedForeignKeyName()
-        );
 
         collect($this->autocomplete_filters)->each(function (string $type) use ($query, $search) {
             app($type)->apply($query, $this->queried_model, $search);
@@ -84,10 +80,9 @@ class ModelCollectionAutocomplete extends AbstractFilter
             ->get();
     }
 
-    public function setCollection(string $relation): Filter
+    public function setModelType(string $model_type): Filter
     {
-        $this->model_relation = $this->getTable()->getController()->getRepository()->getModel()->{$relation}();
-        $this->queried_model = $this->model_relation->getRelated();
+        $this->queried_model = $model_type::make();
 
         return $this;
     }
@@ -102,7 +97,7 @@ class ModelCollectionAutocomplete extends AbstractFilter
 
     public function getCollection(): Collection
     {
-        if ($this->hasValue() && ($model = $this->model_relation->getRelated()->find($this->getValue()))) {
+        if ($this->hasValue() && ($model = $this->queried_model->find($this->getValue()))) {
             return collect([
                 $model->getKey() => $model->getTitle()
             ]);
