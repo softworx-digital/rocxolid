@@ -4,7 +4,7 @@ namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Illuminate\Support\Collection;
 // rocXolid models
-use Softworx\RocXolid\Models\AbstractCrudModel;
+use Softworx\RocXolid\Models\AbstractCrudModel; // @todo change to crudable contract
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid form contracts
@@ -60,8 +60,8 @@ class CollectionSelect extends AbstractFormField
                 $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
             } elseif (isset($option['method'])) {
                 if (method_exists($option['model'], $option['method'])) {
-                    $this->collection = $query->get()->mapWithKeys(function (AbstractCrudModel $model) use ($option) {
-                        return [ $model->getKey() => $model->{$option['method']}() ];
+                    $this->collection = $query->get()->mapWithKeys(function (AbstractCrudModel $model, int $index) use ($option) {
+                        return [ $model->getKey() => $this->getOptionText($model, $option, $index) ];
                     });
                 } else {
                     throw new \InvalidArgumentException(sprintf(
@@ -98,6 +98,21 @@ class CollectionSelect extends AbstractFormField
     protected function isValueExpected(): bool
     {
         return false;
+    }
+
+    protected function getOptionText(AbstractCrudModel $model, array $option, int $index): string
+    {
+        $text = $model->{$option['method']}();
+
+        switch ($option['indicate'] ?? null)
+        {
+            case 'index':
+                $text = sprintf('%s - %s', $index + 1, $text);
+                break;
+        }
+
+
+        return $text;
     }
 
     /*

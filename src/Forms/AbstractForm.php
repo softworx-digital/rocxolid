@@ -450,8 +450,11 @@ abstract class AbstractForm implements Form
         if ($input->has(FormField::SINGLE_DATA_PARAM)) {
             collect($input->get(FormField::SINGLE_DATA_PARAM))
                 ->each(function ($value, $name) {
-                    // @todo hotfixed
-                    if ($this->hasFormField($name) && !is_null($value) && !$this->getFormField($name)->hasOption('value')) {
+                    // @todo hotfixed, extremely ugly
+                    if ($this->hasFormField($name)
+                        && !is_null($value)
+                        && !$this->getFormField($name)->hasOption('value')
+                        && !$this->getFormField($name)->hasOption('force-value')) {
                         $this->getFormField($name)
                             ->setValue($value)
                             ->updateParent();

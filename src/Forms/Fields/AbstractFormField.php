@@ -413,6 +413,18 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this;
     }
 
+    // @todo hotfixed
+    protected function setForceValue($value): FormField
+    {
+        $this->mergeOptions([
+            'force-value' => $value
+        ]);
+
+        $this->setValue($value);
+
+        return $this;
+    }
+
     protected function makeRoute($route_name)
     {
         return route($route_name);

@@ -187,4 +187,15 @@ trait OptionsSetter
 
         return $this;
     }
+
+    protected function setSubmitAction(string $submit_action): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'submit-action' => $submit_action
+            ]
+        ]);
+
+        return $this;
+    }
 }
