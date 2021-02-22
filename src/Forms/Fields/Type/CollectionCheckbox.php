@@ -50,7 +50,7 @@ class CollectionCheckbox extends AbstractFormField
                     $query = (new $filter['class']())->apply($query, $model, $filter['data']);
                 }
             }
-
+            // @todo use qualify
             $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
 
             if (isset($option['method'])) {

@@ -52,7 +52,7 @@ trait HasRelationships
             return collect();
         }
 
-        return collect($this->relationships)->except($except ?? []);
+        return collect($this->relationships)->diff($except ?? []);
     }
 
     /**

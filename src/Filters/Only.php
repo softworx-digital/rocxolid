@@ -13,6 +13,6 @@ class Only
 {
     public function apply(Builder $query, Model $queried_model, Collection $models)
     {
-        return $query->whereIn(sprintf('%s.%s', $queried_model->getTable(), $queried_model->getKeyName()), $models->pluck('id'));
+        return $query->whereIn($queried_model->getQualifiedKeyName(), $models->pluck('id'));
     }
 }
