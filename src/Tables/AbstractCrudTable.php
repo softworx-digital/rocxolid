@@ -20,6 +20,7 @@ use Softworx\RocXolid\Tables\Buttons\Type as ButtonType;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo feature to reload data
  */
 abstract class AbstractCrudTable implements Table
 {
@@ -168,9 +169,9 @@ abstract class AbstractCrudTable implements Table
     /**
      * {@inheritDoc}
      */
-    public function getData(): LengthAwarePaginator
+    public function getData(bool $reload = false): LengthAwarePaginator
     {
-        if (!isset($this->data)) {
+        if ($reload || !isset($this->data)) {
             $data = $this->initRepository()
                 ->paginate($this->getCurrentPage(), $this->getPerPage())
                 ->withPath($this->getPaginatorRoutePath());

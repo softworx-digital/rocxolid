@@ -21,7 +21,11 @@ trait ClonesModels
     public function cloneModel(Crudable $model, Collection $data): Crudable
     {
         // @todo temporary solution
-        $with_relations = $data->get('_clone_with_relations', []);
+        if ($data->has('_clone_with_relations')) {
+            $with_relations = $data->get('_clone_with_relations') ?: collect();
+        } else {
+            $with_relations = collect($this->getModel()->getCloneRelationshipMethods());
+        }
         $clone_log = collect();
 
         $clone = $model->clone($clone_log, [], $with_relations->toArray());

@@ -19,7 +19,7 @@ use Softworx\RocXolid\Forms\Fields\AbstractFormField;
  */
 class ModelRelationSelectAutocomplete extends AbstractFormField
 {
-    const LIMIT = 10;
+    const LIMIT = 15;
 
     protected $default_options = [
         'type-template' => 'model-relation-select',
@@ -67,6 +67,7 @@ class ModelRelationSelectAutocomplete extends AbstractFormField
         });
 
         return $query
+            ->select($this->queried_model->qualifyColumn('*'))
             ->take(static::LIMIT)
             ->get();
     }

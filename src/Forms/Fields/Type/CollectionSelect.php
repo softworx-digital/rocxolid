@@ -60,6 +60,7 @@ class CollectionSelect extends AbstractFormField
                 $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
             } elseif (isset($option['method'])) {
                 if (method_exists($option['model'], $option['method'])) {
+                    // @todo ->select($this->queried_model->qualifyColumn('*'))
                     $this->collection = $query->get()->mapWithKeys(function (AbstractCrudModel $model, int $index) use ($option) {
                         return [ $model->getKey() => $this->getOptionText($model, $option, $index) ];
                     });

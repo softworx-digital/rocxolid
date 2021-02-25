@@ -47,6 +47,7 @@ class CollectionRadioList extends AbstractFormField
                 }
             }
 
+            // @todo ->select($this->queried_model->qualifyColumn('*'))
             $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
                 return $item->initAsFieldItem($this);
             });

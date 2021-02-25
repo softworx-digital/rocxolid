@@ -14,7 +14,7 @@ use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 
 class CollectionSelectAutocomplete extends CollectionSelect
 {
-    const LIMIT = 10;
+    const LIMIT = 15;
 
     protected $default_options = [
         'type-template' => 'collection-select-autocomplete',
@@ -67,6 +67,7 @@ class CollectionSelectAutocomplete extends CollectionSelect
         });
 
         return $query
+            ->select($this->collection_model->qualifyColumn('*'))
             ->take(static::LIMIT)
             ->get();
     }

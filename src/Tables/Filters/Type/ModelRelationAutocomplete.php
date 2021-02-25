@@ -13,7 +13,7 @@ use Softworx\RocXolid\Tables\Filters\AbstractFilter;
 
 class ModelRelationAutocomplete extends AbstractFilter
 {
-    const LIMIT = 10;
+    const LIMIT = 15;
 
     protected $default_options = [
         'type-template' => 'model-relation',

@@ -41,7 +41,9 @@ class CollectionCheckboxTree extends CollectionCheckbox
                 }
             }
 
-            $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
+            // @todo ->select($this->queried_model->qualifyColumn('*'))
+            $this->collection = $query
+                ->get()->transform(function (AbstractCrudModel $item) {
                 return $item->initAsFieldItem($this);
             });
         }

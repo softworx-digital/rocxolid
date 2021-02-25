@@ -45,7 +45,7 @@ class CollectionRadioListOtherSelect extends AbstractFormField
                     $query = (new $filter['class']())->apply($query, $model, $filter['data']);
                 }
             }
-
+            // @todo ->select($this->queried_model->qualifyColumn('*'))
             $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
                 return $item->initAsFieldItem($this);
             });
