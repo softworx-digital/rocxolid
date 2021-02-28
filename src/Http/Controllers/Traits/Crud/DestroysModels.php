@@ -104,7 +104,11 @@ trait DestroysModels
      */
     protected function onDestroy(CrudRequest $request, CrudableModel $model)//: Response
     {
-        $model = $this->getRepository()->deleteModel($model);
+        if (collect(config('rocXolid.main.force_delete', []))->contains((new \ReflectionClass($model))->getName())) {
+            $model = $this->getRepository()->forceDeleteModel($model);
+        } else {
+            $model = $this->getRepository()->deleteModel($model);
+        }
 
         return $this
             ->onModelDestroyed($request, $model)
