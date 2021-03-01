@@ -57,11 +57,15 @@ class RouteService
     /**
      * Get current controller's action.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMethod(): string
+    public function getMethod(): ?string
     {
-        list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+        if ($this->getRouter()->currentRouteAction()) {
+            list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+        } else {
+            return null;
+        }
 
         return $method;
     }
