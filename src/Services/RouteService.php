@@ -62,7 +62,11 @@ class RouteService
     public function getMethod(): ?string
     {
         if ($this->getRouter()->currentRouteAction()) {
-            list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+            try {
+                list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+            } catch (\Exception $e) {
+                return null; // @todo not sure if this is appropriate, the point is to handle callable controllers (__invoke)
+            }
         } else {
             return null;
         }

@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // rocXolid contracts
@@ -193,7 +194,9 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      */
     public function isRequired(): bool
     {
-        return in_array('required', $this->getOption('validation.rules', []));
+        return collect($this->getOption('validation.rules', []))->contains(function ($rule) {
+            return is_string($rule) && Str::startsWith($rule, 'required');
+        });
     }
 
     /**
