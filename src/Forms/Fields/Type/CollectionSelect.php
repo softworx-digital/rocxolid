@@ -47,7 +47,7 @@ class CollectionSelect extends AbstractFormField
             $this->collection = $option;
         } else {
             $model = ($option['model'] instanceof AbstractCrudModel) ? $option['model'] : new $option['model'];
-            $query = $model::query();
+            $query = $model::query()->select($model->qualifyColumn('*'));
             // $query = $model::withoutGlobalScope(app(OwnedScope::class));
 
             if (isset($option['filters'])) {

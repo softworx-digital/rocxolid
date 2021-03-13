@@ -127,4 +127,12 @@ class ModelCollectionAutocomplete extends AbstractFilter
             'filter' => $this->getName(),
         ]);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAppliable(): bool
+    {
+        return parent::isAppliable() && $this->queried_model->find($this->getValue());
+    }
 }
