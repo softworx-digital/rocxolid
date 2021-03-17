@@ -73,4 +73,9 @@ class RouteService
 
         return $method;
     }
+
+    public static function isRocXolidMiddleware(): bool
+    {
+        return collect(request()->route()->middleware())->contains('rocXolid.auth');
+    }
 }
