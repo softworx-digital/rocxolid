@@ -16,7 +16,7 @@ interface Translatable extends TranslationProvider
      *
      * @param string $key
      * @param array $params
-     * @param boolean $use_raw_key
+     * @param bool $use_raw_key
      * @return string
      */
     public function translate(string $key, array $params = [], bool $use_raw_key = false): string;

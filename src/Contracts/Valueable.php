@@ -60,7 +60,7 @@ interface Valueable
      * Check value against given value.
      *
      * @param mixed $value
-     * @param boolean $strict
+     * @param bool $strict
      * @return bool
      */
     public function isValue($value, $strict = false): bool;

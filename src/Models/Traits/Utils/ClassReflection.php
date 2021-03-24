@@ -10,7 +10,7 @@ trait ClassReflection
     /**
      * Obtain model's class name.
      *
-     * @param boolean $short
+     * @param bool $short
      * @return string
      */
     public function className(bool $short = false): string
@@ -21,7 +21,7 @@ trait ClassReflection
     /**
      * Obtain model's human readable translated class name.
      *
-     * @param boolean $plural
+     * @param bool $plural
      * @return string
      */
     public function getClassNameTranslation(bool $plural = false): string

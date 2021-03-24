@@ -17,7 +17,7 @@ trait HasLabelDataAttributes
      * Retrieve label data attributes.
      * The LABEL_DATA_ATTRIBUTES array should be defined in the model using this trait.
      *
-     * @param boolean $keys Flag to retrieve only attribute keys.
+     * @param bool $keys Flag to retrieve only attribute keys.
      * @return Collection
      */
     public function getLabelDataAttributes(bool $keys = false): Collection

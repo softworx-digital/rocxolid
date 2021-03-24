@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 use Illuminate\Routing\Route;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+// rocXolid services
+use Softworx\RocXolid\Services\RouteService;
 // rocXolid controller contracts
 use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 
@@ -42,11 +44,16 @@ class CrudRouterService
         return $route ? $route->bind($request) : null;
     }
 
+    // @todo hotfixed
     public static function backLink(?Model $model = null): ?array
     {
-        $url = request()->headers->get('referer');
+        $url = url()->previous();
 
         if (is_null($url)) {
+            return null;
+        }
+
+        if (parse_url($url, PHP_URL_HOST) !== config('url')) {
             return null;
         }
 
@@ -64,7 +71,7 @@ class CrudRouterService
             return null;
         }
 
-        $repository = $route->getController()->getRepository();
+        $repository = $controller->getRepository();
         $prev_model = null;
 
         collect($route->parameters())->each(function (string $key, string $param) use ($repository, &$prev_model) {

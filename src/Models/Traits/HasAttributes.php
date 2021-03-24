@@ -162,11 +162,12 @@ trait HasAttributes
         $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
         $nf->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 8);
-        $nf->setAttribute(\NumberFormatter::GROUPING_SIZE, 0);
+        // $nf->setAttribute(\NumberFormatter::GROUPING_SIZE, 0);
 
         if (is_scalar($values)) {
             return $nf->format($values);
         }
+
         return collect($values)->transform(function ($value) use ($nf) {
             return $nf->format($value);
         });

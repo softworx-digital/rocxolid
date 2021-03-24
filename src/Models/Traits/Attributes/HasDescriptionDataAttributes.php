@@ -17,7 +17,7 @@ trait HasDescriptionDataAttributes
      * Retrieve description data attributes.
      * The DESCRIPTION_DATA_ATTRIBUTES array should be defined in the model using this trait.
      *
-     * @param boolean $keys Flag to retrieve only attribute keys.
+     * @param bool $keys Flag to retrieve only attribute keys.
      * @return Collection
      */
     public function getDescriptionDataAttributes(bool $keys = false): Collection

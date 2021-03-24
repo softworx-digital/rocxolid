@@ -343,6 +343,21 @@ class Validator extends IlluminateValidator
     }
 
     /**
+     * Replace all place-holders for the after rule.
+     * @todo "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceAfter($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
+    }
+
+    /**
      * Replace all place-holders for the after_or_equal rule.
      * @todo "hotfixed" - improve overall date handling according to localization
      *
@@ -353,6 +368,21 @@ class Validator extends IlluminateValidator
      * @return string
      */
     protected function replaceAfterOrEqual($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
+    }
+
+    /**
+     * Replace all place-holders for the before_or_equal rule.
+     * @todo "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceBefore($message, $attribute, $rule, $parameters)
     {
         return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
     }
