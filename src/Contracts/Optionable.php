@@ -74,10 +74,18 @@ interface Optionable
     /**
      * Verify if the option is set.
      *
-     * @param string $option Option name - key to verufy.
+     * @param string $option Option name - key to verify.
      * @return bool
      */
     public function hasOption(string $option): bool;
+
+    /**
+     * Verify if the option is set and is not null.
+     *
+     * @param string $option Option name - key to verify.
+     * @return bool
+     */
+    public function hasNotNullOption(string $option): bool;
 
     /**
      * Check if the option matches given value.

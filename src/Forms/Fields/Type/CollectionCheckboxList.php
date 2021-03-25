@@ -2,15 +2,13 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use Softworx\RocXolid\Forms\Contracts\FormField;
-use Softworx\RocXolid\Forms\Fields\AbstractFormField;
+use Illuminate\Support\Collection;
+// rocXolid form field types
+use Softworx\RocXolid\Forms\Fields\Type\CollectionCheckbox;
+use Softworx\RocXolid\Models\AbstractCrudModel;
 
-class CollectionCheckboxList extends AbstractFormField
+class CollectionCheckboxList extends CollectionCheckbox
 {
-    protected $show_null_option = false;
-
-    protected $collection = null;
-
     protected $default_options = [
         'type-template' => 'collection-checkbox-list',
         // field wrapper
@@ -34,7 +32,7 @@ class CollectionCheckboxList extends AbstractFormField
         if ($option instanceof Collection) {
             $this->collection = $option;
         } else {
-            $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
+            $model = ($option['model'] instanceof AbstractCrudModel) ? $option['model'] : new $option['model'];
             $query = $model::query();
 
             if (isset($option['filters'])) {
@@ -43,30 +41,12 @@ class CollectionCheckboxList extends AbstractFormField
                 }
             }
 
-            $this->collection = $query->get();
+            // @todo ->select($this->queried_model->qualifyColumn('*'))
+            $this->collection = $query->get()->transform(function (AbstractCrudModel $item) {
+                return $item->initAsFieldItem($this);
+            });
         }
 
         return $this;
-    }
-
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-    public function setExceptAttributes($attributes)
-    {
-        $this->setComponentOptions('except-attributes', $attributes);
-
-        return $this;
-    }
-
-    public function getFieldName(int $index = 0): string
-    {
-        if ($this->isArray()) {
-            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
-        } else {
-            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
-        }
     }
 }

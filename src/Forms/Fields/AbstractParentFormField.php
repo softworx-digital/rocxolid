@@ -8,7 +8,7 @@ use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 
-// @todo: doc properly
+// @todo doc properly
 abstract class AbstractParentFormField extends AbstractFormField
 {
     /**

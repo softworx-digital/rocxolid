@@ -5,7 +5,8 @@ namespace Softworx\RocXolid;
 use Cache;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Contracts\Cache\Repository as IlluminateCacheRepository;
-// @todo: not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
+
+// @todo not yet integrated, in use: \Barryvdh\TranslationManager\ManagerServiceProvider
 // use Vsch\TranslationManager\Translator;
 
 /**
@@ -125,11 +126,7 @@ class ServiceProvider extends AbstractServiceProvider
      */
     private function bindContracts(): AbstractServiceProvider
     {
-        $this->app->singleton(
-            Services\Contracts\ViewService::class,
-            Services\ViewService::class
-        );
-        // @todo: doesn't work
+        // @todo doesn't work for unknown reason
         $this->app->singleton(
             Illuminate\Contracts\Debug\ExceptionHandler::class,
             Exceptions\Handler::class
@@ -140,19 +137,108 @@ class ServiceProvider extends AbstractServiceProvider
             Http\Responses\JsonAjaxResponse::class
         );
 
-        // @todo: use some kind of form service to build and get forms, the same for tables (and columns)
-        /*
-        $this->app->singleton(Services\Contracts\FormService::class, function ($app)
-        {
-            return new Services\FormService();
-        });
-        */
+        $this->app->singleton(
+            Rendering\Services\Contracts\RenderingService::class,
+            Rendering\Services\RenderingService::class
+        );
 
-        $this->app->when(Services\ViewService::class)
+        $this->app->when(Rendering\Services\RenderingService::class)
             ->needs(IlluminateCacheRepository::class)
             ->give(function () {
                 return Cache::store('array');
             });
+
+        return $this
+            ->bindRepositoriesContracts()
+            ->bindFormsContracts()
+            ->bindTablesContracts();
+    }
+
+    /**
+     * Bind contracts related to repositories.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindRepositoriesContracts(): AbstractServiceProvider
+    {
+        $this->app->bind(
+            Repositories\Contracts\Repository::class,
+            Repositories\CrudRepository::class
+        );
+
+        return $this;
+    }
+
+    /**
+     * Bind contracts related to forms.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindFormsContracts(): AbstractServiceProvider
+    {
+        $this->app->singleton(
+            Forms\Services\Contracts\FormService::class,
+            Forms\Services\FormService::class
+        );
+
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormBuilder::class,
+            Forms\Builders\FormBuilder::class
+        );
+
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormFieldBuilder::class,
+            Forms\Builders\FormFieldBuilder::class
+        );
+
+        $this->app->singleton(
+            Forms\Builders\Contracts\FormFieldFactory::class,
+            Forms\Builders\FormFieldFactory::class
+        );
+
+        return $this;
+    }
+
+    /**
+     * Bind contracts related to tables.
+     *
+     * Template:
+     *      $this->app->bind(<SomeContract>::class, <SomeImplementation>::class);
+     *
+     * @return \Softworx\RocXolid\AbstractServiceProvider
+     */
+    private function bindTablesContracts(): AbstractServiceProvider
+    {
+        $this->app->singleton(
+            Tables\Services\Contracts\TableService::class,
+            Tables\Services\TableService::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableBuilder::class,
+            Tables\Builders\TableBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableFilterBuilder::class,
+            Tables\Builders\TableFilterBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableColumnBuilder::class,
+            Tables\Builders\TableColumnBuilder::class
+        );
+
+        $this->app->singleton(
+            Tables\Builders\Contracts\TableButtonBuilder::class,
+            Tables\Builders\TableButtonBuilder::class
+        );
 
         return $this;
     }
@@ -170,8 +256,6 @@ class ServiceProvider extends AbstractServiceProvider
         // rocXolid
         $loader->alias('ViewHelper', Helpers\View::class);
         $loader->alias('Package', Facades\Package::class);
-        $loader->alias('RocXolidFormRequest', Http\Requests\FormRequest::class); // @todo: necessary?
-        $loader->alias('RocXolidRepositoryRequest', Http\Requests\RepositoryRequest::class); // @todo: necessary?
         // third-party
         $loader->alias('Form', \Collective\Html\FormFacade::class);
         $loader->alias('Html', \Collective\Html\HtmlFacade::class);

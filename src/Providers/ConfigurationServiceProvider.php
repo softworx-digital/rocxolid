@@ -22,11 +22,11 @@ class ConfigurationServiceProvider extends IlluminateServiceProvider
     ];
 
     /**
-     * Extend the default request validator.
+     * Register configuration provider for rocXolid core package.
      *
      * @return \Illuminate\Support\ServiceProvider
      */
-    public function boot()
+    public function register(): IlluminateServiceProvider
     {
         $this
             ->configure();

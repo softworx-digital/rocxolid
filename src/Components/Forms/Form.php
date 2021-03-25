@@ -2,17 +2,18 @@
 
 namespace Softworx\RocXolid\Components\Forms;
 
-use App;
 use Illuminate\Support\Collection;
+// rocXolid helpers
+use Softworx\RocXolid\Helpers\View as ViewHelper;
 // rocXolid contracts
 use Softworx\RocXolid\Forms\Contracts\Form as FormContract;
-use Softworx\RocXolid\Forms\Contracts\FormField as FormFieldContract;
 use Softworx\RocXolid\Components\Contracts\Formable as ComponentFormableContract;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 
 /**
- *
+ * @todo [RX-23] refactor
+ * @todo [RX-26] Use subcomponent classes from their representatives, @see Softworx\RocXolid\Components\Tables\Table for reference
  */
 class Form extends AbstractOptionableComponent implements ComponentFormableContract
 {
@@ -114,7 +115,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
 
     protected function loadFormFieldGroupsComponents(): ComponentFormableContract
     {
-        $this->field_group_components = new Collection();
+        $this->field_group_components = collect();
 
         foreach ($this->getForm()->getFormFieldGroups() as $form_field_group) {
             $this->field_group_components->put(
@@ -128,7 +129,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
 
     protected function loadFormFieldsComponents(): ComponentFormableContract
     {
-        $this->field_components = new Collection();
+        $this->field_components = collect();
 
         foreach ($this->getForm()->getFormFields() as $form_field) {
             $this->field_components->put(
@@ -159,7 +160,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
     protected function loadFormButtonsComponents(): ComponentFormableContract
     {
         // button toolbars
-        $this->button_toolbar_components = new Collection();
+        $this->button_toolbar_components = collect();
 
         foreach ($this->getForm()->getButtonToolbars() as $button_toolbar) {
             $this->button_toolbar_components->put(
@@ -169,7 +170,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         // button groups
-        $this->button_group_components = new Collection();
+        $this->button_group_components = collect();
 
         foreach ($this->getForm()->getButtonGroups() as $button_group) {
             $this->button_group_components->put(
@@ -179,7 +180,7 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         // buttons
-        $this->button_components = new Collection();
+        $this->button_components = collect();
 
         foreach ($this->getForm()->getButtons() as $button) {
             $this->button_components->put(
@@ -216,5 +217,10 @@ class Form extends AbstractOptionableComponent implements ComponentFormableContr
         }
 
         return $this;
+    }
+
+    protected function makeDomId(...$params): string
+    {
+        return ViewHelper::domId($this, $this->getForm()->provideDomIdParam(), ...$params);
     }
 }

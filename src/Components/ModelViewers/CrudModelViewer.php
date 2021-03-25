@@ -2,15 +2,11 @@
 
 namespace Softworx\RocXolid\Components\ModelViewers;
 
-// rocXolid utils
-use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid components
 use Softworx\RocXolid\Components\AbstractActiveComponent;
 // rocXolid component contracts
 use Softworx\RocXolid\Components\Contracts\Formable;
 use Softworx\RocXolid\Components\Contracts\Componentable\Form as FormComponentable;
-// rocXolid controllers
-use Softworx\RocXolid\Http\Controllers\AbstractCrudController;
 
 /**
  *
@@ -33,20 +29,5 @@ class CrudModelViewer extends AbstractActiveComponent implements FormComponentab
         }
 
         return $this->model_form_component;
-    }
-
-    public function adjustCreate(CrudRequest $request, AbstractCrudController $controller): CrudModelViewer
-    {
-        return $this;
-    }
-
-    public function adjustUpdate(CrudRequest $request, AbstractCrudController $controller): CrudModelViewer
-    {
-        return $this;
-    }
-
-    public function adjustShow(CrudRequest $request, AbstractCrudController $controller): CrudModelViewer
-    {
-        return $this;
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 // model contracts
 use Softworx\RocXolid\Models\Contracts\Container;
 use Softworx\RocXolid\Models\Contracts\Containee;
+use Softworx\RocXolid\Models\Contracts\Crudable;
 
 /**
  *
@@ -20,15 +21,15 @@ trait IsContained
     /**
      * @override
      */
-    public function resolvePolymorphism($data, $action = null)
+    public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
         return $this;
     }
 
-    // @todo - toto hotfix sem, inac spravit zrejme viac tried - lepsiu arch pageelement x container x containee kombinacii
+    // @todo toto hotfix sem, inac spravit zrejme viac tried - lepsiu arch pageelement x container x containee kombinacii
     public function containeePagesWhereVisible(): Collection
     {
-        $pages = new Collection();
+        $pages = collect();
 
         $this->getContainers('items')->each(function ($container) use ($pages) {
             $container->pages->each(function ($page) use ($pages) {
@@ -43,7 +44,7 @@ trait IsContained
 
     public function getContainer(string $container_relation_name): Container
     {
-        $containers = new Collection();
+        $containers = collect();
 
         $this->getContaineeContainerPivotData($container_relation_name)->each(function ($pivot_data, $key) use ($containers) {
             $container_class = $pivot_data->container_type;
@@ -58,7 +59,7 @@ trait IsContained
 
     public function getContainers(string $container_relation_name): Collection
     {
-        $containers = new Collection();
+        $containers = collect();
 
         $this->getContaineeContainerPivotData($container_relation_name)->each(function ($pivot_data, $key) use ($containers) {
             $container_class = $pivot_data->container_type;

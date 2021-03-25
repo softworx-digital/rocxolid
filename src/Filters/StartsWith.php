@@ -2,17 +2,51 @@
 
 namespace Softworx\RocXolid\Filters;
 
-use Illuminate\Database\Eloquent;
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Illuminate\Database\Eloquent\Builder;
+// rocXolid model contracts
+use Softworx\RocXolid\Models\Contracts\Searchable;
 
+/**
+ * Dynamic query "scope" to filter results with column(s) values starting with given string.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 class StartsWith
 {
-    public function apply($query, $quered_model, Crudable $model)
+    /**
+     * Apply filter.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Softworx\RocXolid\Models\Contracts\Searchable $model
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function apply(Builder $query, Searchable $model, string $search): Builder
     {
-        if (is_numeric($model->getQueryString())) {
-            return $query->where(sprintf('%s.id', $quered_model->getTable()), 'like', sprintf('%s%%', $model->getQueryString()));
-        } else {
-            return $query->where(sprintf('%s.%s', $quered_model->getTable(), $quered_model->getSearchColumn()), 'like', sprintf('%s%%', $model->getQueryString()));
-        }
+        return $query->where(function (Builder $query) use ($model, $search) {
+            $model->getSearchColumns()->each(function (string $column) use ($query, $model, $search) {
+                $query->orWhere($model->qualifyColumn($column), 'like', sprintf('%s%%', $search));
+            });
+        });
+    }
+
+    /**
+     * Apply filter with disjunction.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Softworx\RocXolid\Models\Contracts\Searchable $model
+     * @param string $search
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @todo hotfixed needed feature by adding following method
+     */
+    public function applyDisjunct(Builder $query, Searchable $model, string $search): Builder
+    {
+        return $query->orWhere(function (Builder $query) use ($model, $search) {
+            $model->getSearchColumns()->each(function (string $column) use ($query, $model, $search) {
+                $query->orWhere($model->qualifyColumn($column), 'like', sprintf('%s%%', $search));
+            });
+        });
     }
 }

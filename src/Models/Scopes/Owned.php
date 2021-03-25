@@ -5,14 +5,10 @@ namespace Softworx\RocXolid\Models\Scopes;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 // rocXolid model relations
-use Softworx\RocXolid\Models\Relations\BelongsToThrough;
+use Softworx\RocXolid\Models\Relations as rxRelations;
 
 /**
  * Scope to filter owned resources.
@@ -29,7 +25,7 @@ class Owned implements Scope
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param \Illuminate\Database\Eloquent\Model $model
      * @return void
-     * @todo: subject to refactoring
+     * @todo subject to refactoring
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -45,23 +41,26 @@ class Owned implements Scope
             return;
         }
 
-        // scoping users first // @todo: kinda "hotfixed", find some nicer approach
+        // needed, cause when joining tables, model columns may be replaced by joined table columns (eg. the model key)
+        $builder->select($model->qualifyColumn('*'));
+
+        // scoping users first // @todo kinda "hotfixed", find some nicer approach
         if ($model instanceof $user) {
             $this->handleUserScope($builder, $model, $user);
         // a true model-user ownership
         } elseif (($relation = $model->getOwnershipRelation()) && ($relation->getRelated() instanceof $user)) {
             // polymorph relations have to be resolved first since they are extending simple ones
             // MorphTo
-            if ($relation instanceof MorphTo) {
+            if ($relation instanceof Relations\MorphTo) {
                 $this->handleOwnerMorphToScope($relation, $builder, $model, $user);
             // MorphToMany
-            } elseif ($relation instanceof MorphToMany) {
+            } elseif ($relation instanceof Relations\MorphToMany) {
                 $this->handleOwnerMorphToManyScope($relation, $builder, $model, $user);
             // BelongsTo
-            } elseif ($relation instanceof BelongsTo) {
+            } elseif ($relation instanceof Relations\BelongsTo) {
                 $this->handleOwnerBelongsToScope($relation, $builder, $model, $user);
             // BelongsToThrough
-            } elseif ($relation instanceof BelongsToThrough) {
+            } elseif ($relation instanceof rxRelations\BelongsToThrough) {
                 $this->handleOwnerBelongsToThroughScope($relation, $builder, $model, $user);
             // MorphOneOrMany
             // } elseif ($relation instanceof MorphOneOrMany) {
@@ -89,9 +88,7 @@ class Owned implements Scope
      */
     private function handleUserScope(Builder $builder, Model $model, Authorizable $user)
     {
-        $column = sprintf('%s.%s', $model->getTable(), $model->getKeyName());
-
-        $builder->where($column, $user->getKey());
+        $builder->where($model->getQualifiedKeyName(), $user->getKey());
     }
 
     /**
@@ -102,7 +99,7 @@ class Owned implements Scope
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Contracts\Auth\Access\Authorizable $user
      */
-    private function handleOwnerMorphToScope(MorphTo $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerMorphToScope(Relations\MorphTo $relation, Builder $builder, Model $model, Authorizable $user)
     {
         $builder
             ->where($relation->getMorphType(), $relation->getMorphedModel())
@@ -117,7 +114,7 @@ class Owned implements Scope
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Contracts\Auth\Access\Authorizable $user
      */
-    private function handleOwnerMorphToManyScope(MorphToMany $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerMorphToManyScope(Relations\MorphToMany $relation, Builder $builder, Model $model, Authorizable $user)
     {
         $builder
             ->join($relation->getTable(), $relation->getQualifiedForeignPivotKeyName(), '=', $relation->getQualifiedParentKeyName())
@@ -133,7 +130,7 @@ class Owned implements Scope
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Contracts\Auth\Access\Authorizable $user
      */
-    private function handleOwnerBelongsToScope(BelongsTo $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerBelongsToScope(Relations\BelongsTo $relation, Builder $builder, Model $model, Authorizable $user)
     {
         $builder->where($relation->getQualifiedForeignKeyName(), $user->getKey());
     }
@@ -141,25 +138,24 @@ class Owned implements Scope
     /**
      * Add scope for BelongsToThrough ownership relation.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $relation
+     * @param \Softworx\RocXolid\Models\Relations\BelongsToThrough $relation
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Contracts\Auth\Access\Authorizable $user
      */
-    private function handleOwnerBelongsToThroughScope(BelongsToThrough $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerBelongsToThroughScope(rxRelations\BelongsToThrough $relation, Builder $builder, Model $model, Authorizable $user)
     {
         $relation
             ->performParentJoins($builder)
             ->where($relation->getQualifiedForeignKeyName(), $user->getKey());
-
     }
 
-    private function handleOwnerMorphOneOrManyScope(MorphOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerMorphOneOrManyScope(Relations\MorphOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)
     {
         dd(__METHOD__, '@TDOO');
     }
 
-    private function handleOwnerHasOneOrManyScope(HasOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)
+    private function handleOwnerHasOneOrManyScope(Relations\HasOneOrMany $relation, Builder $builder, Model $model, Authorizable $user)
     {
         dd(__METHOD__, '@TDOO');
     }

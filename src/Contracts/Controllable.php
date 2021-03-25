@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Contracts;
 
-use Illuminate\Routing\Controller;
+use Softworx\RocXolid\Http\Controllers\AbstractController as Controller;
 
 /**
  * Enables object to have a controller assigned.
@@ -16,7 +16,7 @@ interface Controllable
     /**
      * Set the controller.
      *
-     * @param \Illuminate\Routing\Controller $controller Controller to be assigned.
+     * @param \Softworx\RocXolid\Http\Controllers\AbstractController $controller Controller to be assigned.
      * @return \Softworx\RocXolid\Contracts\Controllable
      */
     public function setController(Controller $controller): Controllable;
@@ -24,7 +24,7 @@ interface Controllable
     /**
      * Get the assigned controller.
      *
-     * @return \Illuminate\Routing\Controller
+     * @return \Softworx\RocXolid\Http\Controllers\AbstractController
      * @throws \UnderflowException If no controller is set.
      */
     public function getController(): Controller;

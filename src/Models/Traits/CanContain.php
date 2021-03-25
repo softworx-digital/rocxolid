@@ -28,7 +28,7 @@ trait CanContain
 
     public function getAllContainees(): Collection
     {
-        $containees = new Collection();
+        $containees = collect();
 
         $this->getContainerContaineePivotData()->each(function ($pivot_data, $key) use ($containees) {
             $containee_class = $pivot_data->containee_type;
@@ -45,7 +45,7 @@ trait CanContain
 
     public function getContainees(string $relation_name, $visible_only = false, $paged = false, $page = 1, $per_page = 12): Collection
     {
-        $containees = new Collection();
+        $containees = collect();
 
         $this->getContainerContaineePivotData($relation_name)->each(function ($pivot_data, $key) use ($containees, $visible_only) {
             $containee_class = $pivot_data->containee_type;

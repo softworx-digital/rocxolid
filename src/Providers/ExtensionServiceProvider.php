@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Providers;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 /**
@@ -22,7 +23,8 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
     public function boot()
     {
         $this
-            ->extendCollections();
+            ->extendCollections()
+            ->extendBlade();
 
         return $this;
     }
@@ -34,15 +36,41 @@ class ExtensionServiceProvider extends IlluminateServiceProvider
      */
     private function extendCollections(): IlluminateServiceProvider
     {
-        /*
-        * Get the diff between two collections of array records.
-        */
+        /**
+         * Get the diff between two collections of array records.
+         */
         Collection::macro('diffRecords', function ($items) {
-            return new static($this->filter(function ($item) use ($items){
+            return new static($this->filter(function ($item) use ($items) {
                 return collect($items)->filter(function ($a) use ($item) {
                     return $a === $item;
                 })->isEmpty();
             }));
+        });
+
+        /**
+         * Create associative collection.
+         */
+        Collection::macro('toAssoc', function () {
+            return $this->reduce(function ($assoc, $keyValuePair) {
+                list($key, $value) = $keyValuePair;
+                $assoc[$key] = $value;
+                return $assoc;
+            }, new static);
+        });
+
+        return $this;
+    }
+
+    /**
+     * Register Blade directives extensions.
+     *
+     * @return \Illuminate\Support\ServiceProvider
+     */
+    private function extendBlade(): IlluminateServiceProvider
+    {
+        Blade::directive('render', function ($args) {
+            $args = sprintf('$component, %s', $args);
+            return "<?php \Softworx\RocXolid\Rendering\Services\RenderingService::renderComponent($args); ?>";
         });
 
         return $this;

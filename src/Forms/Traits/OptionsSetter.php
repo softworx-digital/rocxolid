@@ -6,7 +6,7 @@ use Softworx\RocXolid\Helpers\View as ViewHelper;
 use Softworx\RocXolid\Forms\Contracts\Form;
 
 /**
- *
+ * @todo refactor
  */
 trait OptionsSetter
 {
@@ -30,7 +30,10 @@ trait OptionsSetter
     public function processFormOptions(): Form
     {
         if (!empty($this->options)) {
-            $this->setOptions($this->options);
+            // @todo hotfixed
+            $options = is_array($this->options) ? collect($this->options) : $this->options;
+
+            $this->setOptions($options->whereNotNull()->toArray());
         }
 
         $this->mergeOptions([
@@ -108,6 +111,28 @@ trait OptionsSetter
         return $this;
     }
 
+    protected function setTab(string $tab): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'tab' => $tab
+            ]
+        ]);
+
+        return $this;
+    }
+
+    protected function setTitleTemplate(string $title_template): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'title-template' => sprintf('modal.form.%s', $title_template)
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setTemplate(string $template): Form
     {
         $this->mergeOptions([
@@ -157,6 +182,17 @@ trait OptionsSetter
         $this->mergeOptions([
             'component' => [
                 'show-back-button' => $param
+            ]
+        ]);
+
+        return $this;
+    }
+
+    protected function setSubmitAction(string $submit_action): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'submit-action' => $submit_action
             ]
         ]);
 

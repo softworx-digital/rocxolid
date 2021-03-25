@@ -100,17 +100,19 @@ class PermissionScannerService
                 try {
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedAction::class);
                 } catch (\Throwable $e) {
-                    // @todo: nicer handling
-                    dd(__METHOD__, $method, $e->getMessage());
+                    // @todo nicer handling
+                    // dump(__METHOD__, __FILE__, $method, $e->getMessage());
+                    // dd(__METHOD__, $e);
+                    throw $e;
                 }
                 return !is_null($method->annotation);
             })->each(function ($method) use ($permissions, $controller, $package) {
                 $permissions->push([
-                    'name' => $this->getPermissionName($controller::getModelClass(), $method->annotation->getPolicyAbility()),
+                    'name' => $this->getPermissionName($controller::getModelType(), $method->annotation->getPolicyAbility()),
                     'guard' => 'rocXolid',
                     'package' => $package,
                     'controller_class' => $controller,
-                    'model_class' => $controller::getModelClass(),
+                    'model_class' => $controller::getModelType(),
                     'attribute' => null,
                     'policy_ability_group' => $method->annotation->getPolicyAbilityGroup(),
                     'policy_ability' => $method->annotation->getPolicyAbility(),
@@ -136,7 +138,7 @@ class PermissionScannerService
         $models->each(function ($model) use ($permissions) {
             $reflection = new \ReflectionClass($model);
 
-            if (Str::startsWith($reflection->getNamespaceName(), 'App\\')) {
+            if (Str::startsWith($reflection->getNamespaceName(), 'App')) {
                 $package = 'app';
             }
 
@@ -153,8 +155,10 @@ class PermissionScannerService
 
                     return !is_null($method->annotation) && $this->isValidPermissionRelationMethod($reflection, $method);
                 } catch (\Throwable $e) {
-                    // @todo: nicer handling
-                    dd(__METHOD__, $method, $e->getMessage());
+                    // @todo nicer handling
+                    // dd(__METHOD__, __FILE__, $method, $e->getMessage());
+                    // dd(__METHOD__, $e);
+                    throw $e;
                 }
             })->each(function ($method) use ($permissions, $model, $package) {
                 collect($method->annotation->getPolicyAbilities())->each(function ($policy_ability) use ($method, $permissions, $model, $package) {
@@ -198,7 +202,7 @@ class PermissionScannerService
 
     private function isValidPermissionRelationMethod(\ReflectionClass $reflection, \ReflectionMethod $method): bool
     {
-        $method_return_type = (string)$method->getReturnType();
+        $method_return_type = optional($method->getReturnType())->getName();
 
         if (blank($method_return_type)) {
             throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $reflection->getName(), $method->getName()));
@@ -239,7 +243,11 @@ class PermissionScannerService
 
     private function isValidPermissionRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = (string)$method->getReturnType();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (in_array($method_return_type, [ HasOneOrMany::class, BelongsToMany::class ])) {
             return true;
@@ -258,7 +266,11 @@ class PermissionScannerService
 
     private function isValidPermissionBelongsToRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = (string)$method->getReturnType();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (($method_return_type === BelongsTo::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
             return false;
@@ -273,7 +285,11 @@ class PermissionScannerService
 
     private function isValidPermissionBelongsToManyRelationMethodRelation(\ReflectionMethod $method)
     {
-        $method_return_type = (string)$method->getReturnType();
+        $method_return_type = optional($method->getReturnType())->getName();
+
+        if (blank($method_return_type)) {
+            throw new \RuntimeException(sprintf('Method [%s::%s()] has no return type hint', $method->getDeclaringClass()->getName(), $method->getName()));
+        }
 
         if (($method_return_type === BelongsToMany::class) && ($method->annotation->getPolicyAbilities() !== [ 'assign' ])) {
             return false;
@@ -289,7 +305,7 @@ class PermissionScannerService
     private function getPermissionName(string $model, string $policy_ability, string $attribute = null)
     {
         return implode('.', array_filter([
-            Str::kebab((new \ReflectionClass($model))->getShortName()),
+            app($model)->getModelName(),
             $attribute,
             Str::kebab($policy_ability),
         ]));

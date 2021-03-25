@@ -13,6 +13,7 @@ use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo refactor; use collections
  */
 trait Optionable
 {
@@ -60,8 +61,7 @@ trait Optionable
         } elseif (!is_null($default)) {
             return $default;
         } else {
-            // @todo: include some element identificator
-            throw new \InvalidArgumentException(sprintf("Invalid option [%s] requested, available:\n%s", $option, implode("\n", $this->getOptionsKeys())));
+            throw new \InvalidArgumentException(sprintf("Invalid option [%s] requested in [%s], available:\n%s", $option, get_class($this), implode("\n", $this->getOptionsKeys())));
         }
     }
 
@@ -87,7 +87,7 @@ trait Optionable
     public function mergeOptions(array $options): OptionableContract
     {
         //$this->options = $this->getOptions()->merge($new_options); // doesn't deep merge
-        $this->options = collect(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo: problem possible if object at the end
+        $this->options = collect(array_replace_recursive($this->getOptions()->toArray(), $options)); // @todo problem possible if object at the end
 
         return $this;
     }
@@ -126,6 +126,14 @@ trait Optionable
         $options = $this->getOptions()->toArray();
 
         return Arr::has($options, $option);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasNotNullOption(string $option): bool
+    {
+        return !$this->isOptionValue($option, null);
     }
 
     /**

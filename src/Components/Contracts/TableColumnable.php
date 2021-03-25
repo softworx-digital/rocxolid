@@ -2,7 +2,7 @@
 
 namespace Softworx\RocXolid\Components\Contracts;
 
-use Softworx\RocXolid\Repositories\Contracts\Column;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 
 interface TableColumnable
 {

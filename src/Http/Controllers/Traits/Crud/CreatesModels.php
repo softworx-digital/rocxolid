@@ -4,14 +4,14 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
-// rocXolid repositories
-use Softworx\RocXolid\Repositories\AbstractCrudRepository;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 // rocXolid forms
 use Softworx\RocXolid\Forms\AbstractCrudForm;
-// rocXolid form components
-use Softworx\RocXolid\Components\Forms\CrudForm as CrudFormComponent;
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
  * Trait to create a resource.
@@ -22,107 +22,142 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  */
 trait CreatesModels
 {
+    use Response\ProvidesSuccessCreateResponse;
+
     /**
      * Display the specified resource create form.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function create(CrudRequest $request)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        $model = $this->getRepository()->getModel();
 
-        $this->setModel($repository->getModel());
+        $this->initModel($model);
 
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            ->adjustCreate($request);
+        $model_viewer_component = $this->getCreateModelViewerComponent($request, $model);
 
-        $form_component = CrudFormComponent::build($this, $this)
-            ->setForm($form)
-            ->setRepository($repository);
+        return $request->ajax()
+            ? $this->createAjax($request, $model_viewer_component)
+            : $this->createNonAjax($request, $model_viewer_component);
+    }
 
-        $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel())
-            ->setFormComponent($form_component)
-            ->adjustCreate($request, $this);
+    /**
+     * Display the specified resource create form modal for AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function createAjax(CrudRequest $request, CrudModelViewer $model_viewer_component)//: View
+    {
+        return $this->response
+            ->modal($model_viewer_component->fetch('modal.create'))
+            ->get();
+    }
 
-        if ($request->ajax()) {
-            return $this->response
-                ->modal($model_viewer_component->fetch('modal.create'))
-                ->get();
-        } else {
-            return $this
-                ->getDashboard()
-                ->setModelViewerComponent($model_viewer_component)
-                ->render('model', [
-                    'model_viewer_template' => 'create'
-                ]);
-        }
+    /**
+     * Display the specified resource create form view for non-AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function createNonAjax(CrudRequest $request, CrudModelViewer $model_viewer_component)//: View
+    {
+        return $this
+            ->getDashboard()
+            ->setModelViewerComponent($model_viewer_component)
+            ->render('model', [
+                'model_viewer_template' => 'create'
+            ]);
     }
 
     /**
      * Process the store resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="create",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function store(CrudRequest $request)//: Response
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        // @todo: ugly having it this way
-        $this->setModel($repository->getModel());
-
-        $form = $repository->getForm($this->getFormParam($request));
-        $form
-            //->adjustCreate($request)
-            ->adjustCreateBeforeSubmit($request)
-            ->submit();
-
-        if ($form->isValid()) {
-            return $this->onStore($request, $repository, $form);
-        } else {
-            return $this->onStoreError($request, $repository, $form);
+        // last time to check if something prevents the model to be created
+        if (!$this->getRepository()->getModel()->canBeCreated($request)) {
+            throw new \RuntimeException(sprintf('Model [%s] cannot be created', (new \ReflectionClass($this->getRepository()->getModel()))->getName()));
         }
+
+        // @todo incorporate to form refactoring
+        $form = $this->getForm($request)->adjustBeforeSubmit($request);
+
+        return $form->submit()->isValid()
+            ? $this->onStoreFormValid($request, $form)
+            : $this->onStoreFormInvalid($request, $form);
     }
 
     /**
-     * Action to take when the 'create' form was validated.
+     * Action to take when the 'create' form is valid.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStore(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onStoreFormValid(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        $model = $repository->updateModel($form->getFormFieldsValues()->toArray(), $this->getModel(), 'create');
+        $model = $this->getRepository()->createModel($form->getFormFieldsValues());
 
-        return $this->onModelStored($request, $repository, $form, $model);
+        return $this
+            ->onModelStored($request, $model, $form)
+            ->onModelStoredSuccessResponse($request, $model, $form);
     }
 
     /**
      * Action to take after the model has been created and saved.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
-     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @return \Softworx\RocXolid\Http\Controllers\Contracts\Crudable
      */
-    protected function onModelStored(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form, Crudable $model)//: Response
+    protected function onModelStored(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form): Crudable
     {
-        return $this->successResponse($request, $repository, $form, $model, 'create');
+        return $this;
+    }
+
+    /**
+     * Respond to successful model creation.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     */
+    protected function onModelStoredSuccessResponse(CrudRequest $request, CrudableModel $model, AbstractCrudForm $form)//: Response
+    {
+        return $this->successStoreResponse($request, $model, $form, 'create');
     }
 
     /**
      * Action to take when the 'create' form was submitted with invalid data.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
      */
-    protected function onStoreError(CrudRequest $request, AbstractCrudRepository $repository, AbstractCrudForm $form)//: Response
+    protected function onStoreFormInvalid(CrudRequest $request, AbstractCrudForm $form)//: Response
     {
-        return $this->errorResponse($request, $repository, $form, 'create');
+        return $this->errorResponse($request, $this->getRepository()->getModel(), $form, 'create');
+    }
+
+    /**
+     * Obtain model viewer to be used for create/store action.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string|null $tab
+     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
+     */
+    protected function getCreateModelViewerComponent(CrudRequest $request, CrudableModel $model, ?string $tab = null): CrudModelViewer
+    {
+        // $form = $this->getForm($request, $model, $tab);
+        $form = $this->getForm($request);
+        $form_component = $this->getFormComponent($form);
+
+        return $this->getModelViewerComponent($model, $form_component);
     }
 }

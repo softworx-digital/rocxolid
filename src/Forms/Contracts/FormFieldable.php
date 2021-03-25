@@ -5,7 +5,7 @@ namespace Softworx\RocXolid\Forms\Contracts;
 use Illuminate\Support\Collection;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 
-// @todo - dodefinovat, ak treba
+// @todo dodefinovat, ak treba
 interface FormFieldable
 {
     public function addFormField(FormField $form_field): FormFieldable;

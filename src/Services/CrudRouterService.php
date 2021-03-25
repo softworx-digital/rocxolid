@@ -2,115 +2,203 @@
 
 namespace Softworx\RocXolid\Services;
 
-use Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Routing\Route;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+// rocXolid services
+use Softworx\RocXolid\Services\RouteService;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 
-// @todo: refator
+/**
+ * CRUD controller routes registrar.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ * @todo refator & consider routes registration responsibility delegation to controllers
+ * @todo or create custom ResourceRegistrar (extends Illuminate\Routing\ResourceRegistrar)
+ */
 class CrudRouterService
 {
     protected $extra_routes = [];
 
     protected $name = null;
-    protected $options = null;
     protected $controller = null;
+    protected $options = null;
+    protected $param = null;
 
-    public static function create($name, $controller, $options = [])
+    public static function create(string $name, string $controller, ?array $options = [], ?string $param = null)
     {
-        return new static($name, $controller, $options);
+        return new static($name, $controller, $options, $param);
     }
 
-    public function __construct($name, $controller, $options)
+    public static function requestToRoute(Request $request): ?Route
+    {
+        $route = collect(RouteFacade::getRoutes())->first(function (Route $route) use ($request) {
+            return $route->matches($request);
+        });
+
+        return $route ? $route->bind($request) : null;
+    }
+
+    // @todo hotfixed
+    public static function backLink(?Model $model = null): ?array
+    {
+        $url = url()->previous();
+
+        if (is_null($url)) {
+            return null;
+        }
+
+        if (parse_url($url, PHP_URL_HOST) !== config('url')) {
+            return null;
+        }
+
+        $request = request()->create($url);
+
+        $route = self::requestToRoute($request);
+
+        if (is_null($route)) {
+            return null;
+        }
+
+        $controller = $route->getController();
+
+        if (!($controller instanceof Crudable)) {
+            return null;
+        }
+
+        $repository = $controller->getRepository();
+        $prev_model = null;
+
+        collect($route->parameters())->each(function (string $key, string $param) use ($repository, &$prev_model) {
+            // @todo quite a naive assumption, better approach? couldn't find a way to resolve the model from bound route
+            if (!$prev_model && is_numeric($key)) {
+                $prev_model = $repository->find($key);
+            }
+        });
+
+        if (is_null($prev_model) && ($model) && (get_class($model->getCrudController()) === get_class($controller))) {
+            return null;
+        }
+
+        $prev_model = $prev_model ?? $repository->getModel();
+
+        if ($model && $prev_model->is($model)) {
+            return null;
+        }
+
+        return [ $prev_model, $url ];
+    }
+
+    private function __construct(string $name, string $controller, array $options, ?string $param)
     {
         $this->name = $name;
         $this->controller = $controller;
         $this->options = $options;
+        $this->param = $param ?? Str::slug(str_replace('/', '_', $this->name), '_');
 
-        $param = Str::slug($this->name, '_');
+        $this
+            ->registerPlatformRoutes()
+            ->registerPackageRoutes($this->param);
+    }
 
-        Route::post($this->name . '/search', [
+    private function registerPlatformRoutes(): CrudRouterService
+    {
+        RouteFacade::post($this->name . '/search', [
             'as' => 'crud.' . $this->name . '.search',
             'uses' => $this->controller . '@search',
         ]);
 
-        Route::get($this->name . '/repository/order-by/{param}/{order_by_column}/{order_by_direction?}', [
-            'as' => 'crud.' . $this->name . '.repository-order',
-            'uses' => $this->controller . '@repositoryOrderBy',
+        RouteFacade::get($this->name . '/table/{param}/order-by/{order_by_column}/{order_by_direction?}', [
+            'as' => 'crud.' . $this->name . '.table-order',
+            'uses' => $this->controller . '@tableOrderBy',
         ]);
 
-        Route::post($this->name . '/repository/filter/{param}', [
-            'as' => 'crud.' . $this->name . '.repository-filter',
-            'uses' => $this->controller . '@repositoryFilter',
+        RouteFacade::post($this->name . '/table/{param}/filter', [
+            'as' => 'crud.' . $this->name . '.table-filter',
+            'uses' => $this->controller . '@tableFilter',
         ]);
 
-        Route::post($this->name . sprintf('/repository/autocomplete/{%s?}', $param), [
-            'as' => 'crud.' . $this->name . '.repository-autocomplete',
-            'uses' => $this->controller . '@repositoryAutocomplete',
+        RouteFacade::post($this->name . '/table/{param}/autocomplete/{filter}', [
+            'as' => 'crud.' . $this->name . '.filter-autocomplete',
+            'uses' => $this->controller . '@tableFilterAutocomplete',
         ]);
 
-        Route::post($this->name . sprintf('/repository/typeahead/{%s?}', $param), [
-            'as' => 'crud.' . $this->name . '.repository-typeahead',
-            'uses' => $this->controller . '@repositoryTypeahead',
+        RouteFacade::post($this->name . '/form/{param}/autocomplete/{field}', [
+            'as' => 'crud.' . $this->name . '.field-autocomplete',
+            'uses' => $this->controller . '@formFieldAutocomplete',
         ]);
 
-        Route::post($this->name . sprintf('/form/reload/{%s?}', $param), [
+        RouteFacade::post($this->name . sprintf('/form/reload/{%s?}', $this->param), [
             'as' => 'crud.' . $this->name . '.form-reload',
             'uses' => $this->controller . '@formReload',
         ]);
 
-        Route::post($this->name . sprintf('/form/reload/group/{field_group}/{%s?}', $param), [
+        RouteFacade::post($this->name . sprintf('/form/reload/group/{field_group}/{%s?}', $this->param), [
             'as' => 'crud.' . $this->name . '.form-reload-group',
             'uses' => $this->controller . '@formReloadGroup',
         ]);
 
-        Route::post($this->name . sprintf('/form/validate/group/{field_group}/{%s?}', $param), [
+        RouteFacade::post($this->name . sprintf('/form/validate/group/{field_group}/{%s?}', $this->param), [
             'as' => 'crud.' . $this->name . '.form-validate-group',
             'uses' => $this->controller . '@formValidateGroup',
         ]);
 
-        Route::post($this->name . sprintf('/form-validate/field/{field}/{%s?}', $param), [
+        RouteFacade::post($this->name . sprintf('/form-validate/field/{field}/{%s?}', $this->param), [
             'as' => 'crud.' . $this->name . '.form-validate-field',
             'uses' => $this->controller . '@formValidateField',
         ]);
 
-        Route::post($this->name . sprintf('/{%s}/{relation}/reorder', $param), [
+        RouteFacade::post($this->name . sprintf('/{%s}/{relation}/reorder', $this->param), [
             'as' => 'crud.' . $this->name . '.reorder',
             'uses' => $this->controller . '@reorder',
         ]);
 
-        Route::get($this->name . sprintf('/{%s}/translate/{lang}', $param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/translate/{lang}', $this->param), [
             'as' => 'crud.' . $this->name . '.translate-item',
             'uses' => $this->controller . '@translateItem',
         ]);
 
-        Route::get($this->name . sprintf('/clone/{%s}', $param), [
-            'as' => 'crud.' . $this->name . '.clone-confirm',
-            'uses' => $this->controller . '@cloneConfirm',
+        RouteFacade::get($this->name . sprintf('/clone/{%s}', $this->param), [
+            'as' => 'crud.' . $this->name . '.duplicate',
+            'uses' => $this->controller . '@duplicate',
         ]);
 
-        Route::post($this->name . sprintf('/clone/{%s}', $param), [
+        RouteFacade::post($this->name . sprintf('/clone/{%s}', $this->param), [
             'as' => 'crud.' . $this->name . '.clone',
             'uses' => $this->controller . '@clone',
         ]);
 
-        Route::get($this->name . sprintf('/destroy/{%s}', $param), [
+        RouteFacade::get($this->name . sprintf('/destroy/{%s}', $this->param), [
             'as' => 'crud.' . $this->name . '.destroy-confirm',
             'uses' => $this->controller . '@destroyConfirm',
         ]);
 
-        Route::get($this->name . sprintf('/{%s}/detach', $param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/detach', $this->param), [
             'as' => 'crud.' . $this->name . '.detach',
             'uses' => $this->controller . '@detach',
         ]);
 
-        Route::get($this->name . sprintf('/{%s}/toggle-pivot-data/{pivot_data}', $param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/toggle-pivot-data/{pivot_data}', $this->param), [
             'as' => 'crud.' . $this->name . '.toggle-pivot-data',
             'uses' => $this->controller . '@togglePivotData',
         ]);
 
-        Route::get($this->name . sprintf('/{%s}/switch/enability', $param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/switch/enability', $this->param), [
             'as' => 'crud.' . $this->name . '.switch-enability',
             'uses' => $this->controller . '@switchEnability',
         ]);
+
+        return $this;
+    }
+
+    protected function registerPackageRoutes(string $param): CrudRouterService
+    {
+        return $this;
     }
 
     /**
@@ -128,15 +216,16 @@ class CrudRouterService
                 'edit'      => 'crud.' . $this->name . '.edit',
                 'update'    => 'crud.' . $this->name . '.update',
                 'show'      => 'crud.' . $this->name . '.show',
-                'clone'     => 'crud.' . $this->name . '.clone',
-                'destroy'   => 'crud.' . $this->name . '.destroy',
+                'clone'     => 'crud.' . $this->name . '.clone', // @todo check relevance
+                'destroy'   => 'crud.' . $this->name . '.destroy', // @todo check relevance
             ],
         ], $this->options);
 
-        Route::resource($this->name, $this->controller, $options_with_default_route_names);
+        RouteFacade::resource($this->name, $this->controller, $options_with_default_route_names);
     }
 
-    public function with($injectables)
+    // @todo purpose & correctness?
+    public function with($injectables): CrudRouterService
     {
         if (is_string($injectables)) {
             $this->extra_routes[] = 'with' . ucwords($injectables);
@@ -144,18 +233,15 @@ class CrudRouterService
             foreach ($injectables as $injectable) {
                 $this->extra_routes[] = 'with' . ucwords($injectable);
             }
-        } else {
-            $reflection = new \Reflectionfunction ($injectables);
-
-            if ($reflection->isClosure()) {
-                $this->extra_routes[] = $injectables;
-            }
+        } elseif ((new \ReflectionFunction($injectables))->isClosure()) {
+            $this->extra_routes[] = $injectables;
         }
 
         return $this->registerExtraRoutes();
     }
 
-    private function registerExtraRoutes()
+    // @todo purpose & correctness?
+    private function registerExtraRoutes(): CrudRouterService
     {
         foreach ($this->extra_routes as $route) {
             if (is_string($route)) {
@@ -164,8 +250,11 @@ class CrudRouterService
                 $route();
             }
         }
+
+        return $this;
     }
 
+    // @todo purpose & correctness?
     public function __call($method, $parameters = null)
     {
         if (method_exists($this, $method)) {

@@ -23,7 +23,8 @@ class UploadFile extends AbstractFormField
         'upload-url' => null,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control'
+            'class' => 'form-control',
+            // 'maxsize' => '5242880', // 5 MB
         ],
     ];
 

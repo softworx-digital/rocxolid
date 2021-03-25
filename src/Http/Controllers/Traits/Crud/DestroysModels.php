@@ -4,13 +4,17 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Crudable;
 // rocXolid repositories
 use Softworx\RocXolid\Repositories\AbstractCrudRepository;
 // rocXolid model contracts
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer as CrudModelViewerComponent;
 
 /**
- * Trait to remove a resource from storage.
+ * Delete (destroy) resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -18,74 +22,129 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  */
 trait DestroysModels
 {
+    use Response\ProvidesDestroyResponse;
+
     /**
-     * Display the specified resource destroy confirmation dialog.
+     * Flag if to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
      *
-     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @var boolean
+     */
+    protected $use_ajax_destroy_confirmation = false;
+
+    /**
+     * Display the specified resource update form.
+     *
+     * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="update",scopes="['policy.scope.all','policy.scope.owned']")
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function destroyConfirm(CrudRequest $request, Crudable $model)//: View
+    public function destroyConfirm(CrudRequest $request, CrudableModel $model)//: View
     {
-        $this->setModel($model);
+        // $model_viewer_component = $this->getModelViewerComponent($model, $this->getFormComponent($this->getForm($request, $model)));
+        $model_viewer_component = $this->getModelViewerComponent($model);
 
-        $repository = $this->getRepository($this->getRepositoryParam($request));
+        return $request->ajax()
+            ? $this->destroyConfirmAjax($request, $model, $model_viewer_component)
+            : $this->destroyConfirmNonAjax($request, $model, $model_viewer_component);
+    }
 
-        $model_viewer_component = $this->getModelViewerComponent($this->getModel());
+    /**
+     * Display the specified resource destroy confirmation form modal for AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function destroyConfirmAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    {
+        return $this->response
+            ->modal($model_viewer_component->fetch('modal.destroy-confirm'))
+            ->get();
+    }
 
-        if ($request->ajax()) {
-            return $this->response
-                ->modal($model_viewer_component->fetch('modal.destroy-confirm'))
-                ->get();
-        } else {
-            return $this
-                ->getDashboard()
-                ->setModelViewerComponent($model_viewer_component)
-                ->render('model', [
-                    'model_viewer_template' => 'destroy-confirm'
-                ]);
-        }
+    /**
+     * Display the specified resource destroy confirmation form view for non-AJAX requests.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer $model_viewer_component
+     */
+    protected function destroyConfirmNonAjax(CrudRequest $request, CrudableModel $model, CrudModelViewerComponent $model_viewer_component)
+    {
+        return $this
+            ->getDashboard()
+            ->setModelViewerComponent($model_viewer_component)
+            ->render('model', [
+                'model_viewer_template' => 'destroy-confirm'
+            ]);
     }
 
     /**
      * Process the destroy resource request.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="write",policy_ability="delete",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    public function destroy(CrudRequest $request, Crudable $model)//: Response - returns JSON for ajax calls
+    public function destroy(CrudRequest $request, CrudableModel $model)//: Response - returns JSON for ajax calls
     {
-        $this->setModel($model);
+        // last time to check if something prevents the model to be destroyed
+        if (!$model->canBeDeleted($request)) {
+            throw new \RuntimeException(sprintf('Model [%s]:[%s] cannot be deleted', (new \ReflectionClass($model))->getName(), $model->getKey()));
+        }
 
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-
-        return $this->onDestroy($request, $repository);
+        return $this->onDestroy($request, $model);
     }
 
     /**
      * Action to take when the 'destroy' form was submitted.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
-     * @param \Softworx\RocXolid\Forms\AbstractCrudForm $form
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    protected function onDestroy(CrudRequest $request, AbstractCrudRepository $repository)//: Response
+    protected function onDestroy(CrudRequest $request, CrudableModel $model)//: Response
     {
-        $model = $repository->deleteModel($this->getModel());
+        if (collect(config('rocXolid.main.force_delete', []))->contains((new \ReflectionClass($model))->getName())) {
+            $model = $this->getRepository()->forceDeleteModel($model);
+        } else {
+            $model = $this->getRepository()->deleteModel($model);
+        }
 
-        return $this->onModelDestroyed($request, $repository, $model);
+        return $this
+            ->onModelDestroyed($request, $model)
+            ->onModelDestroyedSuccessResponse($request, $model);
     }
 
     /**
      * Action to take after the model is destroyed.
      *
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
-     * @param \Softworx\RocXolid\Repositories\AbstractCrudRepository $repository
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Softworx\RocXolid\Http\Controllers\Contracts\Crudable
+     */
+    protected function onModelDestroyed(CrudRequest $request, CrudableModel $model): Crudable
+    {
+        return $this;
+    }
+
+    /**
+     * Respond to successful model destruction.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      */
-    protected function onModelDestroyed(CrudRequest $request, AbstractCrudRepository $repository, Crudable $model)//: Response
+    protected function onModelDestroyedSuccessResponse(CrudRequest $request, CrudableModel $model)//: Response
     {
         return $this->destroyResponse($request, $model);
+    }
+
+    /**
+     * Decide whether to process the destroy confirmation AJAX-ish or standard (sync) HTTP Request-ish way.
+     *
+     * @return bool
+     */
+    public function useAjaxDestroyConfirmation(): bool
+    {
+        return $this->use_ajax_destroy_confirmation;
     }
 }

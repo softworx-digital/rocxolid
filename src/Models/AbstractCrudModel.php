@@ -5,14 +5,14 @@ namespace Softworx\RocXolid\Models;
 use Illuminate\Database\Eloquent\Model;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
-use Softworx\RocXolid\Models\Contracts\AutocompleteSearchable;
+use Softworx\RocXolid\Models\Contracts\ApiRequestable;
+use Softworx\RocXolid\Models\Contracts\Searchable;
 // rocXolid model traits
-use Softworx\RocXolid\Models\Traits\Crudable as CrudableTrait;
-use Softworx\RocXolid\Models\Traits\AutocompleteSearchable as AutocompleteSearchableTrait;
+use Softworx\RocXolid\Models\Traits;
 // rocXolid relations
 use Softworx\RocXolid\Models\Relations\Traits\BelongsToThrough;
 // rocXolid user management traits
-use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: this doesn't belong here, another approach without dependency on UserManagement?
+use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo this doesn't belong here, another approach without dependency on UserManagement?
 
 /**
  * rocXolid base CRUDable model class.
@@ -21,12 +21,14 @@ use Softworx\RocXolid\UserManagement\Models\Traits\HasUserAttributes; // @todo: 
  * @package Softworx\RocXolid
  * @version 1.0.0
  */
-abstract class AbstractCrudModel extends Model implements Crudable, AutocompleteSearchable
+abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestable, Searchable
 {
-    use CrudableTrait;
+    use Traits\Crudable;
+    use Traits\ApiRequestable;
+    use Traits\CanBeFieldItem;
+    use Traits\CanBeSearched;
     use BelongsToThrough;
     use HasUserAttributes;
-    use AutocompleteSearchableTrait;
 
     /**
      * Attribute to use for parent's position.
@@ -34,13 +36,6 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
      * @var string
      */
     const POSITION_COLUMN = 'model_attribute_position';
-
-    /**
-     * Flag if model instances can be user deleted.
-     *
-     * @var bool
-     */
-    protected static $can_be_deleted = true;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -125,4 +120,20 @@ abstract class AbstractCrudModel extends Model implements Crudable, Autocomplete
      * @var array
      */
     protected $enums = [];
+
+    /**
+     * Monetary attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $monetaries = [];
+
+    /**
+     * Percentual attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $percentuals = [];
 }

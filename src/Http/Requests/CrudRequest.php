@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Http\Requests;
 
+// @todo cleanup
 class CrudRequest extends FormRequest
 {
     /**
@@ -9,7 +10,7 @@ class CrudRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         // only allow creates if the user is logged in
         //return \Auth::check();
@@ -21,7 +22,7 @@ class CrudRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // 'name' => 'required|min:3|max:255'

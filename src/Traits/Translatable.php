@@ -2,7 +2,6 @@
 
 namespace Softworx\RocXolid\Traits;
 
-use App;
 use Softworx\RocXolid\Services\TranslationService;
 use Softworx\RocXolid\Contracts\Translatable as TranslatableContract;
 
@@ -35,7 +34,32 @@ trait Translatable
      */
     public function translate(string $key, array $params = [], bool $use_raw_key = false): string
     {
-        return $this->getTranslationService()->getTranslation($this, $key, $params, $use_raw_key);
+        $translation = $this->getTranslationService()->getTranslation($this, $key, $params, $use_raw_key);
+
+        if (!is_string($translation)) {
+            throw new \RuntimeException(sprintf(
+                "Invalid translation for [%s::%s.%s], string value expected",
+                $this->getTranslationPackage(),
+                $this->getTranslationParam(),
+                $key
+            ));
+        }
+
+        return $translation;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function translations(string $key): array
+    {
+        $translations = $this->getTranslationService()->getTranslation($this, $key);
+
+        if (!is_array($translations)) {
+            throw new \RuntimeException(sprintf('Translations should be of array type, type [%s] returned: [%s]', gettype($translations), $translations));
+        }
+
+        return $translations;
     }
 
     /**
@@ -152,7 +176,7 @@ trait Translatable
         return isset($this->language_name);
     }
 
-    // todo
+    // @todo
     protected function guessTranslationPackage()
     {
         $reflection = new \ReflectionClass($this);
@@ -160,7 +184,7 @@ trait Translatable
         return null;
     }
 
-    // todo
+    // @todo
     protected function guessTranslationParam()
     {
         $reflection = new \ReflectionClass($this);
@@ -170,14 +194,14 @@ trait Translatable
 
     /**
      * Retrieves the view service responsible for retrieving and composing the views.
-     * @todo: pass as dependency via class constructor (however to all classes using this trait - awkward)
+     * @todo pass as dependency via class constructor (however to all classes using this trait - awkward)
      *
      * @return \Softworx\RocXolid\Services\Contracts\TranslationService
      */
     protected function getTranslationService(): TranslationService
     {
         if (!property_exists($this, 'translation_service') || is_null($this->translation_service)) {
-            $translation_service = App::make(TranslationService::class);
+            $translation_service = app(TranslationService::class);
 
             if (property_exists($this, 'translation_service')) {
                 $this->translation_service = $translation_service;

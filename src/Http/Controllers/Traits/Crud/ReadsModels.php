@@ -6,9 +6,11 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
+// rocXolid components
+use Softworx\RocXolid\Components\ModelViewers\CrudModelViewer;
 
 /**
- * Trait to display specific resource.
+ * Read resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -20,15 +22,16 @@ trait ReadsModels
      * Display the specified resource.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="view",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model Resolved model instance.
+     * @param string|null $tab Tab param to show.
+     * @return @todo
      */
-    public function show(CrudRequest $request, Crudable $model)//: View
+    public function show(CrudRequest $request, Crudable $model, ?string $tab = null)//: View
     {
-        $this->setModel($model);
+        $this->initModel($model);
 
-        $model_viewer_component = $this
-            ->getModelViewerComponent($this->getModel())
-            ->adjustShow($request, $this);
+        $model_viewer_component = $this->getShowModelViewerComponent($request, $model, $tab);
 
         if ($request->ajax()) {
             return $this->response
@@ -40,8 +43,21 @@ trait ReadsModels
                 ->setModelViewerComponent($model_viewer_component)
                 ->render('model', [
                     'model_viewer_template' => 'show',
-                    'tab' => $request->query('tab', null),
+                    'tab' => $tab,
                 ]);
         }
+    }
+
+    /**
+     * Obtain model viewer to be used for show action.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @param string|null $tab
+     * @return \Softworx\RocXolid\Components\ModelViewers\CrudModelViewer
+     */
+    protected function getShowModelViewerComponent(CrudRequest $request, Crudable $model, ?string $tab): CrudModelViewer
+    {
+        return $this->getModelViewerComponent($model);
     }
 }

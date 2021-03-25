@@ -2,15 +2,11 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Traits;
 
-// rocXolid utils
-use Softworx\RocXolid\Http\Requests\CrudRequest;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
-// rocXolid forms
-use Softworx\RocXolid\Forms\AbstractCrudForm as AbstractCrudForm;
 
 /**
- * Trait to make the controller able to handle all the CRUD operations and give appropriate responses.
+ * Trait to make the controller able to handle all the CRUD operations and give appropriate response.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -23,56 +19,52 @@ trait Crudable
     use Crud\ReadsModels;
     use Crud\UpdatesModels;
     use Crud\DestroysModels;
+    // @todo response methods - inject model viewer, do not 'create' it (same for CRUD traits subusing Response traits)
     use Crud\Response\ProvidesSuccessResponse;
     use Crud\Response\ProvidesErrorResponse;
-    use Crud\Response\ProvidesDestroyResponse;
 
-    // protected static $model_class; // should be defined in specific class
+    // protected static $model_type; // should be defined in specific controller class
 
-    public static function getModelClass(): string
+    /**
+     * Initiate model instance to be used with controller.
+     *
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
+     * @return \Softworx\RocXolid\Models\Contracts\Crudable
+     */
+    public function initModel(CrudableModel $model): CrudableModel
     {
-        return static::$model_class;
+        return $model;
     }
 
-    // @todo: maybe some different approach
-    public function isModelActionAvailable(CrudableModel $model, string $action): bool
+    /**
+     * Provide the model type the controller works with.
+     * Each controller is assigned only one model type.
+     *
+     * @return string
+     */
+    public static function getModelType(): string
     {
-        return true;
+        return static::$model_type ?? self::guessModelType();
     }
 
-    // @todo: this doesn't belong here, or?
-    public function makeForm(string $param, ?CrudableModel $model, ?string $form_class = null): AbstractCrudForm
+    /**
+     * Naively guess the model type based on controller's namespace.
+     * Replace the 'Http\Controller' subnamespace with 'Model' in the controller's namespace name.
+     *
+     * @return string
+     */
+    private static function guessModelType(): string
     {
-        $repository = $this->getRepository($param);
-        $model = $model ?? $repository->getModel();
+        $model_type = str_replace('Http\Controllers', 'Models', (new \ReflectionClass(static::class))->getNamespaceName());
 
-        $this->setModel($model);
-
-        if (is_null($form_class)) {
-            $form = $repository->getForm($param);
-        } else {
-            $form = $repository->createForm($form_class, $param);
+        if (!class_exists($model_type)) {
+            throw new \RuntimeException(sprintf('Controller [%s] guessed unexisting model type [%s] to work with.', static::class, $model_type));
         }
 
-        return $form;
-    }
-
-    protected function getFormParam(CrudRequest $request, ?string $method = null): string
-    {
-        $method = $method ?? $request->route()->getActionMethod();
-
-        if ($request->filled('_section')) {
-            $method = sprintf('%s.%s', $method, $request->_section);
-
-            if (isset($this->form_mapping[$method])) {
-                return $this->form_mapping[$method];
-            }
+        if (!(new \ReflectionClass($model_type))->implementsInterface(CrudableModel::class)) {
+            throw new \RuntimeException(sprintf('Controller [%s] guessed model type [%s] that is not [%s].', static::class, $model_type, CrudableModel::class));
         }
 
-        if (!isset($this->form_mapping[$method])) {
-            throw new \InvalidArgumentException(sprintf('No controller [%s] form mapping for method [%s]', get_class($this), $method));
-        }
-
-        return $this->form_mapping[$method];
+        return $model_type;
     }
 }

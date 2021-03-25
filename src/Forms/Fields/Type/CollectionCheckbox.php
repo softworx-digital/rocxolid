@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
+use Illuminate\Support\Collection;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable;
 // rocXolid form fields
@@ -32,13 +33,15 @@ class CollectionCheckbox extends AbstractFormField
         'attributes' => [
             'class' => 'flat'
         ],
+        'except-attributes' => null,
+        'enable-custom-values' => false,
     ];
 
     public function setCollection($option)
     {
         if ($option instanceof Collection) {
             $this->collection = $option;
-        } else {
+        } elseif (isset($option['model']) && isset($option['column'])) {
             $model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
             $query = $model::query();
 
@@ -47,7 +50,7 @@ class CollectionCheckbox extends AbstractFormField
                     $query = (new $filter['class']())->apply($query, $model, $filter['data']);
                 }
             }
-
+            // @todo use qualify
             $this->collection = $query->pluck(sprintf('%s.%s', $model->getTable(), $option['column']), sprintf('%s.id', $model->getTable()));
 
             if (isset($option['method'])) {
@@ -57,6 +60,8 @@ class CollectionCheckbox extends AbstractFormField
                     return $model->find($id)->{$method}();
                 });
             }
+        } else {
+            throw new \InvalidArgumentException(sprintf('The "collection" option for [%s] field requires en entire collection to be set or model and column definition', $this->name));
         }
 
         return $this;
@@ -67,13 +72,11 @@ class CollectionCheckbox extends AbstractFormField
         return $this->collection;
     }
 
-    public function getFieldName(int $index = 0): string
+    public function getCustomValues($index = 0): Collection
     {
-        if ($this->isArray()) {
-            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
-        } else {
-            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
-        }
+        return collect($this->getFieldValue($index))->filter(function ($value) {
+            return filled($value) && !$this->getCollection()->keys()->contains($value);
+        });
     }
 
     public function setValue($value, int $index = 0): Valueable
@@ -88,6 +91,31 @@ class CollectionCheckbox extends AbstractFormField
 
     public function isFieldValue($value, $index = 0): bool
     {
-        return $this->getFieldValue($index) && $this->getFieldValue($index)->contains($value);
+        return $this->getFieldValue($index) && $this->getFieldValue($index)->transform(function ($value) {
+            return (string)$value;
+        })->containsStrict((string)$value);
+    }
+
+    public function setExceptAttributes($attributes)
+    {
+        $this->setComponentOptions('except-attributes', $attributes);
+
+        return $this;
+    }
+
+    public function setEnableCustomValues(bool $enable)
+    {
+        $this->setComponentOptions('enable-custom-values', $enable);
+
+        return $this;
+    }
+
+    public function getFieldName(int $index = 0): string
+    {
+        if ($this->isArray()) {
+            return sprintf('%s[%s][%s][]', self::ARRAY_DATA_PARAM, $index, $this->name);
+        } else {
+            return sprintf('%s[%s][]', self::SINGLE_DATA_PARAM, $this->name);
+        }
     }
 }

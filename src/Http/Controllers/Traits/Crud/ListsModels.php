@@ -5,7 +5,7 @@ namespace Softworx\RocXolid\Http\Controllers\Traits\Crud;
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- * Trait to list resource.
+ * List resource CRUD action.
  *
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
@@ -17,21 +17,20 @@ trait ListsModels
      * Display a listing of the resource.
      *
      * @Softworx\RocXolid\Annotations\AuthorizedAction(policy_ability_group="read-only",policy_ability="viewAny",scopes="['policy.scope.all','policy.scope.owned']")
-     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      */
     public function index(CrudRequest $request)//: View
     {
-        $repository = $this->getRepository($this->getRepositoryParam($request));
-        $repository_component = $this->getRepositoryComponent($repository);
+        $table_component = $this->getTableComponent($this->getTable($request));
 
         if ($request->ajax()) {
             return $this->response
-                ->replace($repository_component->getDomId(), $repository_component->fetch())
+                ->replace($table_component->getDomId(), $table_component->fetch())
                 ->get();
         } else {
             return $this
                 ->getDashboard()
-                ->setRepositoryComponent($repository_component)
+                ->setTableComponent($table_component)
                 ->render('index');
         }
     }

@@ -2,32 +2,31 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use DB;
 use Illuminate\Support\Collection;
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid filters
 use Softworx\RocXolid\Filters\StartsWith;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\FormField;
 // rocXolid form field types
 use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 
-// @todo: refactor
 class CollectionSelectAutocomplete extends CollectionSelect
 {
-    const LIMIT = 10;
-
-    protected $collection_model = null;
-
-    protected $collection_model_column = null;
-
-    protected $collection_model_method = null;
-
-    protected $collection_filters = [];
-
-    protected $collection_loaded = false;
+    const LIMIT = 15;
 
     protected $default_options = [
         'type-template' => 'collection-select-autocomplete',
+        // collection settings
+        'collection' => [
+        ],
+        // autocompletion settings
+        'autocomplete' => [
+            'filters' => [
+                StartsWith::class
+            ],
+        ],
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -45,80 +44,64 @@ class CollectionSelectAutocomplete extends CollectionSelect
         ],
     ];
 
+    protected $autocomplete_filters;
+
+    protected $autocomplete_columns;
+
+    protected $collection_model = null;
+
+    protected $collection_filters = [];
+
+    public function autocomplete(string $search): Collection
+    {
+        !$this->autocomplete_columns ?: $this->collection_model->setSearchColumns($this->autocomplete_columns);
+
+        $query = $this->collection_model->query();
+
+        collect($this->autocomplete_filters)->each(function (string $type) use ($query, $search) {
+            app($type)->apply($query, $this->collection_model, $search);
+        });
+
+        collect($this->collection_filters)->each(function (array $filter) use ($query) {
+            app($filter['type'])->apply($query, $this->collection_model, $filter['data']);
+        });
+
+        return $query
+            ->select($this->collection_model->qualifyColumn('*'))
+            ->take(static::LIMIT)
+            ->get();
+    }
+
     public function setCollection($option)
     {
-        if ($option instanceof Collection) {
-            $this->collection = $option;
-            $this->collection_loaded = true;
-        } else {
-            $this->collection = collect();
-            $this->collection_model = ($option['model'] instanceof Model) ? $option['model'] : new $option['model'];
-            $this->collection_model_column = $option['column'];
-            $this->collection_model_method = isset($option['method']) ? $option['method'] : null;
-
-            if (isset($option['filters'])) {
-                $this->collection_filters = $option['filters'];
-            }
-        }
+        $this->collection_model = $option['model']::make();
+        $this->collection_filters = $option['filters'] ?? [];
 
         return $this;
     }
 
     public function getCollection()
     {
-        if (!$this->collection_loaded && $this->shouldLoad()) {
-            $query = $model = $this->collection_model;
-
-            foreach ($this->collection_filters as $filter) {
-                $query = (new $filter['class']())->apply($query, $model, $filter['data']);
+        if ($this->hasValue() && ($model = $this->collection_model->find($this->getValue()))) {
+            // @todo don't know why getValue() returns collection (sometimes?)
+            if ($model instanceof Collection) {
+                $model = $model->first();
             }
 
-            $this->collection = $query
-                // ->take(static::LIMIT)
-                ->pluck(sprintf(
-                    '%s.%s',
-                    $this->collection_model->getTable(),
-                    $this->collection_model_column
-                ), sprintf(
-                    '%s.id',
-                    $this->collection_model->getTable()
-                ));
-        } else {
-            $value = (($this->getValue() instanceof Collection) && $this->getValue()->isEmpty()) ? null : $this->getValue();
-
-            $this->collection = $this->collection_model
-                ->where(sprintf('%s.id', $this->collection_model->getTable()), $value)
-                // ->take(static::LIMIT)
-                ->pluck(sprintf(
-                    '%s.%s',
-                    $this->collection_model->getTable(),
-                    $this->collection_model_column
-                ),
-                sprintf(
-                    '%s.id',
-                    $this->collection_model->getTable()
-                ));
+            return collect([
+                $model->getKey() => $model->getTitle()
+            ]);
         }
 
-        if (!is_null($this->collection_model_method) && method_exists($this->collection_model, $this->collection_model_method)) {
-            $this->collection = $this->collection->map(function (&$item, $id) {
-                return $this->collection_model
-                    ->find($id)->{$this->collection_model_method}();
-            });
-        }
-
-        return $this->collection;
+        return collect();
     }
 
-    public function shouldLoad()
+    public function setAutocomplete(array $settings): FormField
     {
-        foreach ($this->collection_filters as $filter) {
-            if ($filter['class'] == StartsWith::class) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this
+            ->setAutocompleteColumns($settings['columns'] ?? null)
+            ->setAutocompleteFilters($settings['filters'] ?? null)
+            ->setComponentOptions('attributes', [ 'data-abs-ajax-url' => $settings['url'] ?? $this->getAutocompleteUrl() ]);
     }
 
     public function addFilter($filter)
@@ -126,5 +109,27 @@ class CollectionSelectAutocomplete extends CollectionSelect
         $this->collection_filters[] = $filter;
 
         return $this;
+    }
+
+    private function setAutocompleteColumns(?array $columns): FormField
+    {
+        $this->autocomplete_columns = $columns;
+
+        return $this;
+    }
+
+    private function setAutocompleteFilters(?array $filters): FormField
+    {
+        $this->autocomplete_filters = $filters;
+
+        return $this;
+    }
+
+    private function getAutocompleteUrl(): string
+    {
+        return $this->getForm()->getModel()->getControllerRoute('formFieldAutocomplete', [
+            'param' => $this->getForm()->getParam(),
+            'field' => $this->getName(),
+        ]);
     }
 }

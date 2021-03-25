@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Validation\Validator as IlluminateValidator;
 // third-party
 use DvK\Laravel\Vat\Facades\Validator as VatValidator;
-// rocXolid services
-use Softworx\RocXolid\Services\ViewService;
+// rocXolid rendering services
+use Softworx\RocXolid\Rendering\Services\RenderingService;
 
 /**
  * Validator extension.
@@ -15,6 +15,7 @@ use Softworx\RocXolid\Services\ViewService;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo separate to traits accordiing to validation types
  */
 class Validator extends IlluminateValidator
 {
@@ -174,11 +175,118 @@ class Validator extends IlluminateValidator
      */
     public function validateDecimal(string $attribute, $value, array $parameters): bool
     {
-        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
-            return preg_match(sprintf('/^(([0-9]+)(%s([0-9]+))?)$/', $user->address->country->currency_decimal_separator), $value);
-        }
+        $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
+        $nf->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 10);
 
-        return is_numeric($value);
+        $grouping_separator = $nf->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
+        // this is probably a bug in PHP - for eg. sk_SK locale, the grouping symbol is ord(194),
+        // not ord(32) - space
+        $grouping_separator = (ord($grouping_separator) === 194) ? chr(32) : $grouping_separator;
+
+        /*
+        $int_pattern = sprintf(
+            '/^(0|(-?[1-9][0-9]{0,%s}(([0-9]*)|(%s[0-9]{%s})*)))$/',
+            $nf->getAttribute(\NumberFormatter::GROUPING_SIZE) - 1,
+            $grouping_separator,
+            $nf->getAttribute(\NumberFormatter::GROUPING_SIZE)
+        );
+        */
+
+        $int_pattern = '/^(0|(-?[1-9][0-9]*))$/';
+
+        $frac_pattern = sprintf(
+            '/^[0-9]{%s,%s}$/',
+            $nf->getAttribute(\NumberFormatter::MIN_FRACTION_DIGITS),
+            $nf->getAttribute(\NumberFormatter::MAX_FRACTION_DIGITS)
+        );
+
+        $decimal_separator = $nf->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
+
+        list($int, $frac) = array_pad(explode($decimal_separator, $value, 2), 2, 0);
+
+        return preg_match($int_pattern, $int) && preg_match($frac_pattern, $frac);
+    }
+
+    /**
+     * Validate the size of an (localized) decimal attribute is greater than a minimun value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateMinDecimal(string $attribute, $value, array $parameters): bool
+    {
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value >= $parameters[0];
+    }
+
+    /**
+     * Replace all place-holders for the min decimal rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceMinDecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        // @todo hotfixed formatting
+        return str_replace(':min_decimal', number_format($parameters[0], 2, ',', ''), $message);
+    }
+
+    /**
+     * Validate the size of an (localized) decimal attribute is less than a maximum value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validateMaxDecimal(string $attribute, $value, array $parameters): bool
+    {
+        // @todo hotfixed
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value <= $parameters[0];
+    }
+
+    /**
+     * Replace all place-holders for the max decimal rule.
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    public function replaceMaxDecimal(string $message, string $attribute, string $rule, array $parameters): string
+    {
+        // @todo hotfixed formatting
+        return str_replace(':max_decimal', number_format($parameters[0], 2, ',', ''), $message);
+    }
+
+    /**
+     * Validate the size of an (localized) decimal attribute is greater than a minimun value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    public function validatePositiveDecimal(string $attribute, $value, array $parameters): bool
+    {
+        $value = str_replace(',', '.', $value);
+        $value = str_replace(' ', '', $value);
+        $value = (float)$value;
+
+        return $value > 0;
     }
 
     /**
@@ -191,7 +299,7 @@ class Validator extends IlluminateValidator
      */
     public function validateGtdecimal(string $attribute, $value, array $parameters): bool
     {
-        return $this->validateGt($attribute, $this->getNormalizedDecimalNumber($value), $parameters);
+        return $this->validateGt($attribute, $this->getParsedDecimalNumber($value), $parameters);
     }
 
     /**
@@ -218,7 +326,7 @@ class Validator extends IlluminateValidator
      */
     public function validateLatitude(string $attribute, $value, array $parameters): bool
     {
-        return preg_match('/^([-]?(([0-8]?[0-9])(\.(\d+))?)|(90(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+        return preg_match('/^([-]?(([0-8]?[0-9])(\.(\d+))?)|(90(\.0+)?))$/', $value);
     }
 
     /**
@@ -231,12 +339,27 @@ class Validator extends IlluminateValidator
      */
     public function validateLongitude(string $attribute, $value, array $parameters): bool
     {
-        return preg_match('/^([-]?((((1[0-7][0-9])|([0-9]?[0-9]))(\.(\d+))?)|180(\.0+)?))$/', $this->getNormalizedDecimalNumber($value));
+        return preg_match('/^([-]?((((1[0-7][0-9])|([0-9]?[0-9]))(\.(\d+))?)|180(\.0+)?))$/', $value);
+    }
+
+    /**
+     * Replace all place-holders for the after rule.
+     * @todo "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceAfter($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
     }
 
     /**
      * Replace all place-holders for the after_or_equal rule.
-     * @todo: "hotfixed" - improve overall date handling according to localization
+     * @todo "hotfixed" - improve overall date handling according to localization
      *
      * @param string $message
      * @param string $attribute
@@ -251,7 +374,22 @@ class Validator extends IlluminateValidator
 
     /**
      * Replace all place-holders for the before_or_equal rule.
-     * @todo: "hotfixed" - improve overall date handling according to localization
+     * @todo "hotfixed" - improve overall date handling according to localization
+     *
+     * @param string $message
+     * @param string $attribute
+     * @param string $rule
+     * @param array $parameters
+     * @return string
+     */
+    protected function replaceBefore($message, $attribute, $rule, $parameters)
+    {
+        return str_replace(':date', Carbon::make($parameters[0] ?? 'now')->format('j.n.Y'), $message);
+    }
+
+    /**
+     * Replace all place-holders for the before_or_equal rule.
+     * @todo "hotfixed" - improve overall date handling according to localization
      *
      * @param string $message
      * @param string $attribute
@@ -266,7 +404,7 @@ class Validator extends IlluminateValidator
 
     /**
      * Validate that a value is syntactically correct blade template.
-     * @todo: so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
+     * @todo so far serves only for Softworx\RocXolid\Communication\Models\Contracts\Sendable
      *
      * @param string $attribute
      * @param mixed $value
@@ -284,7 +422,7 @@ class Validator extends IlluminateValidator
         $value = str_replace('-&gt;', '->', $value);
 
         try {
-            ViewService::render($value, $variables);
+            RenderingService::render($value, $variables);
         } catch (\Throwable $e) {
             $this->exception = $e;
 
@@ -448,18 +586,18 @@ class Validator extends IlluminateValidator
     }
 
     /**
-     * Normalize decimal number representation according to logged user locale.
+     * Parse decimal number representation according to app locale.
      *
      * @param string $value
      * @return string
      */
-    private function getNormalizedDecimalNumber(string $value): string
+    private function getParsedDecimalNumber(string $value): string
     {
-        // @todo: "hotfixed", find something more appropriate
-        if (($user = auth('rocXolid')->user()) && $user->address()->exists() && $user->address->country()->exists()) {
-            $value = str_replace($user->address->country->currency_decimal_separator, '.', $value);
-        }
+        $nf = new \NumberFormatter(app()->getLocale(), \NumberFormatter::DECIMAL);
 
-        return $value;
+        // $value = preg_replace($nf->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL), '.', $value);
+        // $value = preg_replace($nf->getSymbol(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL), '', $value);
+
+        return (string)$nf->parse($value);
     }
 }

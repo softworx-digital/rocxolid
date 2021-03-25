@@ -64,7 +64,7 @@ trait Validable
     public function getValidationData(): array
     {
         if (is_null($this->validation_data)) {
-            // @todo: this could probably be $this->getRequest()->only($validation['attributes'])
+            // @todo this could probably be $this->getRequest()->only($validation['attributes'])
             $this->validation_data = $this->getRequest()->all();
         }
 

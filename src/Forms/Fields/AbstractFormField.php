@@ -2,6 +2,7 @@
 
 namespace Softworx\RocXolid\Forms\Fields;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // rocXolid contracts
@@ -23,6 +24,7 @@ use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
 // rocXolid form field traits
 use Softworx\RocXolid\Forms\Fields\Traits\ComponentOptionsSetter as ComponentOptionsSetterTrait;
 
+// @todo refactor
 abstract class AbstractFormField implements FormField, Valueable, PivotValueable, Optionable, ErrorMessageable, Translatable
 {
     use ValueableTrait;
@@ -30,7 +32,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
     use MethodOptionableTrait;
     use ErrorMessageableTrait;
     use ComponentOptionsSetterTrait;
-    use TranslatableTrait; // @todo: needed?
+    use TranslatableTrait; // @todo needed?
 
     /**
      * Name of the field.
@@ -192,7 +194,9 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
      */
     public function isRequired(): bool
     {
-        return in_array('required', $this->getOption('validation.rules', []));
+        return collect($this->getOption('validation.rules', []))->contains(function ($rule) {
+            return is_string($rule) && Str::startsWith($rule, 'required');
+        });
     }
 
     /**
@@ -232,10 +236,23 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return filled($this->pivot_relation_name);
     }
 
-    // @todo: kinda hacky, don't like this approach
+    /**
+     * {@inheritDoc}
+     */
+    // @todo kinda hacky, don't like this approach
+    public function getTitle(): string
+    {
+        if ($this->hasOption('component.label.title-translated')) {
+            return $this->getOption('component.label.title-translated');
+        }
+
+        return $this->getForm()->getController()->translate(sprintf('field.%s', $this->getOption('component.label.title', $this->getName())));
+    }
+
+    // @todo kinda hacky, don't like this approach
     public function updateParent()
     {
-        // @todo - zavolat parent update + spravne setnuty parent ?
+        // @todo zavolat parent update + spravne setnuty parent ?
         // to ale chce, aby aj field mal spravne setnutu referenciu na parenta, co zatial nema, zatial je to len form
         if ($group_name = $this->getOption('component.group', false)) {
             if ($this->form->getFormFieldGroup($group_name)->getOption('component.array', false)) {
@@ -246,7 +263,7 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this;
     }
 
-    // @todo: "hotfixed", you can do better
+    // @todo "hotfixed", you can do better
     public function updateComponent(int $index = 0)
     {
         if ($this->hasErrorMessages($index)) {
@@ -322,28 +339,28 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $value;
     }
 
+    // @todo refactoring & unit testing candidate
     public function isFieldValue($value, $index = 0): bool
     {
-        return ($this->getFieldValue($index) == $value);
+        return !is_null($this->getFieldValue($index)) && !is_null($value) && ((string)$this->getFieldValue($index) === (string)$value);
     }
 
     public function getFinalValue()
     {
-        // @todo: temporary hotfix for BelongsToMany fields
-        if ($this->isArray()
-            && method_exists($this->getForm()->getController()->getModel(), $this->name)
-            && ($this->getForm()->getController()->getModel()->{$this->name}() instanceof BelongsToMany)) {
+        $model = $this->getForm()->getModel();
 
+        // @todo temporary hotfix for BelongsToMany fields
+        if ($this->isArray() && method_exists($model, $this->name) && ($model->{$this->name}() instanceof BelongsToMany)) {
             $values = $this->getValues();
 
-            // @todo: awkward
-            $relation = $this->getForm()->getController()->getModel()->{$this->name}();
+            // @todo awkward
+            $relation = $model->{$this->name}();
             $related = $relation->getRelated();
             $pivot_fields = $this->getForm()->getPivotFormFields($relation);
 
             $this->setPivotData(collect());
 
-            $values->each(function ($related_key, $index) use ($relation, $pivot_fields) {
+            $values->each(function ($related_key, $index) use ($model, $relation, $pivot_fields) {
                 $pivot_data = collect();
 
                 $pivot_fields->each(function ($pivot_field) use ($pivot_data, $index) {
@@ -353,12 +370,16 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
                 // $pivot_data = collect($data[$relation->getPivotAccessor()] ?? [])->get($related_key);
 
                 $this->addNewPivot($relation, [
-                    $relation->getForeignPivotKeyName() => $this->getForm()->getController()->getModel()->getKey(),
+                    $relation->getForeignPivotKeyName() => $model->getKey(),
                     $relation->getRelatedPivotKeyName() => $related_key,
                 ] + $pivot_data->toArray());
             });
 
             return $this->getPivotData()->toArray();
+        }
+
+        if ($this->isArray()) {
+            return $this->getValues();
         }
 
         return $this->getValue();
@@ -395,12 +416,24 @@ abstract class AbstractFormField implements FormField, Valueable, PivotValueable
         return $this;
     }
 
+    // @todo hotfixed
+    protected function setForceValue($value): FormField
+    {
+        $this->mergeOptions([
+            'force-value' => $value
+        ]);
+
+        $this->setValue($value);
+
+        return $this;
+    }
+
     protected function makeRoute($route_name)
     {
         return route($route_name);
     }
 
-    // @todo - toto do separatnej parser classy / viac class, ktore to budu handlovat - pozriet ako sa riesia validation messages
+    // @todo toto do separatnej parser classy / viac class, ktore to budu handlovat - pozriet ako sa riesia validation messages
     // Forms\Fields\Support\... - navrhnut strukturu
     // resp cele nejako inak - domysliet
     /*

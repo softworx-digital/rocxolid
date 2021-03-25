@@ -2,17 +2,30 @@
 
 namespace Softworx\RocXolid\Http\Controllers\Contracts;
 
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 // rocXolid utils
 use Softworx\RocXolid\Http\Requests\CrudRequest;
+use Softworx\RocXolid\Http\Responses\Contracts\Response;
+// rocXolid contracts
+use Softworx\RocXolid\Contracts\Repositoryable;
+// rocXolid controller contracts
+use Softworx\RocXolid\Http\Controllers\Contracts\Dashboardable;
+// rocXolid table contracts
+use Softworx\RocXolid\Tables\Contracts\Tableable;
+// rocXolid form contracts
+use Softworx\RocXolid\Forms\Contracts\Formable;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
 
-//@todo - check & update if needed
+// @todo revise & update if needed
 // @todo add responses (after model argument addition to destroyResponse)
-interface Crudable
+/**
+ * Enables controller to handle all the CRUD operations and give appropriate response.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+interface Crudable extends Repositoryable, Dashboardable, Tableable, Formable
 {
     public function index(CrudRequest $request);//: View;
 
@@ -24,7 +37,7 @@ interface Crudable
 
     public function update(CrudRequest $request, CrudableModel $model);//: Response;
 
-    public function show(CrudRequest $request, CrudableModel $model);
+    public function show(CrudRequest $request, CrudableModel $model, ?string $tab = null);
 
     public function destroyConfirm(CrudRequest $request, CrudableModel $model);
 

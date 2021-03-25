@@ -128,7 +128,7 @@ trait Routable
 
     /**
      * {@inheritdoc}
-     * @todo: getController() not guaranteed
+     * @todo getController() not guaranteed
      */
     public function setRouteAction(string $action): RoutableContract
     {

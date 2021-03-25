@@ -3,48 +3,34 @@
 namespace Softworx\RocXolid\Forms;
 
 use Illuminate\Support\Arr;
-// general contracts
-use Softworx\RocXolid\Contracts\Paramable;
-use Softworx\RocXolid\Contracts\Optionable;
-use Softworx\RocXolid\Contracts\EventDispatchable;
-use Softworx\RocXolid\Contracts\Requestable;
-use Softworx\RocXolid\Contracts\Translatable;
-use Softworx\RocXolid\Contracts\Validable;
 // general traits
-use Softworx\RocXolid\Traits\Paramable as ParamableTrait;
-use Softworx\RocXolid\Traits\MethodOptionable as MethodOptionableTrait;
-use Softworx\RocXolid\Traits\EventDispatchable as EventDispatchableTrait;
-use Softworx\RocXolid\Traits\Requestable as RequestableTrait;
-use Softworx\RocXolid\Traits\Translatable as TranslatableTrait;
-use Softworx\RocXolid\Traits\Validable as ValidableTrait;
+use Softworx\RocXolid\Traits\Paramable;
+use Softworx\RocXolid\Traits\MethodOptionable;
+use Softworx\RocXolid\Traits\Requestable;
+use Softworx\RocXolid\Traits\Translatable;
+use Softworx\RocXolid\Traits\Validable;
 // form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
-use Softworx\RocXolid\Forms\Contracts\Formable;
 use Softworx\RocXolid\Forms\Contracts\FormField;
-use Softworx\RocXolid\Forms\Contracts\FormFieldable;
-use Softworx\RocXolid\Forms\Contracts\Buttonable;
-use Softworx\RocXolid\Forms\Contracts\FormBuilder;
-use Softworx\RocXolid\Forms\Contracts\FormFieldBuilder;
-use Softworx\RocXolid\Forms\Contracts\FormFieldFactory;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder;
+use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
 // traits
-use Softworx\RocXolid\Forms\Traits\OptionsSetter as OptionsSetterTrait;
-use Softworx\RocXolid\Forms\Traits\FormFieldable as FormFieldableTrait;
 use Softworx\RocXolid\Forms\Traits\Buttonable as ButtonableTrait;
 
 /**
- * @todo: subject to refactoring
+ * @todo subject to refactoring
  */
-abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionable, EventDispatchable, Requestable, Translatable, Validable, Paramable
+abstract class AbstractForm implements Form
 {
-    use ParamableTrait;
-    use MethodOptionableTrait;
-    use OptionsSetterTrait;
-    use FormFieldableTrait;
-    use ButtonableTrait;
-    use EventDispatchableTrait;
-    use RequestableTrait;
-    use TranslatableTrait;
-    use ValidableTrait;
+    use Paramable;
+    use MethodOptionable;
+    use Requestable;
+    use Translatable;
+    use Validable;
+    use Traits\OptionsSetter;
+    use Traits\FormFieldable;
+    use Traits\Buttonable;
 
     /**
      * @var FormBuilder
@@ -147,6 +133,26 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
      */
     protected $buttons_order = null;
 
+    /**
+     * Constructor
+     *
+     * @param string $param Table parameter serves as reference to better identify the table eg. in session key creation.
+     */
+    public function __construct(string $param)
+    {
+        $this->setParam($param);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Softworx\RocXolid\Forms\Contracts\Form
+     */
+    public function init(): Form
+    {
+        return $this;
+    }
+
     public function buildFields($validate = true): Form
     {
         $this
@@ -209,21 +215,6 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
 
         return $this;
     }
-
-    /*
-     * Method to pass holder and/or holder properties in concrete classes.
-     *
-     * Sample implementation (for some Controller):
-     *
-     * $this
-     *    ->setController($holder)
-     *    ->setModel($model);
-     *
-     *  return $this;
-     *
-     * @return Form
-     */
-    abstract public function setHolderProperties(Formable $holder): Form;
 
     /**
      * Set the form builder instance.
@@ -426,7 +417,7 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         return $input;
     }
 
-    // @todo: "hotfixed"
+    // @todo "hotfixed"
     public function getInputFieldValue($field, $validate = false)
     {
         $param = sprintf('%s.%s', FormField::SINGLE_DATA_PARAM, $field);
@@ -459,7 +450,11 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         if ($input->has(FormField::SINGLE_DATA_PARAM)) {
             collect($input->get(FormField::SINGLE_DATA_PARAM))
                 ->each(function ($value, $name) {
-                    if ($this->hasFormField($name)) {
+                    // @todo hotfixed, extremely ugly
+                    if ($this->hasFormField($name)
+                        && !is_null($value)
+                        && !$this->getFormField($name)->hasOption('value')
+                        && !$this->getFormField($name)->hasOption('force-value')) {
                         $this->getFormField($name)
                             ->setValue($value)
                             ->updateParent();
@@ -483,14 +478,19 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
         }
         */
 
-        // @todo: "hotfixed"
+        // @todo "hotfixed"
         // the pivot handling doesn't belong here since it's CRUDable part
         if ($input->has(FormField::ARRAY_DATA_PARAM)) {
             collect($input->get(FormField::ARRAY_DATA_PARAM))
                 ->each(function ($groupdata, $name) {
+                    if (($name !== 'pivot') && $this->hasFormField($name)) {
+                        $this->getFormField($name)
+                            ->setValues(collect());
+                    }
+
                     collect($groupdata)
                         ->each(function ($value, $index) use ($name) {
-                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                            // @todo "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
                             // $name holds the value 'pivot'
                             if (is_numeric($index)) {
                                 if ($this->hasFormField($name)) {
@@ -501,11 +501,11 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                             } else {
                                 $pivot_for = $index;
 
-                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                // @todo this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($value)
-                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                    ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
-                                            ->each(function($pivot_field_value, $name) use ($pivot_field_index, $pivot_for) {
+                                            ->each(function ($pivot_field_value, $name) use ($pivot_field_index, $pivot_for) {
                                                 if ($this->hasFormField($name)) {
                                                     $this->getFormField($name)
                                                         ->setValue($pivot_field_value, $pivot_field_index)
@@ -523,31 +523,24 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
 
     protected function setFieldsErrorsMessages(): Form
     {
-        $errors = [];
+        collect($this->getErrors()->getMessages())->each(function (array $messages, string $key) {
+            list($key, $name) = explode('.', $key, 2);
 
-        foreach ($this->getErrors()->getMessages() as $key => $message) {
-            Arr::set($errors, $key, $message);
-        }
-
-        $errors = collect($errors);
-
-        if ($errors->has(FormField::SINGLE_DATA_PARAM)) {
-            collect($errors->get(FormField::SINGLE_DATA_PARAM))
-                ->each(function ($messages, $name) {
+            switch ($key) {
+                case FormField::SINGLE_DATA_PARAM:
                     $this->getFormField($name)
-                        ->setErrorMessages($messages)
-                        ->updateComponent();
-                });
-        }
+                            ->setErrorMessages($messages)
+                            ->updateComponent();
+                    break;
+                case FormField::ARRAY_DATA_PARAM:
+                    // @todo ugly
+                    $errors = [];
 
-        // @todo: "hotfixed"
-        // the pivot handling doesn't belong here since it's CRUDable part
-        if ($errors->has(FormField::ARRAY_DATA_PARAM)) {
-            collect($errors->get(FormField::ARRAY_DATA_PARAM))
-                ->each(function ($grouperrors, $name) {
-                    collect($grouperrors)
-                        ->each(function ($messages, $index) use ($name) {
-                            // @todo: "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
+                    Arr::set($errors, $name, $messages);
+
+                    collect($errors)->each(function ($groupmessages, $name) {
+                        collect($groupmessages)->each(function ($messages, $index) use ($name) {
+                            // @todo "hotfixed" - temporary fix - if the given field is pivot, then the $index holds the pivot-for field name
                             // $name holds the value 'pivot'
                             if (is_numeric($index)) {
                                 $this->getFormField($name)
@@ -556,11 +549,11 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                             } else {
                                 $pivot_for = $index;
 
-                                // @todo: this is error prone, since there can be two pivot fields for different relations with the same name
+                                // @todo this is error prone, since there can be two pivot fields for different relations with the same name
                                 collect($messages)
-                                    ->each(function($pivot_fields, $pivot_field_index) use ($pivot_for) {
+                                    ->each(function ($pivot_fields, $pivot_field_index) use ($pivot_for) {
                                         collect($pivot_fields)
-                                            ->each(function($pivot_field_messages, $name) use ($pivot_field_index, $pivot_for) {
+                                            ->each(function ($pivot_field_messages, $name) use ($pivot_field_index, $pivot_for) {
                                                 $this->getFormField($name)
                                                     ->setErrorMessages($pivot_field_messages, $pivot_field_index)
                                                     ->updateComponent($pivot_field_index);
@@ -568,12 +561,21 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
                                     });
                             }
                         });
-                });
-        }
+                    });
+                    break;
+            }
+        });
 
         return $this;
     }
-    // @todo - tieto zrejme upratat do nejakej support definition classy
+
+    // @todo tieto zrejme upratat do nejakej support definition classy
+    // @todo hotfixed
+    public function adjustRequestInput(array $input): array
+    {
+        return $input;
+    }
+
     protected function getFieldGroupsDefinition()
     {
         return $this->adjustFieldGroupsDefinition($this->fieldgroups);
@@ -622,5 +624,10 @@ abstract class AbstractForm implements Form, FormFieldable, Buttonable, Optionab
     protected function adjustButtonsDefinition($buttons)
     {
         return $buttons;
+    }
+
+    public function provideDomIdParam(): string
+    {
+        return md5(get_class($this));
     }
 }

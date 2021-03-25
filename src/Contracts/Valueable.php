@@ -57,6 +57,15 @@ interface Valueable
     public function getValue($default = null);
 
     /**
+     * Check value against given value.
+     *
+     * @param mixed $value
+     * @param bool $strict
+     * @return bool
+     */
+    public function isValue($value, $strict = false): bool;
+
+    /**
      * Get the value at given position.
      *
      * @param int $index Collection position to get the value at.
@@ -69,7 +78,7 @@ interface Valueable
     /**
      * Set the values at once.
      *
-     * @param array Values to set.
+     * @param array $values Values to set.
      * @return \Softworx\RocXolid\Contracts\Valueable
      */
     public function setValues(array $values): Valueable;
@@ -80,6 +89,14 @@ interface Valueable
      * @return \Illuminate\Support\Collection
      */
     public function getValues(): Collection;
+
+    /**
+     * Check if some value is set.
+     *
+     * @param int $index Collection position to check the value at.
+     * @return bool
+     */
+    public function hasValue(int $index = 0): bool;
 
     /**
      * Check if provided value is valid for this type.

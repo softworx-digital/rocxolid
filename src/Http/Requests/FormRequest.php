@@ -4,6 +4,7 @@ namespace Softworx\RocXolid\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as IlluminateFormRequest;
 
+// @todo cleanup
 class FormRequest extends IlluminateFormRequest
 {
     /**
@@ -11,7 +12,7 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         // only allow creates if the user is logged in
         //return \Auth::check();
@@ -23,14 +24,14 @@ class FormRequest extends IlluminateFormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // 'name' => 'required|min:3|max:255'
         ];
     }
 
-    public function getFieldsValidation($fields)
+    public function getFieldsValidation($fields): array
     {
         $validation = [
             'attributes' => [],
@@ -42,13 +43,7 @@ class FormRequest extends IlluminateFormRequest
         foreach ($fields as $name => $field) {
             $validation['attributes'][] = $field->getRuleKey();
 
-            // eg. hidden fields may not have a title
-            if ($field->hasOption('component.label.title')) {
-                $validation['translation'][$field->getRuleKey()] = $field
-                    ->getForm()
-                        ->getController()
-                            ->translate(sprintf('field.%s', $field->getOption('component.label.title')));
-            }
+            $validation['translation'][$field->getRuleKey()] = $field->getTitle();
 
             if ($rules = $field->getOption('validation.rules', false)) {
                 $validation['rules'][$field->getRuleKey()] = $rules;

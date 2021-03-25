@@ -57,12 +57,25 @@ class RouteService
     /**
      * Get current controller's action.
      *
-     * @return string
+     * @return string|null
      */
-    public function getMethod(): string
+    public function getMethod(): ?string
     {
-        list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+        if ($this->getRouter()->currentRouteAction()) {
+            try {
+                list($controller, $method) = explode('@', $this->getRouter()->currentRouteAction());
+            } catch (\Exception $e) {
+                return null; // @todo not sure if this is appropriate, the point is to handle callable controllers (__invoke)
+            }
+        } else {
+            return null;
+        }
 
         return $method;
+    }
+
+    public static function isRocXolidMiddleware(): bool
+    {
+        return request()->route() && collect(request()->route()->middleware())->contains('rocXolid.auth');
     }
 }

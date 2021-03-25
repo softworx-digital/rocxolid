@@ -31,7 +31,7 @@ class FormFieldGroupAddable extends AbstractFormField
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-field-group form-inline col-xs-11'
+            'class' => 'form-field-group form-inline col-xs-10'
         ],
         // buttons
         'button-add' => [
@@ -40,15 +40,10 @@ class FormFieldGroupAddable extends AbstractFormField
                 // 'title' => 'add',
             ],
             'attributes' => [
-                'class' => 'btn btn-primary margin-top-24',
+                'class' => 'btn btn-primary',
                 'data-add-form-field-group' => '.form-field-group-addable',
                 'data-add-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
-            'wrapper' => [
-                'attributes' => [
-                    'class' => 'col-xs-1 text-center'
-                ]
-            ]
         ],
         'button-remove' => [
             'label' => [
@@ -56,21 +51,16 @@ class FormFieldGroupAddable extends AbstractFormField
                 // 'title' => 'remove',
             ],
             'attributes' => [
-                'class' => 'btn btn-danger margin-top-24',
+                'class' => 'btn btn-danger',
                 'data-remove-form-field-group' => '.form-field-group-addable',
                 'data-remove-form-field-group-container' => '.form-field-group-addable-wrapper'
             ],
-            'wrapper' => [
-                'attributes' => [
-                    'class' => 'col-xs-1 text-center'
-                ]
-            ]
         ]
     ];
 
     public function getGroupCount()
     {
-        return $this->group_count;
+        return max(1, $this->group_count);
     }
 
     public function setGroupCount($group_count)
@@ -87,11 +77,11 @@ class FormFieldGroupAddable extends AbstractFormField
 
     protected function setButtonAdd($button_options): FormField
     {
-        return $this->setComponentOptions('button-add', (new Button())->setOptions($button_options));
+        return $this->setComponentOptions('button-add', app(Button::class)->setOptions($button_options));
     }
 
     protected function setButtonRemove($button_options): FormField
     {
-        return $this->setComponentOptions('button-remove', (new Button())->setOptions($button_options));
+        return $this->setComponentOptions('button-remove', app(Button::class)->setOptions($button_options));
     }
 }

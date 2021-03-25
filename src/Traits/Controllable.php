@@ -2,8 +2,8 @@
 
 namespace Softworx\RocXolid\Traits;
 
-use Illuminate\Routing\Controller;
 use Softworx\RocXolid\Contracts\Controllable as ControllableContract;
+use Softworx\RocXolid\Http\Controllers\AbstractController as Controller;
 
 /**
  * Enables object to have a controller assigned.

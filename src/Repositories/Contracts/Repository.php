@@ -2,93 +2,101 @@
 
 namespace Softworx\RocXolid\Repositories\Contracts;
 
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Softworx\RocXolid\Contracts\EventDispatchable;
-use Softworx\RocXolid\Contracts\Controllable;
-use Softworx\RocXolid\Contracts\Paramable;
-use Softworx\RocXolid\Contracts\Optionable;
-use Softworx\RocXolid\Forms\Contracts\Formable;
-use Softworx\RocXolid\Models\Contracts\Crudable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+// rocXolid repository contracts
+use Softworx\RocXolid\Repositories\Contracts\Scopeable;
+use Softworx\RocXolid\Repositories\Contracts\Orderable;
+use Softworx\RocXolid\Repositories\Contracts\Filterable;
+use Softworx\RocXolid\Repositories\Contracts\Paginationable;
 
-// @todo - dodefinovat dalsie navratove typy + dalsie metody (SYNC) podla implementacnej classy - doplnit dalsie contracty (paginaciu,...)
-interface Repository extends Orderable, Filterable, Columnable, Buttonable, Controllable, Paramable, Optionable, EventDispatchable, Formable
+/**
+ * Repository is responsible for retrieving model data upon ordering and filters.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
+interface Repository extends Scopeable, Orderable, Filterable, Paginationable
 {
     /**
-     * Set the form builder.
+     * Initialize the repository by providing model type to work with.
      *
-     * @param RepositoryBuilder $form_builder
-     * @return $this
+     * @param string $model_type
+     * @return \Softworx\RocXolid\Repositories\Contracts\Repository
      */
-    public function setRepositoryBuilder(RepositoryBuilder $form_builder): Repository;
+    public function init(string $model_type): Repository;
 
     /**
-     * Get form builder.
+     * Retrieve the model assigned to the repository.
      *
-     * @return RepositoryBuilder
+     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getRepositoryBuilder(): RepositoryBuilder;
+    public function getModel(): Model;
 
     /**
-     * Set the form field builder.
+     * Retrieve the model query.
      *
-     * @param RepositoryColumnBuilder $form_field_builder
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function setRepositoryColumnBuilder(RepositoryColumnBuilder $form_field_builder): Repository;
+    public function getQuery(): Builder;
 
     /**
-     * Get form field builder.
+     * Initialize model query for retrieving collection of data.
      *
-     * @return RepositoryColumnBuilder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRepositoryColumnBuilder(): RepositoryColumnBuilder;
+    public function getCollectionQuery(): Builder;
 
     /**
+     * Retrieve data set based on scopes, order, filter and paging.
+     *
      * @param array $columns
-     * @return Collection
+     * @return \Illuminate\Support\Collection
      */
-    //public function all($columns = array('*')): Collection;
+    public function all(array $columns = ['*']): Collection;
 
     /**
-     * @param $id
+     * Retrieve data set count based on scopes, order, filter and paging.
+     *
+     * @return int
+     */
+    public function count(): int;
+
+    /**
+     * Retrieve data set's column sum based on scopes, order, filter and paging.
+     *
+     * @return int
+     */
+    public function sum(string $column): float;
+
+    /**
+     * Find model instance with applied scopes and internal filters.
+     *
+     * @param mixed $key
      * @param array $columns
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    //public function find($id, $columns = array('*')): Crudable;
+    public function find($key, array $columns = ['*']): ?Model;
 
     /**
-     * @param $attribute
-     * @param $value
+     * Find model instance with applied scopes and internal filters by given attribute - column.
+     *
+     * @param string $column
+     * @param mixed $value
      * @param array $columns
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    //public function findBy($attribute, $value, $columns = array('*')): Crudable;
+    public function findBy(string $column, $value, array $columns = ['*']): ?Model;
 
     /**
-     * @param int $perPage
+     * Find model instance with applied scopes and internal filters, throw exception when not found.
+     *
+     * @param mixed $key
      * @param array $columns
-     * @return LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    //public function paginate($per_page = 1, $columns = array('*')): LengthAwarePaginator;
-
-    /**
-     * @param array $data
-     * @return mixed
-     */
-    //public function createModel(array $data): Crudable;
-
-    /**
-     * @param array $data
-     * @param $id
-     * @param string $attribute
-     * @return mixed
-     */
-    //public function update(array $data, $id, $attribute = 'id');
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    //public function delete($id);
+    public function findOrFail($key, array $columns = ['*']): Model;
 }

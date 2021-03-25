@@ -12,31 +12,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 // rocXolid contracts
 use Softworx\RocXolid\Contracts\Controllable;
 use Softworx\RocXolid\Contracts\Modellable;
-use Softworx\RocXolid\Contracts\Repositoryable;
 // rocXolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
-use Softworx\RocXolid\Forms\Contracts\Formable as FormableContract;
 // rocXolid traits
 use Softworx\RocXolid\Traits\Controllable as ControllableTrait;
 use Softworx\RocXolid\Traits\Modellable as ModellableTrait;
-use Softworx\RocXolid\Traits\Repositoryable as RepositoryableTrait;
 // rocXolid field types
-use Softworx\RocXolid\Forms\Fields\Type\ButtonGroup;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmitActions;
-use Softworx\RocXolid\Forms\Fields\Type\ButtonSubmit;
+use Softworx\RocXolid\Forms\Fields\Type as FieldType;
 // rocXolid http requests
 use Softworx\RocXolid\Http\Requests\CrudRequest;
 
 /**
- * @todo: subject to refactoring
- * @todo: add automated support for relation fields (relation, model_attribute, model_type, model_id)
+ * @todo subject to refactoring
+ * @todo add automated support for relation fields (relation, model_attribute, model_type, model_id)
  */
-abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable, Repositoryable
+abstract class AbstractCrudForm extends AbstractForm implements Controllable, Modellable
 {
     use ControllableTrait;
     use ModellableTrait;
-    use RepositoryableTrait;
-    // @todo: cannot be used as intended because of trait overrideability limitations, find some other approach
+
+    // @todo cannot be used as intended because of trait overrideability limitations, find some other approach
     /*
     use Traits\Crud\DefaultOptions;
     use Traits\Crud\DefaultButtonToolbars;
@@ -52,15 +47,13 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         'class' => 'form-horizontal form-label-left',
     ];
 
-    protected $repository = null;
-
     protected $fieldgroups = false;
 
     protected $buttontoolbars = false;
 
     protected $buttongroups = [
-        ButtonGroup::DEFAULT_NAME => [
-            'type' => ButtonGroup::class,
+        FieldType\ButtonGroup::DEFAULT_NAME => [
+            'type' => FieldType\ButtonGroup::class,
             'options' => [
                 'wrapper' => false,
                 'attributes' => [
@@ -70,13 +63,13 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         ],
     ];
 
-    // @todo: filter buttons according to permissions
+    // @todo filter buttons according to permissions
     protected $buttons = [
         // submit - default group
         'submit' => [
-            'type' => ButtonSubmitActions::class,
+            'type' => FieldType\ButtonSubmitActions::class,
             'options' => [
-                'group' => ButtonGroup::DEFAULT_NAME,
+                'group' => FieldType\ButtonGroup::DEFAULT_NAME,
                 'label' => [
                     'title' => 'submit-back',
                 ],
@@ -122,7 +115,6 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                 || (($relation instanceof HasOneOrMany) && ($user->can('update', [ $this->getModel(), $attribute ])))
                 || (($relation instanceof BelongsTo) && ($user->can('update', [ $this->getModel(), $attribute ])))
                 || (($relation instanceof BelongsToMany) && ($user->can('assign', [ $this->getModel(), $attribute ])))) {
-
                 if ($this->hasFormField($attribute)) {
                     $this
                         ->getFormField($attribute)
@@ -134,13 +126,16 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                             )))
                             ->updateParent();
 
+                    // @todo quick'n'dirty
                     if (method_exists($relation, 'getPivotColumns') && filled($relation->getPivotColumns())) {
                         $this
                             ->getFormField($attribute)
                             ->setPivotData($relation->get()->pluck('pivot'))
                             ->updateParent();
 
-                        collect($relation->getPivotColumns())->each(function ($pivot_attribute) use ($relation) {
+                        $pivot = $relation->newExistingPivot();
+
+                        collect($relation->getPivotColumns())->each(function (string $pivot_attribute) use ($relation, $pivot) {
                             if ($this->hasFormField($pivot_attribute)) {
                                 $field = $this->getFormField($pivot_attribute);
 
@@ -152,13 +147,17 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
                                     ));
                                 }
 
-                                $field
-                                    ->setValue($this->getModel()->decimalize($relation->get()->pluck(sprintf(
-                                        '%s.%s',
-                                        $relation->getPivotAccessor(),
-                                        $pivot_attribute
-                                    ))))
-                                    ->updateParent();
+                                $pivot_attribute_value = $relation->get()->pluck(sprintf('%s.%s', $relation->getPivotAccessor(), $pivot_attribute));
+                                // @todo quick'n'dirty
+                                if ($pivot->isDecimalAttribute($pivot_attribute)) {
+                                    $field
+                                        ->setValue($this->getModel()->decimalize($pivot_attribute_value))
+                                        ->updateParent();
+                                } else {
+                                    $field
+                                        ->setValue($pivot_attribute_value)
+                                        ->updateParent();
+                                }
                             }
                         });
                     }
@@ -176,54 +175,21 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         });
     }
 
-    // @todo: really FormableContract?
-    public function setHolderProperties(FormableContract $repository): Form
-    {
-        $this->repository = $repository;
-
-        $this
-            ->setController($this->repository->getController());
-
-        if ($this->repository->getController()->hasModel()) {
-            $this
-                ->setModel($this->repository->getController()->getModel());
-        } else {
-            throw new \RuntimeException(sprintf('No model set to [%s]', get_class($this->repository->getController())));
-        }
-
-        return $this;
-    }
-
     public function makeRouteAction($route_action): string
     {
         if ($this->getModel()->exists) {
-            return $this->repository->getController()->getRoute($route_action, $this->getModel());
+            return $this->getController()->getRoute($route_action, $this->getModel());
         } else {
-            return $this->repository->getController()->getRoute($route_action);
+            return $this->getController()->getRoute($route_action);
         }
     }
 
-    public function adjustCreate(CrudRequest $request)
+    public function adjustBeforeSubmit(CrudRequest $request)
     {
         return $this;
     }
 
-    public function adjustCreateBeforeSubmit(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    public function adjustUpdate(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    public function adjustUpdateBeforeSubmit(CrudRequest $request)
-    {
-        return $this;
-    }
-
-    // @todo - ked bude field builder upgradeovany cez factory (uz je, ale este nefactoruje objekty), tak rovno tvorba fieldov a nie len definicii
+    // @todo ked bude field builder upgradeovany cez factory (uz je, ale este nefactoruje objekty), tak rovno tvorba fieldov a nie len definicii
     // aj to asi nejako krajsie rozdelit - processovanie fieldov (definicii), lebo by sa este mali adjustovat
     protected function getFieldsDefinition(): array
     {
@@ -245,7 +211,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             }
         }
 
-        // @todo: "hotfixed", you can do better
+        // @todo "hotfixed", you can do better
         $fields = $this->fields;
 
         $fields = $this->adjustFieldsDefinition($fields);
@@ -253,6 +219,21 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         $fields = $this->filterFieldsDefinitionByPermissions($fields);
 
         return $fields;
+    }
+
+    /**
+     * Unset all fields that are not owned by the form
+     *
+     * @param array $fields
+     * @return \Softworx\RocXolid\Forms\Contracts\Form
+     */
+    protected function unsetForeignFieldsDefinition(array &$fields): Form
+    {
+        $fields = collect($fields)->filter(function ($definition, $field_name) {
+            return collect($this->fields)->keys()->contains($field_name);
+        })->toArray();
+
+        return $this;
     }
 
     protected function filterFieldsDefinitionByPermissions(array $fields): array
@@ -281,7 +262,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         })->toArray();
     }
 
-    // @todo: "hotfixed", you can do better
+    // @todo "hotfixed", you can do better
     protected function adjustFieldsValidationDefinition($fields)
     {
         foreach ($fields as $field_name => &$field_definition) {
@@ -297,7 +278,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     protected function getButtonsDefinition(): array
     {
-        // @todo: "hotfixed", you can do better
+        // @todo "hotfixed", you can do better
         $buttons = $this->buttons;
 
         $buttons = $this->adjustButtonsDefinition($buttons);
@@ -313,14 +294,14 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         }
 
         return collect($buttons)->filter(function ($definition, $button_name) use ($user) {
-// @todo
+            // @todo
             return true;
         })->toArray();
     }
 
     protected function getModelAttributes(): Collection
     {
-        $attributes = new Collection();
+        $attributes = collect();
 
         /*
         foreach ($this->getModel()->toArray() as $attribute => $value)
@@ -347,7 +328,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
 
     protected function getModelRelationships(): Collection
     {
-        $relationships = new Collection();
+        $relationships = collect();
 
         foreach ($this->getModel()->getRelationshipMethods() as $method) {
             $relation = $this->getModel()->$method();
@@ -359,7 +340,7 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
         return $relationships;
     }
 
-    // @todo - toto zrejme niekam upratat
+    // @todo toto zrejme niekam upratat
     // skusit do novej classy a nastavit nech sa ta injectuje miesto laravelovskej Illuminate\Database\Connection
     protected function getConnection()
     {
@@ -370,5 +351,10 @@ abstract class AbstractCrudForm extends AbstractForm implements Controllable, Mo
             ->registerDoctrineTypeMapping('enum', 'string');
 
         return $connection;
+    }
+
+    public function provideDomIdParam(): string
+    {
+        return $this->getModel()->provideDomIdParam();
     }
 }

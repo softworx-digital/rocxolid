@@ -3,14 +3,27 @@
 namespace Softworx\RocXolid\Traits;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Illuminate\Routing\Controller;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Optionable as OptionableContract;
 
+/**
+ * Trait to enable dynamic options setting with class method.
+ *
+ * @author softworx <hello@softworx.digital>
+ * @package Softworx\RocXolid
+ * @version 1.0.0
+ */
 trait MethodOptionable
 {
     use Optionable;
 
+    /**
+     * Set option value.
+     *
+     * @param string $option
+     * @param mixed $value
+     * @return \Softworx\RocXolid\Contracts\Optionable
+     */
     public function setOption(string $option, $value): OptionableContract
     {
         $method = Str::camel(sprintf('set_%s', str_replace('-', '_', $option)));
@@ -24,6 +37,12 @@ trait MethodOptionable
         return $this;
     }
 
+    /**
+     * Set several options at once.
+     *
+     * @param array $options
+     * @return \Softworx\RocXolid\Contracts\Optionable
+     */
     public function setOptions(array $options): OptionableContract
     {
         foreach ($options as $option => $value) {

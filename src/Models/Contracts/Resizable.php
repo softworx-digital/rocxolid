@@ -29,7 +29,24 @@ interface Resizable
      * Set model data related to resizing.
      *
      * @param Illuminate\Support\Collection $sizes
-     * @return Softworx\RocXolid\Models\Contracts\Resizable
+     * @return \Softworx\RocXolid\Models\Contracts\Resizable
      */
     public function setResizeData(Collection $sizes): Resizable;
+
+    /**
+     * Get ratio of width and height of a resizable for given size.
+     *
+     * @param string $size
+     * @return float
+     */
+    public function getWidthHeightRatio(string $size): float;
+
+    /**
+     * Obtain accessor to physical image.
+     *
+     * @param string|null $size
+     * @return \InterventionImage
+     * @todo make the return type an interface
+     */
+    public function getPhysicalImage(?string $size = null);
 }

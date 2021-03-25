@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\FormHelper;
 
-// @todo: define properly
+// @todo define properly
 interface FormField
 {
     const SINGLE_DATA_PARAM = '_data';
 
     const ARRAY_DATA_PARAM = '_datagroup';
+
+    public function getTitle(): string;
     /*
     public function render(array $options = [], $show_label = true, $show_field = true, $show_error = true);
 

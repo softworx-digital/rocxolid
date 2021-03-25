@@ -3,7 +3,6 @@
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
 use Softworx\RocXolid\Forms\Contracts\FormField;
-use Softworx\RocXolid\Forms\Fields\AbstractFormField;
 use Softworx\RocXolid\Forms\Fields\Type\UploadFile;
 
 class UploadImage extends UploadFile

@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Components\Contracts\Componentable;
 
 use Illuminate\Support\Collection;
+// rocXolid components
 use Softworx\RocXolid\Components\General\Alert as AlertComponent;
 
 /**
@@ -23,7 +24,7 @@ interface Alert
     public function addAlertComponent(AlertComponent $component): Alert;
 
     /**
-     * Get alert components
+     * Get alert components.
      *
      * @return \Illuminate\Support\Collection
      */

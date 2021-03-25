@@ -2,13 +2,13 @@
 
 namespace Softworx\RocXolid\Components\Tables;
 
-use Softworx\RocXolid\Contracts\Renderable;
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
 use Softworx\RocXolid\Components\Contracts\TableButtonable as ComponentTableButtonable;
-use Softworx\RocXolid\Repositories\Contracts\Column as TableButtonContract;
-use Softworx\RocXolid\Models\Contracts\Crudable as CrudableModel;
+use Softworx\RocXolid\Tables\Buttons\Contracts\Button as TableButtonContract;
 use Softworx\RocXolid\Components\General\Button;
+use Softworx\RocXolid\Traits\Loggable;
 
-// @todo - zatial sa dava buttonanchor implementujuci Column (tuto aliasnuty ako TableButtonContract) - toto doladit / rozdelit
+// @todo docblocks
 class TableButton extends Button implements ComponentTableButtonable
 {
     protected $button;
@@ -18,6 +18,11 @@ class TableButton extends Button implements ComponentTableButtonable
         $this->button = $button;
 
         $this->setOptions($this->button->getOption('component'));
+
+        // @todo kinda "hotfixed", you can do better
+        if ($view_package = $this->getOption('view-package', false)) {
+            $this->setViewPackage($view_package);
+        }
 
         return $this;
     }
@@ -31,22 +36,61 @@ class TableButton extends Button implements ComponentTableButtonable
         return $this->button;
     }
 
+    // @todo not cool
     public function setPreRenderProperties(...$elements): Renderable
     {
         $table = $elements[0];
         $model = $elements[1];
-        $controller = $table->getRepository()->getController();
+        $controller = $table->getTable()->getController();
 
         if ($this->hasOption('action')) {
-            if ($this->getOption('ajax', false)) {
-                $this->mergeOptions([
-                    'attributes' => [
-                        'data-ajax-url' => $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', []))
-                    ]
-                ]);
+            // not using this since model's retrieved by repository and not default CRUD Controller could be set to table
+            // $this->setUrl($model->getControllerRoute($this->getOption('action'), $this->getOption('route-params', [])));
+            $this->setUrl($controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])));
+        } elseif ($this->hasOption('method-action')) {
+            $this->setUrl($model->{$this->getOption('method-action.method')}());
+        } elseif ($this->hasOption('related-action')) {
+            // $related = $model->{$this->getOption('related-action.relation')};
+            // $related = $related ?? $model->{$this->getOption('related-action.relation')}()->getRelated();
+
+            if ($this->hasOption('related-action.relation')) {
+                $related = $model->{$this->getOption('related-action.relation')}()->getRelated();
+            } elseif ($this->hasOption('related-action.getter')) {
+                $related = $model->{$this->getOption('related-action.getter')}();
             } else {
-                $this->setOption('url', $controller->getRoute($this->getOption('action'), $model, $this->getOption('route-params', [])));
+                throw new \InvalidArgumentException(sprintf('Table button [related-action] option requires either [relation] or related model [getter] definition for [%s]', get_class($this)));
             }
+
+            /*
+            $params = [
+                sprintf('_data[%s]', $related->{$this->getOption('related-action.attribute')}()->getForeignKeyName()) => $model->getKey()
+            ] + $this->getOption('route-params', []);
+            */
+            // @todo !!! twisted arguments (see add-panel-heading.blade.php for instance)
+            $params = $related->getRouteRelationParam($this->getOption('related-action.relation'), $this->getOption('related-action.attribute'), $model);
+            $params += $this->getOption('route-params', []);
+
+            $this->setUrl($related->getControllerRoute($this->getOption('related-action.action'), $params));
+
+        } elseif ($this->hasOption('foreign-action')) {
+            if ($this->hasOption('foreign-action.getter')) {
+                $related = $model->{$this->getOption('foreign-action.getter')}();
+            } else {
+                throw new \InvalidArgumentException(sprintf('Table button [foreign-action] option requires [getter] definition for [%s]', get_class($this)));
+            }
+
+            if ($this->hasOption('foreign-action.parent')) {
+                $params = [
+                    sprintf('_data[%s]', $model->{$this->getOption('foreign-action.parent')}()->getForeignKey()) => $model->{$this->getOption('foreign-action.parent')}()->getKey()
+                ] + $this->getOption('route-params', []);
+            } else {
+                $params = [
+                    sprintf('_data[%s]', $model->getForeignKey()) => $model->getKey()
+                ] + $this->getOption('route-params', []);
+            }
+
+            $this->setUrl($related->getControllerRoute($this->getOption('foreign-action.action'), $params));
+
         } elseif ($this->hasOption('tel')) {
             $this->setOption('url', sprintf('tel:%s', $model->{$this->getOption('tel')}));
         } elseif ($this->hasOption('mailto')) {
@@ -67,5 +111,20 @@ class TableButton extends Button implements ComponentTableButtonable
     public function getTranslationKey(string $key): string
     {
         return sprintf('table-button.%s', $key);
+    }
+
+    private function setUrl(string $url): self
+    {
+        if ($this->getOption('ajax', false)) {
+            $this->mergeOptions([
+                'attributes' => [
+                    'data-ajax-url' => $url,
+                ],
+            ]);
+        } else {
+            $this->setOption('url', $url);
+        }
+
+        return $this;
     }
 }

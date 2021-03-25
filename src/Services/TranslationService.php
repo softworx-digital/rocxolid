@@ -21,7 +21,7 @@ class TranslationService implements TranslationServiceContract
     /**
      * {@inheritdoc}
      */
-    public function getTranslation(Translatable $translatable, string $key, array $params = [], bool $use_raw_key = false): string
+    public function getTranslation(Translatable $translatable, string $key, array $params = [], bool $use_raw_key = false)
     {
         $language_key = $this->getTranslationKey(
             $translatable->getTranslationPackage(),
@@ -30,7 +30,7 @@ class TranslationService implements TranslationServiceContract
         );
 
         $general_language_key = $this->getTranslationKey(
-            'rocXolid:admin',
+            'rocXolid:admin', // @todo find some other way
             'general',
             $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );

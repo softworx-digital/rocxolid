@@ -2,11 +2,12 @@
 
 namespace Softworx\RocXolid\Components\Tables;
 
-use Softworx\RocXolid\Contracts\Renderable;
-use Softworx\RocXolid\Repositories\Contracts\Column;
+use Softworx\RocXolid\Rendering\Contracts\Renderable;
+use Softworx\RocXolid\Tables\Columns\Contracts\Column;
 use Softworx\RocXolid\Components\AbstractOptionableComponent;
 use Softworx\RocXolid\Components\Contracts\TableColumnable as ComponentTableColumnable;
 
+// @todo doc
 class TableColumn extends AbstractOptionableComponent implements ComponentTableColumnable
 {
     const ARRAY_TEMPLATE_NAME = 'array';
@@ -19,7 +20,7 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
         $this->setOptions($this->table_column->getOption('component'));
 
-        // @todo: kinda "hotfixed", you can do better
+        // @todo kinda "hotfixed", you can do better
         if ($view_package = $this->getOption('view-package', false)) {
             $this->setViewPackage($view_package);
         }
@@ -51,12 +52,20 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
 
         $attribute = $this->getTableColumn()->getName();
 
-        return $this->getOption('model')->$attribute;
+        // return $this->getOption('model')->$attribute;
+        return $this->getOption('model')->getAttributeViewValue($attribute);
+    }
+
+    public function getModelAttributeViewValue()
+    {
+        $attribute = $this->getTableColumn()->getName();
+
+        return $this->getTableColumn()->getModelAttributeViewValue($this->getOption('model')->$attribute);
     }
 
     public function getOrderRoute()
     {
-        $repository = $this->getTableColumn()->getRepository();
+        $repository = $this->getTableColumn()->getTable();
 
         if ($repository->isOrderColumn($this->getTableColumn())) {
             $direction = $repository->isOrderDirection('asc') ? 'desc' : 'asc';
@@ -64,19 +73,14 @@ class TableColumn extends AbstractOptionableComponent implements ComponentTableC
             $direction = 'asc';
         }
 
-        return $repository->getRoute('order', null, [
-            'order_by' => [
-                'column' => $this->getTableColumn()->getName(),
-                'direction' => $direction,
-            ]
-        ]);
+        return $repository->getOrderByRoute($this->getTableColumn()->getName(), $direction);
     }
 
     public function setPreRenderProperties(...$elements): Renderable
     {
         $table = $elements[0];
         $model = $elements[1];
-        $controller = $table->getRepository()->getController();
+        $controller = $table->getTable()->getController();
 
         if ($this->hasOption('action')) {
             if ($this->getOption('ajax', false)) {

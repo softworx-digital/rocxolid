@@ -7,8 +7,10 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
 
 class NotMe
 {
-    public function apply($query, Crudable $model)
+    public function apply($query, Crudable $model, Crudable $instance)
     {
-        return $query->where(sprintf('%s.id', $model->getTable()), '!=', $model->getKey());
+        $instance = $instance ?? $model;
+
+        return $query->where(sprintf('%s.id', $instance->getTable()), '!=', $instance->getKey());
     }
 }

@@ -4,29 +4,34 @@ namespace Softworx\RocXolid\Models\Traits;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations;
 // rocXolid model scopes
 use Softworx\RocXolid\Models\Scopes\Owned as OwnedScope;
 // rocXolid model contracts
 use Softworx\RocXolid\Models\Contracts\Crudable;
 
+/**
+ * @todo revise
+ */
 trait HasRelationships
 {
+    // @todo kinda hardcoded
+    public function isParentSingle()
+    {
+        return ($this->parent->{$this->model_attribute}() instanceof Relations\MorphOne);
+    }
+
+    // @todo kinda hardcoded
+    public function isParentPrimary()
+    {
+        return $this->is_model_primary;
+    }
+
     public function getReflectedRelationshipMethods()
     {
         $reflect = new \ReflectionClass($this);
-        $methods = collect($reflect->getMethods())->filter(function ($method) {
-            return is_subclass_of((string)$method->getReturnType(), \Illuminate\Database\Eloquent\Relations\Relation::class);
+        $methods = collect($reflect->getMethods())->filter(function (\ReflectionMethod $method) {
+            return is_subclass_of($method->getReturnType()->getName(), Relations\Relation::class);
         });
 
         return $methods;
@@ -47,7 +52,7 @@ trait HasRelationships
             return collect();
         }
 
-        return collect($this->relationships)->except($except ?? []);
+        return collect($this->relationships)->diff($except ?? []);
     }
 
     /**
@@ -67,7 +72,7 @@ trait HasRelationships
             try {
                 $return = $method->invoke($model);
 
-                if ($return instanceof Relation) {
+                if ($return instanceof Relations\Relation) {
                     $relationships->put($method->getName(), [
                         'type' => (new \ReflectionClass($return))->getShortName(),
                         'model' => (new \ReflectionClass($return->getRelated()))->getName()
@@ -80,21 +85,22 @@ trait HasRelationships
         return $relationships;
     }
 
-    // @todo: ugly? and combine with HasRelationships::resolvePolymorphType()
-    public function resolvePolymorphism(array $data, string $action = null): Crudable
+    // @todo ugly ! and combine with HasRelationships::resolvePolymorphType()
+    // @todo maybe use resource registrar
+    public function resolvePolymorphism(Collection $data, string $action = null): Crudable
     {
-        foreach ($data as $attribute => $value) {
+        $data->each(function ($value, $attribute) use ($data) {
             // eg. model_type
             if (substr($attribute, -5) === '_type') {
                 // eg. model_id
                 $id_attribute = sprintf('%s_id', substr($attribute, 0, -5));
 
-                if (array_key_exists($id_attribute, $data)) {
+                if ($data->has($id_attribute)) {
                     $method = sprintf('resolvePolymorph%sModel', Str::studly($value));
 
                     if (method_exists($this, $method)) {
                         $this->$attribute = $this->$method();
-                        $this->$id_attribute = $data[$id_attribute];
+                        $this->$id_attribute = $data->get($id_attribute);
                     } else {
                         $type = config(sprintf('rocXolid.main.polymorphism.%s', $value));
 
@@ -109,16 +115,16 @@ trait HasRelationships
                         }
 
                         $this->$attribute = $type;
-                        $this->$id_attribute = $data[$id_attribute];
+                        $this->$id_attribute = $data->get($id_attribute);
                     }
                 }
             }
-        }
+        });
 
         return $this;
     }
 
-    // @todo: ugly
+    // @todo ugly
     public function resolvePolymorphType(Collection $data): string
     {
         foreach ($data as $attribute => $value) {
@@ -148,10 +154,12 @@ trait HasRelationships
         return false;
     }
 
-    // @todo: subject to refactoring, don't like the current approach
-    public function fillRelationships(array $data, string $action = null): Crudable
+    // @todo subject to refactoring, don't like the current approach
+    public function fillRelationships(Collection $data): Crudable
     {
-        $this->getRelationshipMethods()->each(function ($relation) use ($data, $action) {
+        $data = $data->toArray(); // @todo use collections
+
+        $this->getRelationshipMethods()->each(function ($relation) use ($data) {
             // possibility to adjust the data and its structure before assignment
             $adjust_method = sprintf('adjust%sFillData', Str::studly($relation));
 
@@ -163,11 +171,11 @@ trait HasRelationships
             if (method_exists($this, $fill_method)) {
                 $this->$fill_method($data);
             } else {
-                if ($this->$relation() instanceof BelongsTo) {
+                if ($this->$relation() instanceof Relations\BelongsTo) {
                     $this->fillBelongsTo($relation, $data);
-                } elseif ($this->$relation() instanceof HasMany) {
+                } elseif ($this->$relation() instanceof Relations\HasMany) {
                     $this->fillHasMany($relation, $data);
-                } elseif ($this->$relation() instanceof BelongsToMany) {
+                } elseif ($this->$relation() instanceof Relations\BelongsToMany) {
                     $this->fillBelongsToMany($relation, $data);
                 }
             }
@@ -181,7 +189,7 @@ trait HasRelationships
         $attribute = sprintf('%s_id', $relation);
 
         if (array_key_exists($attribute, $data) && !empty($data[$attribute])) {
-            // @todo: kinda "hotfixed"
+            // @todo kinda "hotfixed"
             $associate = $this->$relation()->getRelated()->findOrFail($data[$attribute]);
 
             $this->$relation()->associate($associate);
@@ -207,12 +215,24 @@ trait HasRelationships
         return $this;
     }
 
-    protected function fillBelongsToMany(string $relation, array $data): Crudable
+    // @todo switch to collections (arguments)
+    protected function fillBelongsToMany(string $relation, array $data, bool $detach = true): Crudable
     {
         $attribute = $relation;
+        $data = collect($data);
 
-        if (array_key_exists($attribute, $data)) {
-            $this->$relation()->sync($data[$attribute]);
+        if ($data->has($attribute)) {
+            $attribute_data = collect($data->get($attribute));
+
+            if (filled($this->$relation()->getPivotColumns())) {
+                $i = 0;
+                $attribute_data->transform(function (array $pivot, int $id) use (&$i) {
+                    $pivot['position'] = $pivot['position'] ?? $i++;
+                    return $pivot;
+                });
+            }
+
+            $this->$relation()->sync($attribute_data, $detach);
         }
 
         return $this;

@@ -3,6 +3,7 @@
 namespace Softworx\RocXolid\Traits;
 
 use Illuminate\Support\Collection;
+// rocXolid contracts
 use Softworx\RocXolid\Contracts\Valueable as ValueableContract;
 
 /**
@@ -11,6 +12,7 @@ use Softworx\RocXolid\Contracts\Valueable as ValueableContract;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo return types (php8)
  */
 trait Valueable
 {
@@ -56,10 +58,11 @@ trait Valueable
 
     /**
      * {@inheritdoc}
+     * @todo refactor?
      */
     public function setValue($value, int $index = 0): ValueableContract
     {
-        if ($this->isArray() && ($value instanceof Collection)) {
+        if (method_exists($this, 'isArray') && $this->isArray() && ($value instanceof Collection)) {
             $value->each(function ($v, $i) {
                 $this->setValue($v, $i);
             });
@@ -76,6 +79,14 @@ trait Valueable
     public function getValue($default = null)
     {
         return $this->getIndexValue(0, $default);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValue($value, $strict = false): bool
+    {
+        return $strict ? ($this->getValue() === $value) : ($this->getValue() == $value);
     }
 
     /**
@@ -116,6 +127,14 @@ trait Valueable
         }
 
         return $this->values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasValue(int $index = 0): bool
+    {
+        return !is_null($this->getValue($index));
     }
 
     /**
