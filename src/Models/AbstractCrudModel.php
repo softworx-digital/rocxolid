@@ -106,6 +106,14 @@ abstract class AbstractCrudModel extends Model implements Crudable, ApiRequestab
     protected $date_times = [];
 
     /**
+     * Time attributes.
+     * These attributes are formatted according to localization in the front-end.
+     *
+     * @var array
+     */
+    protected $times = [];
+
+    /**
      * Decimal attributes.
      * These attributes are formatted according to localization in the front-end.
      *

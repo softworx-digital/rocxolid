@@ -28,6 +28,8 @@ trait HasAttributes
             return $this->getDateAttributeViewValue($attribute);
         } elseif ($this->isDateTimeAttribute($attribute)) {
             return $this->getDateTimeAttributeViewValue($attribute);
+        } elseif ($this->isTimeAttribute($attribute)) {
+            return $this->getTimeAttributeViewValue($attribute);
         } elseif ($this->isDecimalAttribute($attribute)) {
             return $this->getDecimalAttributeViewValue($attribute);
         } elseif ($this->isEnumAttribute($attribute)) {
@@ -97,6 +99,28 @@ trait HasAttributes
     protected function getDateTimeAttributeViewValue(string $attribute)
     {
         return filled($this->$attribute) ? Carbon::make($this->$attribute)->locale(app()->getLocale())->isoFormat('llll') : null;
+    }
+
+    /**
+     * Check if attribute is of time type.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    public function isTimeAttribute(string $attribute): bool
+    {
+        return collect($this->times)->contains($attribute);
+    }
+
+    /**
+     * Retrieve time type attribute value for a view.
+     *
+     * @param string $attribute
+     * @return mixed
+     */
+    protected function getTimeAttributeViewValue(string $attribute)
+    {
+        return filled($this->$attribute) ? Carbon::make($this->$attribute)->locale(app()->getLocale())->format('H:i') : null;
     }
 
     /**

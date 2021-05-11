@@ -19,9 +19,10 @@ interface Rateable
      *
      * @param float $rating
      * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $rater
+     * @param array|null $rating_data
      * @return \Softworx\RocXolid\Models\Contracts\Rateable
      */
-    public function addRating(float $rating, ?Crudable $rater = null): Rateable;
+    public function addRating(float $rating, ?Crudable $rater = null, ?array $rating_data = null): Rateable;
 
     /**
      * Check if model is already rated (by rater).

@@ -31,13 +31,24 @@ trait CanBeRated
     protected static $rating_count_column = 'rating_count';
 
     /**
+     * Model attribute that stores rating data value.
+     *
+     * @var string
+     */
+    protected static $rating_data_column = 'rating_data';
+
+    /**
      * {@inheritDoc}
      */
-    public function addRating(float $rating, ?Crudable $rater = null): Rateable
+    public function addRating(float $rating, ?Crudable $rater = null, ?array $rating_data = null): Rateable
     {
         $current = $this->{static::$rating_column} * $this->{static::$rating_count_column};
         $this->{static::$rating_count_column}++;
         $this->{static::$rating_column} = ($current + $rating) / $this->{static::$rating_count_column};
+
+        if (filled($rating_data)) {
+            $this->{static::$rating_data_column} = json_encode($rating_data);
+        }
 
         !$rater ?: DB::table('_ratings')->insert([
             'rater_model' => (new \ReflectionClass($rater))->getName(),
@@ -48,7 +59,7 @@ trait CanBeRated
 
         $this->save();
 
-        return $this;
+        return $this->afterRating($rating, $rater, $rating_data);
     }
 
     /**
@@ -96,5 +107,18 @@ trait CanBeRated
     public function getRatingCountColumn(): string
     {
         return static::$rating_count_column;
+    }
+
+    /**
+     * Take some action after rating.
+     *
+     * @param float $rating
+     * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $rater
+     * @param array|null $rating_data
+     * @return \Softworx\RocXolid\Models\Contracts\Rateable
+     */
+    protected function afterRating(float $rating, ?Crudable $rater = null, ?array $rating_data = null): Rateable
+    {
+        return $this;
     }
 }

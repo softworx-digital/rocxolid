@@ -68,6 +68,7 @@ class FormFieldFactory implements FormFieldFactoryContract
         'color'             => FieldType\Colorpicker::class,
         'text_color'        => FieldType\Colorpicker::class,
         'background_color'  => FieldType\Colorpicker::class,
+        'subtitle_color'    => FieldType\Colorpicker::class,
     ];
 
     // @todo zrejme inak - nie cez generovanie definicii, ale priamu tvorbu fieldov
@@ -103,8 +104,10 @@ class FormFieldFactory implements FormFieldFactoryContract
             case Type::DATE:
             case Type::DATETIME:
             case Type::DATETIMETZ:
-            case Type::TIME:
                 $rules[] = 'date';
+            case Type::TIME:
+                $rules[] = 'nullable'; // @todo hotfixed
+                $rules[] = 'regex:/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/';
                 break;
         }
 

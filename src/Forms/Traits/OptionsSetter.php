@@ -100,6 +100,17 @@ trait OptionsSetter
         return $this;
     }
 
+    protected function setEnctype(string $enctype): Form
+    {
+        $this->mergeOptions([
+            'component' => [
+                'enctype' => $enctype
+            ]
+        ]);
+
+        return $this;
+    }
+
     protected function setSection(string $section): Form
     {
         $this->mergeOptions([
