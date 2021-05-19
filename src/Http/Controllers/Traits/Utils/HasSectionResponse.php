@@ -52,12 +52,18 @@ trait HasSectionResponse
         $model_viewer_component = $model->getModelViewerComponent();
 
         $template_name = sprintf('include.%s', $request->_section);
+        $assignments = $this->getSectionTemplateAssignments($request, $model, $form);
 
         return $this->response
-            ->replace($model_viewer_component->getDomId($request->_section), $model_viewer_component->fetch($template_name))
+            ->replace($model_viewer_component->getDomId($request->_section), $model_viewer_component->fetch($template_name, $assignments))
             ->replace($model_viewer_component->getDomId('actions'), $model_viewer_component->fetch('include.actions'))
             ->modalClose($model_viewer_component->getDomId(sprintf('modal-%s', $form->getParam())))
             ->notifySuccess($model_viewer_component->translate('text.updated'))
             ->get();
+    }
+
+    protected function getSectionTemplateAssignments(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
+    {
+        return [];
     }
 }
