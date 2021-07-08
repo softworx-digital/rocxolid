@@ -25,7 +25,16 @@ interface AjaxResponse extends Response
     public function raw(string $key, ?string $value): AjaxResponse;
 
     /**
-     * Instruct the response to process an error on consumer side.
+     * Instruct the response to call a function on client side.
+     *
+     * @param string $fn
+     * @param mixed $args,...
+     * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse
+     */
+    public function callFn(string $fn, ...$args): AjaxResponse;
+
+    /**
+     * Instruct the response to process an error on client side.
      *
      * @param \Illuminate\Support\Collection $errors
      * @return \Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse

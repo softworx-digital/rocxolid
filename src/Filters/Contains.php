@@ -45,7 +45,7 @@ class Contains
     {
         return $query->orWhere(function (Builder $query) use ($model, $search) {
             $model->getSearchColumns()->each(function (string $column) use ($query, $model, $search) {
-                $query->orWhere($model->qualifyColumn($column), 'like', sprintf('%%s%%', $search));
+                $query->orWhere($model->qualifyColumn($column), 'like', sprintf('%%%s%%', $search));
             });
         });
     }

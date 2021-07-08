@@ -50,6 +50,19 @@ class JsonAjaxResponse implements AjaxResponse
     /**
      * {@inheritdoc}
      */
+    public function callFn(string $fn, ...$args): AjaxResponse
+    {
+        $this->message_bag->add('callFn', [
+            'fn' => $fn,
+            'args' => $args,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function errors(Collection $errors): AjaxResponse
     {
         $this->message_bag->add('errors', $errors);

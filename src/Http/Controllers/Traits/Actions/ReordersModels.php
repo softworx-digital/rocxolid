@@ -13,7 +13,7 @@ use Softworx\RocXolid\Models\Contracts\Crudable;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo refactor, maybe delegate to a service
+ * @todo refactor, maybe delegate to a service + add interface to models
  */
 trait ReordersModels
 {
@@ -25,7 +25,7 @@ trait ReordersModels
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model
      * @param string $relation
      */
-    public function reorder(CrudRequest $request, Crudable $model, string $relation)//: View
+    public function reorder(CrudRequest $request, Crudable $model, string $relation, ?string $position_column = null)//: View
     {
         if (($input = $request->input('_data', false)) && is_array($input) && ($input = reset($input))) {
             $order = [];
@@ -36,12 +36,14 @@ trait ReordersModels
             throw \InvalidArgumentException(sprintf('Invalid data for reordering provided'));
         }
 
-        foreach ($model->$relation as $item) {
-            if (isset($order[$item->getKey()]) && isset($item->{$item::POSITION_COLUMN})) {
-                $item->{$item::POSITION_COLUMN} = $order[$item->getKey()];
+        $model->$relation->each(function (Crudable $item) use ($order, $position_column) {
+            $position_column = $position_column ?? $item::POSITION_COLUMN; // @todo fn to get positining column
+
+            if (isset($order[$item->getKey()]) && isset($item->$position_column)) {
+                $item->$position_column = $order[$item->getKey()];
                 $item->save();
             }
-        }
+        });
 
         $model_viewer_component = $this->getModelViewerComponent($model);
 

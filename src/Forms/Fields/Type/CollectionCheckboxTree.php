@@ -21,11 +21,19 @@ class CollectionCheckboxTree extends CollectionCheckbox
         // field label
         'label' => false,
         'except-attributes' => null,
+        'subitems-attribute' => 'subcategories',
         // field HTML attributes
         'attributes' => [
             'class' => 'form-control',
         ],
     ];
+
+    public function setSubitemsAttribute(string $subitems_attribute)
+    {
+        $this->setComponentOptions('subitems-attribute', $subitems_attribute);
+
+        return $this;
+    }
 
     public function setCollection($option)
     {

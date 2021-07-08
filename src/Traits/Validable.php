@@ -44,11 +44,12 @@ trait Validable
     public function validateGroup(string $group, array $validation_rules = [], array $messages = []): ValidableContract
     {
         $validation = $this->getRequest()->getFieldsValidation($this->getFormFields($group));
-
+// dump($validation);
         $rules = array_merge($validation['rules'], $validation_rules);
         $messages = array_merge($validation['error_messages'], $messages);
-
-        $this->validator = $this->getValidatorFactory()->make($this->getRequest()->only($validation['attributes']), $rules, $messages);
+// dump($rules);
+        // $this->validator = $this->getValidatorFactory()->make($this->getRequest()->only($validation['attributes']), $rules, $messages);
+        $this->validator = $this->getValidatorFactory()->make($this->getValidationData($validation), $rules, $messages);
         $this->validator->setAttributeNames($validation['translation']);
 
         return $this;

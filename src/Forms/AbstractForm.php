@@ -3,20 +3,21 @@
 namespace Softworx\RocXolid\Forms;
 
 use Illuminate\Support\Arr;
-// general traits
+use Illuminate\Support\Collection;
+// rocxolid general traits
 use Softworx\RocXolid\Traits\Paramable;
 use Softworx\RocXolid\Traits\MethodOptionable;
 use Softworx\RocXolid\Traits\Requestable;
 use Softworx\RocXolid\Traits\Translatable;
 use Softworx\RocXolid\Traits\Validable;
-// form contracts
+// rocxolid http contracts
+use Softworx\RocXolid\Http\Responses\Contracts\AjaxResponse;
+// rocxolid form contracts
 use Softworx\RocXolid\Forms\Contracts\Form;
 use Softworx\RocXolid\Forms\Contracts\FormField;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldBuilder;
 use Softworx\RocXolid\Forms\Builders\Contracts\FormFieldFactory;
-// traits
-use Softworx\RocXolid\Forms\Traits\Buttonable as ButtonableTrait;
 
 /**
  * @todo subject to refactoring
@@ -569,6 +570,11 @@ abstract class AbstractForm implements Form
         return $this;
     }
 
+    public function getFieldGroups(): Collection
+    {
+        return collect($this->getFieldGroupsDefinition())->keys();
+    }
+
     // @todo tieto zrejme upratat do nejakej support definition classy
     // @todo hotfixed
     public function adjustRequestInput(array $input): array
@@ -629,5 +635,10 @@ abstract class AbstractForm implements Form
     public function provideDomIdParam(): string
     {
         return md5(get_class($this));
+    }
+
+    public function addToResponse(AjaxResponse &$response): Form
+    {
+        return $this;
     }
 }

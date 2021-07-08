@@ -39,14 +39,18 @@ trait ValidatesFormGroup
         $form_field_group_component = FormFieldGroupComponent::build($this, $this)
             ->setFormFieldGroup($form->getFormFieldGroup($field_group));
 
-        $this->response->replace(
-            $form_field_group_component->getDomId($field_group),
-            $form_component->fetch('include.fieldset-only-group', ['group' => $field_group])
-        );
+        $form->getFieldGroups()->each(function (string $field_group) use ($form_field_group_component, $form_component) {
+            $this->response->replace(
+                $form_field_group_component->getDomId($field_group),
+                $form_component->fetch('include.fieldset-only-group', [ 'group' => $field_group ])
+            );
+        });
 
         if (!$form->isValid()) {
             $this->response->errors(collect($form->getErrors()->all()));
         }
+
+        $form->addToResponse($this->response);
 
         return $this->response->get();
     }

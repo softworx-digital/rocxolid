@@ -58,7 +58,9 @@ class Item extends AbstractComponent implements NavbarAccessible
 
     public function getTitle(): string
     {
-        return $this->title;
+        $user = auth('rocXolid')->user();
+
+        return is_callable($this->title) ? $this->title->call($this, $user) : $this->title;
     }
 
     public function getTitlePath()

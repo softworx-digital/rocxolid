@@ -153,7 +153,7 @@ class CrudRouterService
             'uses' => $this->controller . '@formValidateField',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/{%s}/{relation}/reorder', $this->param), [
+        RouteFacade::post($this->name . sprintf('/{%s}/{relation}/reorder/{position_column?}', $this->param), [
             'as' => 'crud.' . $this->name . '.reorder',
             'uses' => $this->controller . '@reorder',
         ]);
