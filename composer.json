@@ -20,6 +20,7 @@
         "ext-openssl" : "*",
         "ext-tidy" : "*",
         "laravel/framework": "^6.0|^8.0",
+        "laravel/ui": "^3.3",
         "laravelcollective/html": "^5.8|^6.0",
         "doctrine/annotations": "1.11.1",
         "doctrine/dbal": "^2.9",
