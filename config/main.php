@@ -2,6 +2,20 @@
 
 return [
     /**
+     * Paths configuration.
+     */
+    'path' => [
+        /**
+         * Base directories where to publish package file groups.
+         */
+        'publish' => [
+            'config' => config_path('vendor/softworx'),
+            'lang' => 'lang/vendor/softworx',
+            'views' => 'views/vendor/softworx',
+            'migrations' => 'vendor/softworx',
+        ],
+    ],
+    /**
      * Key-classname definition used for polymorphic relations.
      *
      * 'polymorphism' => [

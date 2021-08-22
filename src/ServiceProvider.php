@@ -76,47 +76,6 @@ class ServiceProvider extends AbstractServiceProvider
     }
 
     /**
-     * Expose config files and resources to be published.
-     *
-     * @return \Softworx\RocXolid\AbstractServiceProvider
-     */
-    private function publish(): AbstractServiceProvider
-    {
-        // configuration files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="config" (--force to overwrite)
-        $this->publishes([
-            __DIR__ . '/../config/main.php' => config_path('rocXolid/main.php'),
-            __DIR__ . '/../config/validation.php' => config_path('rocXolid/validation.php'),
-        ], 'config');
-
-        /*
-        // language files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="language" (--force to overwrite)
-        $this->publishes([
-            __DIR__ . '/../../resources/lang' => resource_path('lang/vendor/rocXolid'),
-        ], 'language');
-        */
-
-        /*
-        // views files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="views" (--force to overwrite)
-        $this->publishes([
-            __DIR__ . '/../../resources/views' => resource_path('views/vendor/rocXolid'),
-        ], 'views');
-        */
-
-        /*
-        // assets files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\ServiceProvider" --tag="assets" (--force to overwrite)
-        $this->publishes([
-            __DIR__ . '/../../resources/assets' => public_path('vendor/rocXolid'),
-        ], 'assets');
-        */
-
-        return $this;
-    }
-
-    /**
      * Bind contracts / facades, so they don't have to be added to config/app.php.
      *
      * Template:

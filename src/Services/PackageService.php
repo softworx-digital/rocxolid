@@ -18,6 +18,11 @@ use Softworx\RocXolid\Providers\Contracts\RepresentsPackage;
  */
 class PackageService
 {
+    /**
+     * Class map source file path.
+     *
+     * @var string
+     */
     const CLASS_MAP_FILE = 'vendor/composer/autoload_classmap.php';
 
     /**
