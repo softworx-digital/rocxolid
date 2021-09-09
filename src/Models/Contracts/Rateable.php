@@ -28,7 +28,7 @@ interface Rateable
      * Check if model is already rated (by rater).
      *
      * @param \Softworx\RocXolid\Models\Contracts\Crudable|null $rater
-     * @return boolean
+     * @return bool
      */
     public function isRated(?Crudable $rater = null): bool;
 

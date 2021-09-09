@@ -101,7 +101,7 @@ trait Orderable
      */
     protected function getFullyQualifiedOrderByColumn(): string
     {
-        return sprintf('%s.%s', $this->getOrderByModel()->getTable(), $this->getOrderByColumn());
+        return $this->getOrderByModel()->qualifyColumn($this->getOrderByColumn());
     }
 
     /**

@@ -24,7 +24,7 @@ trait Orderable
      */
     public function setOrderBy(string $column_name, string $direction): OrderableContract
     {
-        if ($this->isValidRequest($column_name, $direction)) {
+        if ($this->isValidOrderByRequest($column_name, $direction)) {
             $this->getRequest()->session()->put($this->getSessionKey(static::ORDER_BY_SESSION_PARAM), collect([
                 'column' => $column_name,
                 'direction' => $direction,
@@ -102,7 +102,7 @@ trait Orderable
      *
      * @return bool
      */
-    protected function isValidRequest(string $column_name, string $direction): bool
+    protected function isValidOrderByRequest(string $column_name, string $direction): bool
     {
         return Schema::hasColumn($this->getController()->getRepository()->getModel()->getTable(), $column_name)
             && in_array($direction, ['asc', 'desc']);

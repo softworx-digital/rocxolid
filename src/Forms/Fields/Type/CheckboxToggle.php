@@ -19,8 +19,8 @@ class CheckboxToggle extends AbstractFormField
         'label' => [
             'after' => true,
             'attributes' => [
-                'class' => 'label-fit-height margin-left-10 margin-right-5'
-            ]
+                'class' => 'label-fit-height margin-left-10 margin-right-5',
+            ],
         ],
         // field HTML attributes
         'attributes' => [
@@ -30,6 +30,11 @@ class CheckboxToggle extends AbstractFormField
             // 'data-style' => 'round',
             'data-on' => '<i class=\'fa fa-check\'></i>',
             'data-off' => '<i class=\'fa fa-close\'></i>',
+        ],
+        'validation' => [
+            'rules' => [
+                'boolean', // @todo: verify it's actually working
+            ],
         ],
     ];
 }

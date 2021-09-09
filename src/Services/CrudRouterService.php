@@ -133,62 +133,62 @@ class CrudRouterService
             'uses' => $this->controller . '@formFieldAutocomplete',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/form/reload/{%s?}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/form/reload/{%s?}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.form-reload',
             'uses' => $this->controller . '@formReload',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/form/reload/group/{field_group}/{%s?}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/form/reload/group/{field_group}/{%s?}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.form-reload-group',
             'uses' => $this->controller . '@formReloadGroup',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/form/validate/group/{field_group}/{%s?}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/form/validate/group/{field_group}/{%s?}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.form-validate-group',
             'uses' => $this->controller . '@formValidateGroup',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/form-validate/field/{field}/{%s?}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/form-validate/field/{field}/{%s?}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.form-validate-field',
             'uses' => $this->controller . '@formValidateField',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/{%s}/{relation}/reorder/{position_column?}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/{%s}/{relation}/reorder/{position_column?}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.reorder',
             'uses' => $this->controller . '@reorder',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/{%s}/translate/{lang}', $this->param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/translate/{lang}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.translate-item',
             'uses' => $this->controller . '@translateItem',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/clone/{%s}', $this->param), [
+        RouteFacade::get($this->name . sprintf('/clone/{%s}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.duplicate',
             'uses' => $this->controller . '@duplicate',
         ]);
 
-        RouteFacade::post($this->name . sprintf('/clone/{%s}', $this->param), [
+        RouteFacade::post($this->name . sprintf('/clone/{%s}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.clone',
             'uses' => $this->controller . '@clone',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/destroy/{%s}', $this->param), [
+        RouteFacade::get($this->name . sprintf('/destroy/{%s}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.destroy-confirm',
             'uses' => $this->controller . '@destroyConfirm',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/{%s}/detach', $this->param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/detach', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.detach',
             'uses' => $this->controller . '@detach',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/{%s}/toggle-pivot-data/{pivot_data}', $this->param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/toggle-pivot-data/{pivot_data}', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.toggle-pivot-data',
             'uses' => $this->controller . '@togglePivotData',
         ]);
 
-        RouteFacade::get($this->name . sprintf('/{%s}/switch/enability', $this->param), [
+        RouteFacade::get($this->name . sprintf('/{%s}/switch/enability', $this->getParam()), [
             'as' => 'crud.' . $this->name . '.switch-enability',
             'uses' => $this->controller . '@switchEnability',
         ]);
@@ -219,9 +219,19 @@ class CrudRouterService
                 'clone'     => 'crud.' . $this->name . '.clone', // @todo check relevance
                 'destroy'   => 'crud.' . $this->name . '.destroy', // @todo check relevance
             ],
-        ], $this->options);
+        ], $this->getOptions());
 
         RouteFacade::resource($this->name, $this->controller, $options_with_default_route_names);
+    }
+
+    protected function getParam(): string
+    {
+        return $this->param;
+    }
+
+    protected function getOptions(): array
+    {
+        return $this->options;
     }
 
     // @todo purpose & correctness?

@@ -80,7 +80,7 @@ trait Crudable
         return null;
     }
 
-    public function getModelName($singular = true)
+    public function getModelName($singular = true): string
     {
         if (property_exists($this, 'model_name')) {
             $name = static::$model_name;
@@ -89,6 +89,11 @@ trait Crudable
         }
 
         return $singular ? $name : Str::plural($name);
+    }
+
+    public function morphTypeParam(): string
+    {
+        return $this->getModelName();
     }
 
     /**
@@ -258,20 +263,20 @@ trait Crudable
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
             ] + ($model ? [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->getModelName(),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->morphTypeParam(),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
             ] : [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->morphTypeParam(),
             ]);
         } elseif ($relation instanceof Relations\MorphToMany) {
             return [
                 sprintf('%s[model_attribute]', FormField::SINGLE_DATA_PARAM) => $attribute,
                 sprintf('%s[relation]', FormField::SINGLE_DATA_PARAM) => $relation_name,
             ] + ($model ? [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->getModelName(),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $model->morphTypeParam(),
                 sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getForeignKeyName()) => $model->getKey()
             ] : [
-                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->getModelName(),
+                sprintf('%s[%s]', FormField::SINGLE_DATA_PARAM, $relation->getMorphType()) => $this->$relation_name->morphTypeParam(),
             ]);
         } elseif ($relation instanceof Relations\BelongsTo) {
             return [
@@ -335,6 +340,17 @@ trait Crudable
     {
         // @todo you can do (maybe) better than checking substring
         return (substr($attribute, 0, 3) === 'is_');
+    }
+
+    /**
+     * Check if attribute value is in JSON array format.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    public function isJsonArrayAttribute(string $attribute): bool
+    {
+        return $this->hasCast($attribute) && ($this->getCastType($attribute) === 'array');
     }
 
     /**

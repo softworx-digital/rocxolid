@@ -2,12 +2,12 @@
 
 namespace Softworx\RocXolid\Forms\Fields\Type;
 
-use Softworx\RocXolid\Forms\Fields\AbstractFormField;
+use Softworx\RocXolid\Forms\Fields\Type\CollectionSelect;
 
-class Tagsinput extends AbstractFormField
+class TagsInput extends CollectionSelect
 {
     protected $default_options = [
-        'type-template' => 'text',
+        'type-template' => 'tagsinput',
         // field wrapper
         'wrapper' => false,
         // component helper classes
@@ -19,8 +19,21 @@ class Tagsinput extends AbstractFormField
         'label' => false,
         // field HTML attributes
         'attributes' => [
-            'class' => 'form-control',
+            'class' => 'form-control nosubmit nopicker',
+            'multiple' => 'multiple',
             'data-role' => 'tagsinput',
         ],
     ];
+
+    public function getFieldName(int $index = 0): string
+    {
+        return sprintf('%s[]', parent::getFieldName($index));
+    }
+
+    protected function init()
+    {
+        $this->setCollection(collect($this->getForm()->getModel()->{$this->getName()})->flip());
+
+        return $this;
+    }
 }
