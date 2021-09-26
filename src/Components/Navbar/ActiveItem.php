@@ -14,6 +14,10 @@ class ActiveItem extends Item implements Controllable, Routable
 
     public function isRouteActive(): bool
     {
+        if ($this->isOpenOnRoute(request()->route())) {
+            return true;
+        }
+
         if (parent::isRouteActive()) {
             return true;
         }

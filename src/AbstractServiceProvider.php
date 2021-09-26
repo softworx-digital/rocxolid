@@ -73,31 +73,31 @@ class AbstractServiceProvider extends IlluminateServiceProvider implements Repre
         ], 'config');
 
         // lang files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\CMS\Elements\ServiceProvider" --tag="lang" (--force to overwrite)
+        // php artisan vendor:publish --provider="Softworx\RocXolid\<package>?\ServiceProvider" --tag="lang" (--force to overwrite)
         $this->publishes([
             $this->translationsSourcePath($root_path) => $this->translationsPublishPath(),
         ], 'lang');
 
         // views files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\CMS\Elements\ServiceProvider" --tag="views" (--force to overwrite)
+        // php artisan vendor:publish --provider="Softworx\RocXolid\<package>?\ServiceProvider" --tag="views" (--force to overwrite)
         $this->publishes([
             $this->viewsSourcePath($root_path) => $this->viewsPublishPath(),
         ], 'views');
 
         // assets files
-        // php artisan vendor:publish --provider="Softworx\RocXolid\CMS\Elements\ServiceProvider" --tag="assets" (--force to overwrite)
+        // php artisan vendor:publish --provider="Softworx\RocXolid\<package>?\ServiceProvider" --tag="assets" (--force to overwrite)
         $this->publishes([
             $this->assetsSourcePath($root_path) => $this->assetsPublishPath(),
         ], 'assets');
 
         // migrations
-        // php artisan vendor:publish --provider="Softworx\RocXolid\CMS\Elements\ServiceProvider" --tag="migrations" (--force to overwrite)
+        // php artisan vendor:publish --provider="Softworx\RocXolid\<package>?\ServiceProvider" --tag="migrations" (--force to overwrite)
         $this->publishes([
             $this->migrationsSourcePath($root_path) => $this->migrationsPublishPath(),
         ], 'migrations');
 
         // db dumps
-        // php artisan vendor:publish --provider="Softworx\RocXolid\CMS\Elements\ServiceProvider" --tag="dumps" (--force to overwrite)
+        // php artisan vendor:publish --provider="Softworx\RocXolid\<package>?\ServiceProvider" --tag="dumps" (--force to overwrite)
         $this->publishes([
             $this->dumpsSourcePath($root_path) => $this->dumpsPublishPath(),
         ], 'dumps');
@@ -212,7 +212,7 @@ class AbstractServiceProvider extends IlluminateServiceProvider implements Repre
      */
     public static function migrationsPublishPath(): string
     {
-        return database_path(sprintf('migrations/vendor/%s', static::getPackageKey()));
+        return database_path('migrations');
     }
 
     /**

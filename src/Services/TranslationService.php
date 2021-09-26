@@ -29,8 +29,9 @@ class TranslationService implements TranslationServiceContract
             $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );
 
+        // @todo find some other way as a fallback?
         $general_language_key = $this->getTranslationKey(
-            'rocXolid-admin', // @todo find some other way
+            'rocXolid-admin',
             'general',
             $use_raw_key ? $key : $translatable->getTranslationKey($key)
         );

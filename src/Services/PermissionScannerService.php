@@ -96,7 +96,8 @@ class PermissionScannerService
                 $package = $service_provider::getPackageKey();
             }
 
-            $methods = collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function (&$method) {
+            // collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function (&$method) {
+            collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function ($method) {
                 try {
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedAction::class);
                 } catch (\Throwable $e) {
@@ -149,7 +150,8 @@ class PermissionScannerService
                 $package = $service_provider::getPackageKey();
             }
 
-            $methods = collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function (&$method) use ($reflection) {
+            // collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function (&$method) use ($reflection) {
+            collect($reflection->getMethods(\ReflectionMethod::IS_PUBLIC))->filter(function ($method) use ($reflection) {
                 try {
                     $method->annotation = $this->annotation_reader->getMethodAnnotation($method, AuthorizedRelation::class);
 
