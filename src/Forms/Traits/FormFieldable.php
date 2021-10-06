@@ -107,14 +107,10 @@ trait FormFieldable
         return $form_fields;
     }
 
-    public function reorderFormFields($order_definition): FormFieldableContract
+    public function reorderFormFields(array $order_definition): FormFieldableContract
     {
-        if (is_null($order_definition)) {
+        if (blank($order_definition)) {
             return $this;
-        }
-
-        if (!is_array($order_definition)) {
-            throw new \InvalidArgumentException(sprintf('Fields order definition has to be an array, [%s] given', get_type($order_definition)));
         }
 
         $fields = $this->getFormFields()->sortBy(function ($form_field, $name) use ($order_definition) {

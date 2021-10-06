@@ -56,6 +56,8 @@ class ModelRelationSelectAutocomplete extends AbstractFormField
 
     protected $autocomplete_columns;
 
+    protected $model_filters = [];
+
     public function autocomplete(string $search): Collection
     {
         !$this->autocomplete_columns ?: $this->queried_model->setSearchColumns($this->autocomplete_columns);
@@ -64,6 +66,11 @@ class ModelRelationSelectAutocomplete extends AbstractFormField
 
         collect($this->autocomplete_filters)->each(function (string $type) use ($query, $search) {
             app($type)->apply($query, $this->queried_model, $search);
+        });
+
+        collect($this->model_filters)->each(function (array $filter) use ($query) {
+            // @todo decide whether to use 'type' or 'class' and unify all field types
+            app($filter['type'])->apply($query, $this->queried_model, $filter['data']);
         });
 
         return $query
@@ -76,6 +83,14 @@ class ModelRelationSelectAutocomplete extends AbstractFormField
     {
         $this->model_relation = $this->getForm()->getModel()->{$relation}();
         $this->queried_model = $this->model_relation->getRelated();
+        $this->model_filters = $relation['filters'] ?? [];
+
+        return $this;
+    }
+
+    public function setRelationFilters(array $filters): FormField
+    {
+        $this->model_filters = $filters ?? [];
 
         return $this;
     }
@@ -90,10 +105,19 @@ class ModelRelationSelectAutocomplete extends AbstractFormField
 
     public function getCollection(): Collection
     {
+        if (is_null($this->getOption('force-value', false))) {
+            return collect();
+        }
+
         if ($this->hasValue() && ($model = $this->model_relation->getRelated()->find($this->getValue()))) {
             // @todo don't know why getValue() returns collection (sometimes?)
             if ($model instanceof Collection) {
                 $model = $model->first();
+            }
+
+            // @todo hotfixed
+            if (is_null($model)) {
+                return collect();
             }
 
             return collect([

@@ -67,7 +67,7 @@ trait HasForms
         $model = $model ?? $this->getRepository()->getModel();
 
         if (!$this->hasFormAssigned($param)) {
-            $form = $this->makeForm($request, $model, $param);
+            $form = $this->makeForm($request, $model, $param, $this->getMappingOptions($request, 'form'));
 
             $this->setForm($form, $param);
         }

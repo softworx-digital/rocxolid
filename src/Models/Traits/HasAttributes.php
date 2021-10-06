@@ -4,7 +4,10 @@ namespace Softworx\RocXolid\Models\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+// rocXolid utilities
+use Softworx\RocXolid\Casts;
 
 /**
  * Trait to handle model attributes.
@@ -12,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
- * @todo quick'n'dirty
+ * @todo quick'n'dirty, integrate casting
  */
 trait HasAttributes
 {
@@ -24,12 +27,12 @@ trait HasAttributes
      */
     public function getAttributeViewValue(string $attribute)
     {
-        if ($this->isDateAttribute($attribute)) {
-            return $this->getDateAttributeViewValue($attribute);
-        } elseif ($this->isDateTimeAttribute($attribute)) {
+        if ($this->isDateTimeAttribute($attribute)) {
             return $this->getDateTimeAttributeViewValue($attribute);
         } elseif ($this->isTimeAttribute($attribute)) {
             return $this->getTimeAttributeViewValue($attribute);
+        } elseif ($this->isDateAttribute($attribute)) {
+            return $this->getDateAttributeViewValue($attribute);
         } elseif ($this->isDecimalAttribute($attribute)) {
             return $this->getDecimalAttributeViewValue($attribute);
         } elseif ($this->isEnumAttribute($attribute)) {
@@ -87,7 +90,7 @@ trait HasAttributes
      */
     public function isDateTimeAttribute(string $attribute): bool
     {
-        return collect($this->date_times)->contains($attribute);
+        return collect($this->getCasts())->get($attribute) === 'datetime';
     }
 
     /**
@@ -131,7 +134,7 @@ trait HasAttributes
      */
     public function isDecimalAttribute(string $attribute): bool
     {
-        return collect($this->decimals)->contains($attribute);
+        return collect($this->getCasts())->get($attribute) === Casts\Decimal::class;
     }
 
     /**
@@ -166,7 +169,7 @@ trait HasAttributes
      */
     public function isEnumAttribute(string $attribute): bool
     {
-        return collect($this->enums)->contains($attribute);
+        return collect($this->getCasts())->get($attribute) === Casts\Enum::class;
     }
 
     /**
@@ -177,7 +180,7 @@ trait HasAttributes
      */
     protected function getEnumAttributeViewValue(string $attribute)
     {
-        return filled($this->$attribute) ? $this->getModelViewerComponent()->translate(sprintf('choice.%s.%s', $attribute, $this->$attribute)) : null;
+        return app(Casts\Enum::class)->format($this, $attribute);
     }
 
     // @todo "hotfixed" to enable array fields to be filled correctly
@@ -266,6 +269,19 @@ trait HasAttributes
             logger()->error($e);
             return false;
         }
+    }
+
+    /**
+     *  Retrieve relation type attribute value for a view.
+     *
+     * @param string $attribute
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function getRelationAttributeModel(string $attribute): ?Model
+    {
+        $attribute = Str::camel(Str::beforeLast($attribute, '_id'));
+
+        return $this->$attribute;
     }
 
     /**

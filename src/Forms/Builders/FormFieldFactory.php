@@ -78,6 +78,8 @@ class FormFieldFactory implements FormFieldFactoryContract
 
         if ($column->getNotnull()) {
             $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
         }
 
         if ($column->getLength()) {
@@ -105,8 +107,8 @@ class FormFieldFactory implements FormFieldFactoryContract
             case Type::DATETIME:
             case Type::DATETIMETZ:
                 $rules[] = 'date';
+                break;
             case Type::TIME:
-                $rules[] = 'nullable'; // @todo hotfixed
                 $rules[] = 'regex:/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/';
                 break;
         }

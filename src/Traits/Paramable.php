@@ -40,4 +40,12 @@ trait Paramable
     {
         return isset($this->param);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isParam(string $param): bool
+    {
+        return $this->param === $param;
+    }
 }

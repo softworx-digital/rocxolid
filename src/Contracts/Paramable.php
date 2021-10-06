@@ -33,4 +33,12 @@ interface Paramable
      * @return bool
      */
     public function hasParam(): bool;
+
+    /**
+     * Check if the parameter is equal to given param.
+     *
+     * @param string $param
+     * @return bool
+     */
+    public function isParam(string $param): bool;
 }

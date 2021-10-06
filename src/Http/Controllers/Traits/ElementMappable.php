@@ -12,9 +12,30 @@ use Softworx\RocXolid\Http\Requests\CrudRequest;
  * @author softworx <hello@softworx.digital>
  * @package Softworx\RocXolid
  * @version 1.0.0
+ * @todo refactor - verify if setting specific type would not be better than parametrizing
+ * @todo use other expression than element
  */
 trait ElementMappable
 {
+    /**
+     * Get mapping key from request.
+     *
+     * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request
+     * @param string $element_signature
+     * @param array|null $default
+     * @return array
+     */
+    protected function getMappingOptions(CrudRequest $request, string $element_signature, ?array $default = null): array
+    {
+        if ($request->filled('_param')) {
+            return [ 'param' => $request->_param ];
+        } elseif ($request->filled('_section')) {
+            return [ 'section' => $request->_section ];
+        }
+
+        return $default ?? [];
+    }
+
     /**
      * Get element param based on request (action, section and param).
      *
@@ -26,13 +47,12 @@ trait ElementMappable
      */
     protected function getMappingParam(CrudRequest $request, string $element_signature, string $default): string
     {
-        $method = $request->route()->getActionMethod();
+        $action = $request->route()->getActionMethod();
         $property = sprintf('%s_mapping', $element_signature);
+        $mapping = collect($this->$property);
 
         if ($request->filled('_param')) {
-            if (in_array($request->_param, $this->$property)) {
-                return $request->_param;
-            } else {
+            if (!$mapping->contains($request->_param)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid _param [%s] sent in request for %s [%s]',
                     $request->_param,
@@ -40,14 +60,14 @@ trait ElementMappable
                     get_class($this)
                 ));
             }
+
+            return $request->_param;
         }
 
         if ($request->filled('_section')) {
-            $method = sprintf('%s.%s', $method, $request->_section);
+            $section = sprintf('%s.%s', $action, $request->_section);
 
-            if (isset($this->$property[$method])) {
-                return $this->$property[$method];
-            } else {
+            if (!$mapping->has($section)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid _section [%s].[%s] sent in request for %s [%s]',
                     $request->route()->getActionMethod(),
@@ -56,21 +76,23 @@ trait ElementMappable
                     get_class($this)
                 ));
             }
+
+            return $mapping->get($section);
         }
 
-        if (isset($this->$property[$method])) {
-            return $this->$property[$method];
+        if ($mapping->has($action)) {
+            return $mapping->get($action);
         } elseif (isset($default)) {
             return $default;
-        } elseif (empty($this->$property)) {
+        } elseif ($mapping->isEmpty()) {
             return $default;
         }
 
         throw new \InvalidArgumentException(sprintf(
-            'No controller [%s] %s mapping for method [%s]',
+            'No controller [%s] %s mapping for action [%s]',
             get_class($this),
             $element_signature,
-            $method
+            $action
         ));
     }
 

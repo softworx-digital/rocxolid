@@ -25,7 +25,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         'options',
     ];
 
-    public function addDefinitionFields(Form $form, array $definition, ?array $form_fields_order_definition): FormFieldBuilderContract
+    public function addDefinitionFields(Form $form, array $definition, array $form_fields_order_definition): FormFieldBuilderContract
     {
         $form_field_groups = [];
         $form_fields = [];
@@ -42,7 +42,7 @@ class FormFieldBuilder implements FormFieldBuilderContract
         return $this;
     }
 
-    public function addDefinitionButtons(Form $form, array $definition, ?array $form_buttons_order_definition): FormFieldBuilderContract
+    public function addDefinitionButtons(Form $form, array $definition, array $form_buttons_order_definition): FormFieldBuilderContract
     {
         $button_toolbars = [];
         $button_groups = [];

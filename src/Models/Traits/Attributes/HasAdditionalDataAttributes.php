@@ -18,7 +18,7 @@ trait HasAdditionalDataAttributes
      * The ADDITIONAL_DATA_ATTRIBUTES array should be defined in the model using this trait.
      *
      * @param bool $keys Flag to retrieve only attribute keys.
-     * @return Collection
+     * @return \Illuminate\Support\Collection
      */
     public function getAdditionalDataAttributes(bool $keys = false): Collection
     {

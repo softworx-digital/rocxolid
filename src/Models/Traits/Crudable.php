@@ -361,8 +361,7 @@ trait Crudable
      */
     public function isJsonAttribute(string $attribute): bool
     {
-        // @todo you can do (maybe) better than checking substring
-        return (substr($attribute, -5) === '_json');
+        return $this->hasCast($attribute) && ($this->getCastType($attribute) === 'json');
     }
 
     /**

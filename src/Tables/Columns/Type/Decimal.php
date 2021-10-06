@@ -14,18 +14,15 @@ class Decimal extends AbstractColumn
 {
     protected $default_options = [
         'type-template' => 'decimal',
-        /*
-        // field wrapper
-        'wrapper' => false,
-        // column HTML attributes
-        'attributes' => [
-            'class' => 'form-control'
+        'wrapper' => [
+            'attributes' => [
+                'class' => 'text-center',
+            ],
         ],
-        */
     ];
 
-    protected function setUnit($unit): Column
+    protected function setSuffix($suffix): Column
     {
-        return $this->setComponentOptions('unit', $unit);
+        return $this->setComponentOptions('suffix', $suffix);
     }
 }

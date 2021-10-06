@@ -14,17 +14,4 @@ abstract class AbstractActiveComponent extends AbstractComponent implements Cont
     use ControllableTrait;
     use ModellableTrait;
     use RoutableTrait;
-
-    /*
-     * @todo this doesn't quite work for related component models, eg. for images
-     *
-    protected function makeDomId(...$params): string
-    {
-        if ($this->hasModel() && $this->getModel()->exists) {
-            return parent::makeDomId($this->getModel()->getKey(), ...$params);
-        }
-
-        return parent::makeDomId(...$params);
-    }
-    */
 }

@@ -25,7 +25,6 @@ trait ReadsModels
      * @param \Softworx\RocXolid\Http\Requests\CrudRequest $request Incoming request.
      * @param \Softworx\RocXolid\Models\Contracts\Crudable $model Resolved model instance.
      * @param string|null $tab Tab param to show.
-     * @return @todo
      */
     public function show(CrudRequest $request, Crudable $model, ?string $tab = null)//: View
     {
@@ -34,9 +33,17 @@ trait ReadsModels
         $model_viewer_component = $this->getShowModelViewerComponent($request, $model, $tab);
 
         if ($request->ajax()) {
-            return $this->response
-                ->modal($model_viewer_component->fetch('modal.show'))
-                ->get();
+            if (isset($tab)) {
+                return $this->response
+                    ->replace($model_viewer_component->getDomId('modal-show-body', $model->getKey()), $model_viewer_component->fetch('modal.modal-body', [
+                        'tab' => $tab,
+                    ]))
+                    ->get();
+            } else {
+                return $this->response
+                    ->modal($model_viewer_component->fetch('modal.show'))
+                    ->get();
+            }
         } else {
             return $this
                 ->getDashboard()

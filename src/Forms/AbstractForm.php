@@ -124,7 +124,7 @@ abstract class AbstractForm implements Form
      *     ...
      * ];
      */
-    protected $fields_order = null;
+    protected $fields_order = [];
 
     /**
      * protected $buttons_order = [
@@ -132,7 +132,7 @@ abstract class AbstractForm implements Form
      *     ...
      * ];
      */
-    protected $buttons_order = null;
+    protected $buttons_order = [];
 
     /**
      * Constructor
@@ -161,12 +161,12 @@ abstract class AbstractForm implements Form
                 ->addDefinitionFields($this, [
                     'form_field_groups' => $this->getFieldGroupsDefinition(),
                     'form_fields' => $this->getFieldsDefinition()
-                ], $this->fields_order)
+                ], $this->getFieldsOrder())
                 ->addDefinitionButtons($this, [
                     'button_toolbars' => $this->getButtonToolbarsDefinition(),
                     'button_groups' => $this->getButtonGroupsDefinition(),
                     'buttons' => $this->getButtonsDefinition(),
-                ], $this->buttons_order);
+                ], $this->getButtonsOrder());
 
         $this
             ->setFieldsRequestInput()
@@ -630,6 +630,26 @@ abstract class AbstractForm implements Form
     protected function adjustButtonsDefinition($buttons)
     {
         return $buttons;
+    }
+
+    protected function getFieldsOrder(): array
+    {
+        return $this->adjustFieldsOrder($this->fields_order);
+    }
+
+    protected function adjustFieldsOrder(array $fields_order): array
+    {
+        return $fields_order;
+    }
+
+    protected function getButtonsOrder(): array
+    {
+        return $this->adjustButtonsOrder($this->buttons_order);
+    }
+
+    protected function adjustButtonsOrder(array $buttons_order): array
+    {
+        return $buttons_order;
     }
 
     public function provideDomIdParam(): string

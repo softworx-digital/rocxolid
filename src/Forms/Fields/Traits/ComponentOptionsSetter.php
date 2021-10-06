@@ -60,9 +60,9 @@ trait ComponentOptionsSetter
         return $this->setComponentOptions('prefix', $prefix);
     }
 
-    protected function setUnits($units): FormField
+    protected function setSuffix($suffix): FormField
     {
-        return $this->setComponentOptions('units', $units);
+        return $this->setComponentOptions('suffix', $suffix);
     }
 
     protected function setSelectValueChallange($select_value_challange): FormField

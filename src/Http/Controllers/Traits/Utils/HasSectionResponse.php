@@ -51,11 +51,12 @@ trait HasSectionResponse
 
         $model_viewer_component = $model->getModelViewerComponent();
 
-        $template_name = sprintf('include.%s', $request->_section);
+        $dom_id_param = $this->getSectionDomIdParam($request, $model, $form);
+        $template_name = $this->getSectionTemplateName($request, $model, $form);
         $assignments = $this->getSectionTemplateAssignments($request, $model, $form);
 
         return $this->response
-            ->replace($model_viewer_component->getDomId($request->_section), $model_viewer_component->fetch($template_name, $assignments))
+            ->replace($model_viewer_component->getDomId($dom_id_param), $model_viewer_component->fetch($template_name, $assignments))
             ->replace($model_viewer_component->getDomId('actions'), $model_viewer_component->fetch('include.actions'))
             ->modalClose($model_viewer_component->getDomId(sprintf('modal-%s', $form->getParam())))
             ->notifySuccess($model_viewer_component->translate('text.updated'))
@@ -64,6 +65,26 @@ trait HasSectionResponse
 
     protected function getSectionTemplateAssignments(CrudRequest $request, Crudable $model, AbstractCrudForm $form): array
     {
-        return [];
+        [ $section, $param ] = explode('.', $request->_section, 2);
+
+        return [
+            'param' => $param,
+        ];
+    }
+
+    protected function getSectionDomIdParam(CrudRequest $request, Crudable $model, AbstractCrudForm $form): string
+    {
+        [ $section, $param ] = explode('.', $request->_section, 2);
+        [ $section, $template ] = explode(':', sprintf('%s:default', $section));
+
+        return sprintf('%s.%s', $section, $param);
+    }
+
+    protected function getSectionTemplateName(CrudRequest $request, Crudable $model, AbstractCrudForm $form): string
+    {
+        [ $section, $param ] = explode('.', $request->_section, 2);
+        [ $section, $template ] = explode(':', sprintf('%s:default', $section));
+
+        return sprintf('%s.%s', $section, $template);
     }
 }

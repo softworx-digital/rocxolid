@@ -24,7 +24,10 @@ class View
 
         if (is_array($additional)) {
             foreach ($additional as $add) {
-                $id .= str_replace(':', '-', sprintf('-%s', $add));
+                $add = str_replace(':', '-', $add);
+                $add = str_replace('.', '-', $add);
+
+                $id .= sprintf('-%s', $add);
             }
         }
 

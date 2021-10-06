@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
  * Scope to filter enabled only resources.
  *
  * @author softworx <hello@softworx.digital>
- * @package Softworx\RocXolid\UserManagement
+ * @package Softworx\RocXolid
  * @version 1.0.0
  */
 class IsEnabled implements Scope
