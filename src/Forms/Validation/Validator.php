@@ -19,8 +19,6 @@ use Softworx\RocXolid\Rendering\Services\RenderingService;
  */
 class Validator extends IlluminateValidator
 {
-    protected $exception = null;
-
     /**
      * Validate that an attribute is the only one defined among attributes defined in parameters.
      *
@@ -424,7 +422,7 @@ class Validator extends IlluminateValidator
         try {
             RenderingService::render($value, $variables);
         } catch (\Throwable $e) {
-            $this->exception = $e;
+            $this->setException($e);
 
             return false;
         }

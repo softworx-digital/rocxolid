@@ -272,7 +272,7 @@ trait HasAttributes
     }
 
     /**
-     *  Retrieve relation type attribute value for a view.
+     * Retrieve relation type model for a view.
      *
      * @param string $attribute
      * @return \Illuminate\Database\Eloquent\Model|null
@@ -285,7 +285,7 @@ trait HasAttributes
     }
 
     /**
-     * Retrieve relation type attribute value for a view.
+     * Retrieve relation type related value for a view.
      *
      * @param string $attribute
      * @return string|null

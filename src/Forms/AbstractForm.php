@@ -597,7 +597,7 @@ abstract class AbstractForm implements Form
         return $this->adjustFieldsDefinition($this->fields);
     }
 
-    protected function adjustFieldsDefinition($fields)
+    protected function adjustFieldsDefinition(array $fields): array
     {
         return $fields;
     }

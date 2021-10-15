@@ -52,7 +52,7 @@ abstract class AbstractRenderable implements Contracts\Renderable
      *
      * @return \Softworx\RocXolid\Rendering\Services\Contracts\RenderingService
      */
-    protected function getRenderingService(): RenderingService
+    public function getRenderingService(): RenderingService
     {
         return $this->rendering_service;
     }
